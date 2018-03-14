@@ -1,0 +1,21 @@
+<ion-view title="Lug Nut">
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <ion-content scroll="false" class="has-header">
+        <map on-create="mapCreated(map)"></map>
+        
+        <div id="console" ng-controller="LogCtrl">
+            <div ng-repeat="(i, item) in logs.slice().reverse() track by $index" class="log-item">
+                <div ng-repeat="(p, message) in item.messages track by $index">
+                    <span ng-class="cssClass(item.type)" ng-if="isString(message)">{{message}}</span>
+                    <pre ng-class="cssClass(item.type)" ng-if="isObject(message)">{{message | json}}</pre>
+                </div>
+            </div>
+        </div>
+        
+    </ion-content>
+    <ion-footer-bar class="bar-stable">
+        <a ng-click="watchPosition()" class="button button-icon icon ion-navigate"></a>
+    </ion-footer-bar>
+</ion-view>

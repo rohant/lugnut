@@ -1,0 +1,63 @@
+<ion-side-menus>
+
+  <ion-pane ion-side-menu-content>
+    <ion-nav-bar class="bar-stable nav-title-slide-ios7">
+      <ion-nav-back-button class="button-clear"><i class="icon ion-chevron-left"></i> Back</ion-nav-back-button>
+    </ion-nav-bar>
+    <ion-nav-view name="menuContent" animation="slide-left-right"></ion-nav-view>
+  </ion-pane>
+
+  <ion-side-menu side="left">
+    <header class="bar bar-header bar-stable">
+      <h1 class="title">Left</h1>
+    </header>
+    <ion-content class="has-header">
+      <ion-list>
+          
+        <!--
+        <ion-checkbox nav-clear menu-close ng-model="debug" ng-checked="debug" ng-disabled="debug">
+            Debug Model
+        </ion-checkbox>
+        -->
+
+        <ul class="list">
+            <li class="item item-toggle">
+                Debug Model
+                <label class="toggle toggle-positive">
+                    <input type="checkbox" ng-model="debug">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </li>
+            
+            <li class="item item-toggle">
+                Show points
+                <label class="toggle toggle-positive">
+                    <input type="checkbox" ng-model="showPoins">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </li>
+        </ul>
+        
+        <!--
+        <ion-item menu-close href="#/app/map">
+          Map
+        </ion-item>
+        <ion-item nav-clear menu-close href="#/app/search">
+          Search
+        </ion-item>
+        <ion-item nav-clear menu-close href="#/app/browse">
+          Browse
+        </ion-item>
+        <ion-item nav-clear menu-close href="#/app/playlists">
+          Playlists
+        </ion-item>
+        -->
+        
+      </ion-list>
+    </ion-content>
+  </ion-side-menu>
+</ion-side-menus>
