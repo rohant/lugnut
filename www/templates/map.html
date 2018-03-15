@@ -5,8 +5,8 @@
     <ion-content scroll="false" class="has-header">
         <map on-create="mapCreated(map)"></map>
         
-        <div id="console" ng-controller="LogCtrl">
-            <div ng-repeat="(i, item) in logs.slice().reverse() track by $index" class="log-item">
+        <div id="console" ng-controller="LogCtrl" ng-show="debug.enabled">
+            <div ng-repeat="(i, item) in logs track by $index" class="log-item">
                 <div ng-repeat="(p, message) in item.messages track by $index">
                     <span ng-class="cssClass(item.type)" ng-if="isString(message)">{{message}}</span>
                     <pre ng-class="cssClass(item.type)" ng-if="isObject(message)">{{message | json}}</pre>
