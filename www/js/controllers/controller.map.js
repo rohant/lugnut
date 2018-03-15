@@ -6,6 +6,8 @@ angular.module('app.controllers')
     var infowindow, marker;
     
     $scope.points = [];
+    $scope.isWatching = false;
+    $scope.isGotPosition = false;
 
     $scope.mapCreated = function (map) {
         
@@ -22,6 +24,8 @@ angular.module('app.controllers')
             });
             
             function onSuccess (position) {
+                
+                $scope.isGotPosition = true;
                 
                 $log.debug('Got position:', position);
                 
@@ -92,10 +96,9 @@ angular.module('app.controllers')
             return;
         }
         
-        $log.debug("watch position..");
+        $scope.isWatching = true;
         
-        navigator.geolocation.clearWatch(watchID);
-        
+        $log.debug("Start route recording..");
         
         function onSuccess (position) {
             
@@ -174,5 +177,15 @@ angular.module('app.controllers')
             enableHighAccuracy: true,
             timeout: 30000,
         });
+    };
+    
+    $scope.stopWatchingPosition = function(){
+        $scope.isWatching = false;
+        
+        $log.debug('Stop route recording.');
+        
+        navigator.geolocation.clearWatch(watchID);
+        
+        // do save route
     };
 })

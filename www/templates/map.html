@@ -4,18 +4,29 @@
     </ion-nav-buttons>
     <ion-content scroll="false" class="has-header">
         <map on-create="mapCreated(map)"></map>
-        
+
         <div id="console" ng-controller="LogCtrl" ng-show="debug.enabled">
             <div ng-repeat="(i, item) in logs track by $index" class="log-item">
                 <div ng-repeat="(p, message) in item.messages track by $index">
                     <span ng-class="cssClass(item.type)" ng-if="isString(message)">{{message}}</span>
-                    <pre ng-class="cssClass(item.type)" ng-if="isObject(message)">{{message | json}}</pre>
+                    <pre ng-class="cssClass(item.type)" ng-if="isObject(message)">{{message| json}}</pre>
                 </div>
             </div>
         </div>
-        
+
+        <div class="map-actions" ng-show="isGotPosition">
+            <button class="button button-positive icon-left ion-record" ng-click="watchPosition()" ng-show="!isWatching">
+                Record route
+            </button>
+            <button class="button button-assertive icon-left ion-stop" ng-click="stopWatchingPosition()" ng-show="isWatching">
+                Stop recording
+            </button>
+        </div>
+
     </ion-content>
+    <!--
     <ion-footer-bar class="bar-stable">
         <a ng-click="watchPosition()" class="button button-icon icon ion-navigate"></a>
     </ion-footer-bar>
+    -->
 </ion-view>
