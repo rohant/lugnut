@@ -12,6 +12,9 @@
                     <pre ng-class="cssClass(item.type)" ng-if="isObject(message)">{{message| json}}</pre>
                 </div>
             </div>
+            
+            <a href="javascript:location.reload()" class="button button-block button-stable" ng-if="showReloadBtn">Reset</a>
+            
         </div>
 
         <div class="map-actions" ng-show="isGotPosition">

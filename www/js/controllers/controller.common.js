@@ -4,7 +4,9 @@ angular.module('app.controllers', [])
     $scope.Config = Config;
     
     $scope.debug = {
-        enabled:true
+        enabled: true,
+        showPoints: false,
+        simulation: false,
     };
     
     $log.info('Start application!');

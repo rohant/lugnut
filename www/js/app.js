@@ -1,4 +1,11 @@
-angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.config'])
+angular.module('app', [
+    'ionic', 
+    'ngCordova', 
+    'app.config', 
+    'app.services', 
+    'app.controllers', 
+    'app.directives'
+])
 
 .run(function($rootScope, $ionicPlatform) {
   $ionicPlatform.ready(function() {
