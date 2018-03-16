@@ -6,7 +6,8 @@ angular.module('app.controllers', [])
     $scope.debug = {
         enabled: true,
         showPoints: false,
-        simulation: false,
+        simulation: true,
+        snapToRoadEngine: 0,
     };
     
     $log.info('Start application!');

@@ -50,6 +50,16 @@
             </li>
         </ul>
         
+        
+        <ion-list ng-show="debug.enabled && debug.simulation">
+          <ion-radio ng-model="debug.snapToRoadEngine" ng-value="0">Snap to road: No</ion-radio>
+          <ion-radio ng-model="debug.snapToRoadEngine" ng-value="1">Snap to road: V1</ion-radio>
+          <ion-radio ng-model="debug.snapToRoadEngine" ng-value="2">Snap to road: V2</ion-radio>
+          <ion-radio ng-model="debug.snapToRoadEngine" ng-value="3">Snap to road: V3</ion-radio>
+          <ion-radio ng-model="debug.snapToRoadEngine" ng-value="4">Snap to road: V4</ion-radio>
+        </ion-list>
+        
+        
         <!--
         <ion-item menu-close href="#/app/map">
           Map

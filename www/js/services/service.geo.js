@@ -3,15 +3,18 @@ angular.module('app.services')
 .factory('Gps', function ($injector, $interval, $timeout, $log, $q, Config) {
     var $gl = $injector.get('$cordovaGeolocation');
     
-    function simulation (delay, points) {
-        return {
+    function GeoSimulator (delay, points) {
+        var $s = {
             watcher: null,
             
             then: function(callback) {
                 var i = 0;
                 
                 this.watcher = setInterval(function(){
-                    if (i <= points.length) {
+                    if (i > points.length-1) {
+                        clearInterval($s.watcher);
+                        $log.debug('end.');
+                    } else {
                         $log.debug('simulated position.', points[i]);
                         
                         callback({
@@ -42,7 +45,9 @@ angular.module('app.services')
             clearWatch: function() {
                 return $interval.clear(this.timer);
             },
-        }
+        };
+        
+        return $s;
     }
     
     
@@ -58,7 +63,6 @@ angular.module('app.services')
                 return $gl.getCurrentPosition.apply(this, arguments);
             } else {
                 return $timeout(function(){}, 3000).then(function(){
-                    
                     $log.debug('simulated current position.');
                     
                     return {
@@ -67,8 +71,8 @@ angular.module('app.services')
                             altitude: 181,
                             altitudeAccuracy: null,
                             heading: null,
-                            latitude: 49.9837886,
-                            longitude: 36.1818388,
+                            latitude: 37.804165,
+                            longitude: -122.271213,
                             speed: null
                         },
                         timestamp: new Date().getTime(),
@@ -87,7 +91,7 @@ angular.module('app.services')
                 return $gl.watchPosition.apply(this, arguments);
             } else {
                 
-                this.simulator = simulation (2000, Config.simulate.points);
+                this.simulator = new GeoSimulator (1000, Config.simulate.points);
                 
                 return this.simulator;
             }
@@ -108,4 +112,4 @@ angular.module('app.services')
     };
 
     return service;
-});
+})
