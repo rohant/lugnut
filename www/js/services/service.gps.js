@@ -7,7 +7,7 @@ angular.module('app.services')
         var $s = {
             watcher: null,
             
-            then: function(callback) {
+            then: function(onSuccess, onError, onUpdate) {
                 var i = 0;
                 
                 this.watcher = setInterval(function(){
@@ -17,7 +17,7 @@ angular.module('app.services')
                     } else {
                         $log.debug('simulated position.', points[i]);
                         
-                        callback({
+                        onUpdate({
                             coords: {
                                 accuracy: 15.720999717712402,
                                 altitude: 181,

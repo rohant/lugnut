@@ -1,12 +1,12 @@
 angular.module('app.controllers', [])
 
-.controller('AppCtrl', function ($scope, $log, $ionicLoading, Config) {
+.controller('AppCtrl', function ($scope, $log, $ionicLoading, Config, Gps) {
     $scope.Config = Config;
     
     $scope.debug = {
-        enabled: true,
+        enabled: false,
+        simulation: false,
         showPoints: false,
-        simulation: true,
         snapToRoadEngine: 0,
     };
     

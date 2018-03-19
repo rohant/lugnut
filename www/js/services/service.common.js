@@ -31,12 +31,13 @@ angular.module('app.services', [])
     
     var log = function (type) {
         return function(){
+            var data = arguments;
             
-            for (var i in arguments) {
+            for (var i in data) {
                 service.logs.push({
                     type: type,
-                    message: arguments[i],
                     time: (new Date()).getTime(),
+                    message: angular.isObject(data[i]) ? angular.copy(data[i]) : data[i],
                 });
             }
             

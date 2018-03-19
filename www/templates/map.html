@@ -12,23 +12,20 @@
                     <pre ng-class="cssClass(item.type)" ng-if="isObject(item.message)">{{item.message| json}}</pre>
                 </div>
             </div>
-            <a href="javascript:location.reload()" class="button button-block button-stable" ng-if="showReloadBtn">
+            <a href="javascript:void()" class="button button-block button-stable" ng-if="showReloadBtn" ng-click="init()">
                 Reset
             </a>
         </div>
 
-        <div class="map-actions" ng-show="isGotPosition">
+        <div class="map-actions" ng-show="showActions">
             <button class="button button-positive icon-left ion-record" ng-click="watchPosition()" ng-show="!isWatching">
                 Record route
             </button>
             <button class="button button-assertive icon-left ion-stop" ng-click="stopWatchingPosition()" ng-show="isWatching">
                 Stop recording
             </button>
-            <a href="javascript:location.reload()" class="button button-block button-stable icon-left ion-refresh" ng-if="showReloadBtn">
-                Reload view
-            </a>
         </div>
-
+        
     </ion-content>
     <!--
     <ion-footer-bar class="bar-stable">

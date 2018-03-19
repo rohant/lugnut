@@ -9,12 +9,7 @@ angular.module('app.controllers')
     var prevPosition;
     
     var waypoints = [];
-    var tracewaypoints = new google.maps.Polyline({
-        path: waypoints,
-        strokeColor: "blue",
-        strokeOpacity: 1.0,
-        strokeWeight: 2
-    });
+    var tracewaypoints;
     
     var lines = []
     var snapPath = [];
@@ -22,31 +17,108 @@ angular.module('app.controllers')
     $scope.points = [];
     
     $scope.isWatching = false;
-    $scope.isGotPosition = false;
+    $scope.showActions = false;
     
-    $scope.showReloadBtn = false;
+    
+    $scope.$watch('debug.enabled', function(debug){
+        Gps.simulation = debug && $scope.debug.simulation;
+        $log.debug("debug.enabled:" + Gps.simulation);
+    });
+    
+    $scope.$watch('debug.simulation', function(simulation){
+        Gps.simulation = simulation && $scope.debug.enabled;
+        $log.debug("debug.simulation:" + Gps.simulation);
+    });
 
+    $scope.$watch('debug.showPoints', function(showPoints){
+        $log.debug("debug.showPoins:" + showPoints);
+    });
     
     
-    Gps.simulation = true;
-    
-    $scope.$watch('debug.simulation', function(enable){
-        $log.debug("debug.simulation:"+enable);
-        Gps.simulation = enable;
-    })
-    
-    $scope.mapCreated = function (map) {
+    var Marker = {
+        _map: null,
+        _info: null,
+        _marker: null,
         
-        $scope.map = map;
-        $scope.points = [];
+        init: function(map){
+            this._map = map;
+            return this;
+        },
         
-        tracewaypoints.setMap($scope.map);
+        current: function(position){
+            var self = this;
+            
+            var latLng = new google.maps.LatLng(
+                position.coords.latitude,
+                position.coords.longitude
+            );
+            
+            if (!this._info) {
+                this._info = new google.maps.InfoWindow({
+                   size: new google.maps.Size(150, 50)
+                });
+            }
+            
+            if (!this._marker) {
+                this._marker = self.createMarker('You are here!', latLng);
+                
+                google.maps.event.addListener(self._marker, 'click', function (e) {
+                    self._info.open(self._map, self._marker);
+                    return true;
+                });
+            }
+            
+            this._info.setContent(this._content(position));
+            this._marker.setPosition(latLng);
+            
+            return this;
+        },
+        
+        _content: function(position){
+            var geoInfo = (
+                'Latitude: ' + position.coords.latitude + ";<br>\n" +
+                'Longitude: ' + position.coords.longitude + ";<br>\n" +
+                'Altitude: ' + position.coords.altitude + ";<br>\n" +
+                'Accuracy: ' + position.coords.accuracy + ";<br>\n" +
+                'Altitude Accuracy: ' + position.coords.altitudeAccuracy + ";<br>\n" +
+                'Heading: ' + position.coords.heading + ";<br>\n" +
+                'Speed: ' + position.coords.speed + ";<br>\n" +
+                'Timestamp: ' + position.timestamp + ";<br>\n"
+            );
+
+            return '<b>Info:</b><br>' + geoInfo;
+        },
+        
+        createMarker: function(title, latLng){
+            var counter = 0;
+            
+            return (function(self){
+                return new google.maps.Marker({
+                    map: self._map,
+                    title: title || 'Point - ' + counter++,
+                    zIndex: Math.round(latLng.lat() * -100000) << 5
+                });
+            }(this));
+        },
+    }
+    
+    
+    /**
+     * 
+     * @param {type} map
+     * @return {undefined}
+     */
+    $scope.init = function (map) {
+        
+        Marker.init(map);
+        
+        $scope.showReloadBtn = false;
         
         $scope.loading = $ionicLoading.show({
             content: 'Getting current location...',
             showBackdrop: false
         });
-
+        
         Gps.getCurrentPosition({
             enableHighAccuracy: true,
             timeout: 30000,
@@ -54,7 +126,7 @@ angular.module('app.controllers')
         }).then(function (position) {
             $log.debug('Got position:', position);
 
-            $scope.isGotPosition = true;
+            $scope.showActions = true;
             $scope.loading.hide();
 
             var myLatlng = new google.maps.LatLng(
@@ -65,87 +137,65 @@ angular.module('app.controllers')
             $scope.map.setCenter(myLatlng);
             $scope.map.setZoom(15);
 
-            var geoInfo = (
-                'Latitude: ' + position.coords.latitude + ";<br>\n" +
-                'Longitude: ' + position.coords.longitude + ";<br>\n" +
-                'Altitude: ' + position.coords.altitude + ";<br>\n" +
-                'Accuracy: ' + position.coords.accuracy + ";<br>\n" +
-                'Altitude Accuracy: ' + position.coords.altitudeAccuracy + ";<br>\n" +
-                'Heading: ' + position.coords.heading + ";<br>\n" +
-                'Speed: ' + position.coords.speed + ";<br>\n" +
-                'Timestamp: ' + position.timestamp + ";<br>\n"
-            );
-
-            var label = 'Info:';
-            var contentString = '<b>'+label+'</b><br>' + geoInfo;
-
-            if (marker) {
-                infowindow.setContent(contentString);
-                marker.setPosition(myLatlng);
-            } else {
-                //marker = createMarker(myLatlng, 'Info:', geoInfo);
-
-                marker = new google.maps.Marker({
-                    position: myLatlng,
-                    map: $scope.map,
-                    title: label,
-                    zIndex: Math.round(myLatlng.lat() * -100000) << 5
-                });
-
-                marker.myname = label;
-
-                google.maps.event.addListener(marker, 'click', function (e) {
-                    infowindow.setContent(contentString);
-                    infowindow.open($scope.map, marker);
-                    return true;
-                });
-            }
+            Marker.current(position);
+                    
         }, function (error) {
-            $log.error('Unable to get location: ' + error.message);
-            $scope.loading.hide();
+            
+            $log.error('Unable to get location: ' + error.message, error);
+            
             $scope.showReloadBtn = true;
+            $scope.loading.hide();
         });
+    }
+    
+    /**
+     * 
+     * @param {type} map
+     * @return {undefined}
+     */
+    $scope.mapCreated = function (map) {
+        $scope.map = map;
+        $scope.init(map);
     };
 
+    /**
+     * 
+     * @return {undefined}
+     */
     $scope.watchPosition = function () {
         
         if (!$scope.map) {
             return;
         }
         
+        if (!tracewaypoints) {
+            tracewaypoints = new google.maps.Polyline({
+                map: $scope.map,
+                path: waypoints,
+                strokeColor: "blue",
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            });
+        }
+        
         $scope.isWatching = true;
         
-        localStorage.setItem('points', []);
-        
+        if ($scope.debug.enabled && $scope.debug.simulation) {
+            $log.info("Start simulation..");
+        }
         
         $log.debug("Start route recording..");
         $log.debug("Search GPS coordinates..");
         
-        if ($scope.debug.simulation) {
-            $log.info("Start simulation..");
-        }
-        
+        localStorage.setItem('points', []);
         
         function onSuccess (position) {
             $log.debug('Got position:', position);
-
-            var geoInfo = (
-                'Latitude: ' + position.coords.latitude + ";<br>\n" +
-                'Longitude: ' + position.coords.longitude + ";<br>\n" +
-                'Altitude: ' + position.coords.altitude + ";<br>\n" +
-                'Accuracy: ' + position.coords.accuracy + ";<br>\n" +
-                'Altitude Accuracy: ' + position.coords.altitudeAccuracy + ";<br>\n" +
-                'Heading: ' + position.coords.heading + ";<br>\n" +
-                'Speed: ' + position.coords.speed + ";<br>\n" +
-                'Timestamp: ' + position.timestamp + ";<br>\n"
-            );
-
 
             var myLatlng = new google.maps.LatLng(
                 position.coords.latitude,
                 position.coords.longitude
             );
-
 
             if (+$scope.debug.snapToRoadEngine == 0) {
                 waypoints.push(myLatlng)
@@ -350,52 +400,28 @@ angular.module('app.controllers')
             }
     
     
+            Marker.current(position);
+            
             $scope.map.setCenter(myLatlng);
-            
-            
-            infowindow = new google.maps.InfoWindow({
-                size: new google.maps.Size(150, 50)
-            });
-
-
-            var label = 'Info:';
-            var contentString = '<b>'+label+'</b><br>' + geoInfo;
-
-            if (marker) {
-                infowindow.setContent(contentString);
-                marker.setPosition(myLatlng);
-            } else {
-                //marker = createMarker(myLatlng, 'Info:', geoInfo);
-
-                marker = new google.maps.Marker({
-                    position: myLatlng,
-                    map: $scope.map,
-                    title: label,
-                    zIndex: Math.round(myLatlng.lat() * -100000) << 5
-                });
-                
-                marker.myname = label;
-
-                google.maps.event.addListener(marker, 'click', function (e) {
-                    infowindow.setContent(contentString);
-                    infowindow.open($scope.map, marker);
-                    return true;
-                });
-            }
             
             localStorage.setItem('points', JSON.stringify($scope.points));
         }
         
         function onError (error) {
-            $log.error('Unable to get location: ' + error.message);
+            $log.error('Unable to get location: ' + error.message, error);
         }
 
         watch = Gps.watchPosition({
             enableHighAccuracy: true,
+            maximumAge: 3600000,
             timeout: 30000,
-        }).then(onSuccess, onError);
+        }).then(null, onError, onSuccess);
     };
     
+    /**
+     * 
+     * @return {undefined}
+     */
     $scope.stopWatchingPosition = function(){
         $scope.isWatching = false;
         
