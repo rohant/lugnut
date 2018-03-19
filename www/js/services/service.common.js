@@ -31,19 +31,14 @@ angular.module('app.services', [])
     
     var log = function (type) {
         return function(){
-            var data = arguments;
             
-            //if (typeof arguments !== 'object') {
-            //
-            //} else {
-            //
-            //}
-            
-            service.logs.push({
-                type: type,
-                messages: data,
-                time: (new Date()).getTime(),
-            });
+            for (var i in arguments) {
+                service.logs.push({
+                    type: type,
+                    message: arguments[i],
+                    time: (new Date()).getTime(),
+                });
+            }
             
             var $rs = $injector.get('$rootScope');
             $rs.$broadcast('log:updated', {

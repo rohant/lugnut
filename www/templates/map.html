@@ -7,14 +7,14 @@
 
         <div id="console" ng-controller="LogCtrl" ng-show="debug.enabled">
             <div ng-repeat="(i, item) in logs track by $index" class="log-item">
-                <div ng-repeat="(p, message) in item.messages track by $index">
-                    <span ng-class="cssClass(item.type)" ng-if="isString(message)">{{message}}</span>
-                    <pre ng-class="cssClass(item.type)" ng-if="isObject(message)">{{message| json}}</pre>
+                <div>
+                    <span ng-class="cssClass(item.type)" ng-if="isString(item.message)">{{item.message}}</span>
+                    <pre ng-class="cssClass(item.type)" ng-if="isObject(item.message)">{{item.message| json}}</pre>
                 </div>
             </div>
-            
-            <a href="javascript:location.reload()" class="button button-block button-stable" ng-if="showReloadBtn">Reset</a>
-            
+            <a href="javascript:location.reload()" class="button button-block button-stable" ng-if="showReloadBtn">
+                Reset
+            </a>
         </div>
 
         <div class="map-actions" ng-show="isGotPosition">
