@@ -1,6 +1,16 @@
 angular.module('app.config', [])
 
 .value('Config', {
+
+    API_KEY: 'AIzaSyDBbNcRgAaE9L4Q6IuAFchPqT1BA61kHvw',
+
+    debug: {
+        enabled: true,
+        simulation: false,
+        showPoints: false,
+        snapToRoadEngine: 0,
+    },
+
     simulate: {
         points: [
             [37.803210, -122.285347],

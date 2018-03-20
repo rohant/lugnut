@@ -1,30 +1,35 @@
 angular.module('app.controllers')
 
-.controller('MapCtrl', function ($scope, $log, $http, $ionicLoading, Gps) {
-    
+.controller('MapCtrl', function ($scope, $rootScope, $log, $http, $state, $ionicLoading, Gps, Marker, Route) {
+
     var watch;
     var infowindow, marker;
-    
+
     var markers = [];
     var prevPosition;
-    
+
     var waypoints = [];
     var tracewaypoints;
-    
+
     var lines = []
     var snapPath = [];
-    
+
     $scope.points = [];
-    
+
     $scope.isWatching = false;
     $scope.showActions = false;
-    
-    
+
+    $rootScope.routes = [];
+    $rootScope.$watch('routes', function(routes){
+        localStorage.setItem('routes', JSON.stringify(routes));
+        $log.debug("routes:", routes);
+    });
+
     $scope.$watch('debug.enabled', function(debug){
         Gps.simulation = debug && $scope.debug.simulation;
-        $log.debug("debug.enabled:" + Gps.simulation);
+        $log.debug("debug.enabled:" + debug);
     });
-    
+
     $scope.$watch('debug.simulation', function(simulation){
         Gps.simulation = simulation && $scope.debug.enabled;
         $log.debug("debug.simulation:" + Gps.simulation);
@@ -33,101 +38,38 @@ angular.module('app.controllers')
     $scope.$watch('debug.showPoints', function(showPoints){
         $log.debug("debug.showPoins:" + showPoints);
     });
-    
-    
-    var Marker = {
-        _map: null,
-        _info: null,
-        _marker: null,
-        
-        init: function(map){
-            this._map = map;
-            return this;
-        },
-        
-        current: function(position){
-            var self = this;
-            
-            var latLng = new google.maps.LatLng(
-                position.coords.latitude,
-                position.coords.longitude
-            );
-            
-            if (!this._info) {
-                this._info = new google.maps.InfoWindow({
-                   size: new google.maps.Size(150, 50)
-                });
-            }
-            
-            if (!this._marker) {
-                this._marker = self.createMarker('You are here!', latLng);
-                
-                google.maps.event.addListener(self._marker, 'click', function (e) {
-                    self._info.open(self._map, self._marker);
-                    return true;
-                });
-            }
-            
-            this._info.setContent(this._content(position));
-            this._marker.setPosition(latLng);
-            
-            return this;
-        },
-        
-        _content: function(position){
-            var geoInfo = (
-                'Latitude: ' + position.coords.latitude + ";<br>\n" +
-                'Longitude: ' + position.coords.longitude + ";<br>\n" +
-                'Altitude: ' + position.coords.altitude + ";<br>\n" +
-                'Accuracy: ' + position.coords.accuracy + ";<br>\n" +
-                'Altitude Accuracy: ' + position.coords.altitudeAccuracy + ";<br>\n" +
-                'Heading: ' + position.coords.heading + ";<br>\n" +
-                'Speed: ' + position.coords.speed + ";<br>\n" +
-                'Timestamp: ' + position.timestamp + ";<br>\n"
-            );
 
-            return '<b>Info:</b><br>' + geoInfo;
-        },
-        
-        createMarker: function(title, latLng){
-            var counter = 0;
-            
-            return (function(self){
-                return new google.maps.Marker({
-                    map: self._map,
-                    title: title || 'Point - ' + counter++,
-                    zIndex: Math.round(latLng.lat() * -100000) << 5
-                });
-            }(this));
-        },
-    }
-    
-    
     /**
-     * 
+     *
      * @param {type} map
      * @return {undefined}
      */
     $scope.init = function (map) {
-        
+
         Marker.init(map);
-        
+
         $scope.showReloadBtn = false;
-        
+
         $scope.loading = $ionicLoading.show({
             content: 'Getting current location...',
             showBackdrop: false
         });
-        
+
         Gps.getCurrentPosition({
             enableHighAccuracy: true,
             timeout: 30000,
-            maximumAge: 60000,
+            maximumAge: 0,
+            //maximumAge: 60000,
         }).then(function (position) {
             $log.debug('Got position:', position);
 
             $scope.showActions = true;
-            $scope.loading.hide();
+
+            try {
+                $scope.loading.hide();
+            } catch (e) {
+                $ionicLoading.hide();
+            }
 
             var myLatlng = new google.maps.LatLng(
                 position.coords.latitude,
@@ -138,18 +80,23 @@ angular.module('app.controllers')
             $scope.map.setZoom(15);
 
             Marker.current(position);
-                    
+
         }, function (error) {
-            
+
             $log.error('Unable to get location: ' + error.message, error);
-            
+
             $scope.showReloadBtn = true;
-            $scope.loading.hide();
+
+            try {
+                $scope.loading.hide();
+            } catch (e) {
+                $ionicLoading.hide();
+            }
         });
     }
-    
+
     /**
-     * 
+     *
      * @param {type} map
      * @return {undefined}
      */
@@ -159,15 +106,15 @@ angular.module('app.controllers')
     };
 
     /**
-     * 
+     *
      * @return {undefined}
      */
     $scope.watchPosition = function () {
-        
+
         if (!$scope.map) {
             return;
         }
-        
+
         if (!tracewaypoints) {
             tracewaypoints = new google.maps.Polyline({
                 map: $scope.map,
@@ -177,18 +124,20 @@ angular.module('app.controllers')
                 strokeWeight: 2
             });
         }
-        
+
+        $scope.route = Route.createEmpty();
+
         $scope.isWatching = true;
-        
+
         if ($scope.debug.enabled && $scope.debug.simulation) {
             $log.info("Start simulation..");
         }
-        
+
         $log.debug("Start route recording..");
         $log.debug("Search GPS coordinates..");
-        
-        localStorage.setItem('points', []);
-        
+
+        //localStorage.setItem('points', []);
+
         function onSuccess (position) {
             $log.debug('Got position:', position);
 
@@ -201,13 +150,13 @@ angular.module('app.controllers')
                 waypoints.push(myLatlng)
                 tracewaypoints.setPath(waypoints);
             } else {
-                
+
                 // working!
-                
+
                 if (+$scope.debug.snapToRoadEngine == 1)
                 {
                     $log.debug('snapToRoadEngine => 1');
-                    
+
                     if (!waypoints.length) {
                         waypoints.push(myLatlng);
                         //tracewaypoints.setPath(waypoints);
@@ -221,9 +170,9 @@ angular.module('app.controllers')
                         }, function (result, status) {
                             if (status == google.maps.DirectionsStatus.OK) {
                                 snapPath = snapPath.concat(result.routes[0].overview_path);
-                                
+
                                 waypoints = snapPath;
-                                
+
                                 tracewaypoints.setPath(snapPath);
                             } else {
                                 $log.error("Directions request failed: " + status);
@@ -231,14 +180,14 @@ angular.module('app.controllers')
                         });
                     }
                 }
-                
-                
+
+
                 // working!
 
                 if (+$scope.debug.snapToRoadEngine == 2)
                 {
                     $log.debug('snapToRoadEngine => 2');
-                    
+
                     if (!waypoints.length) {
                         waypoints.push(myLatlng)
                         //tracewaypoints.setPath(waypoints);
@@ -269,14 +218,14 @@ angular.module('app.controllers')
                         waypoints.push(myLatlng);
                     }
                 }
-                
-                
+
+
                 // working!
-                
+
                 if (+$scope.debug.snapToRoadEngine == 3)
                 {
                     $log.debug('snapToRoadEngine => 3');
-                    
+
                     var image = new google.maps.MarkerImage(
                         'http://maps.google.com/mapfiles/ms/micons/green-dot.png',
                         new google.maps.Size(32, 32),   // size
@@ -299,7 +248,7 @@ angular.module('app.controllers')
                         var service = new google.maps.DirectionsService();
 
                         service.route({
-                            origin: waypoints[waypoints.length - 1], 
+                            origin: waypoints[waypoints.length - 1],
                             destination: myLatlng,
                             travelMode: google.maps.DirectionsTravelMode.DRIVING
                         }, function (response, status) {
@@ -323,27 +272,27 @@ angular.module('app.controllers')
                                 waypoints = snapPath;
 
                                 //waypoints.push(response.routes[0].overview_path[0])
-                                tracewaypoints.setPath(waypoints);  
+                                tracewaypoints.setPath(waypoints);
                             }
                         });
                     }
                 }
-                
-                
-                
+
+
+
                 if (+$scope.debug.snapToRoadEngine == 4)
                 {
                     $log.debug('snapToRoadEngine => 4');
-                    
+
                     if (!waypoints.length) {
                         waypoints.push(myLatlng)
                         //tracewaypoints.setPath(waypoints);
                     } else {
-                    
+
                         var tmp = [];
                         for (var i in waypoints) {
                             tmp.push([
-                                waypoints[i].lat(), 
+                                waypoints[i].lat(),
                                 waypoints[i].lng()
                             ].join(','));
                         }
@@ -355,36 +304,36 @@ angular.module('app.controllers')
                             var tmp = [];
                             for (var i in response.data.snappedPoints) {
                                 var point = response.data.snappedPoints[i];
-                                
+
                                 var _point = new google.maps.LatLng(
                                     point.location.latitude,
                                     point.location.longitude
                                 );
-                                
+
 
                                 tmp.push(_point);
 
                                 //waypoints.push(point);
 
 
-                                tracewaypoints.setPath(tmp);  
+                                tracewaypoints.setPath(tmp);
                             }
 
                         }, function(response) {
                             console.log('$http', response)
                         });
-                        
+
                         waypoints.push(myLatlng);
                     }
                 }
-                
+
 
 
     //            if (!prevPosition || (
     //                Math.abs(prevPosition.coords.latitude - position.coords.latitude) > 0.000001
     //            ) || (
     //                Math.abs(prevPosition.coords.longitude - position.coords.longitude) > 0.000001
-    //            )) 
+    //            ))
                 {
     //                prevPosition = new google.maps.LatLng(
     //                    position.coords.latitude,
@@ -395,18 +344,23 @@ angular.module('app.controllers')
     //                    latitude: prevPosition.coords.latitude,
     //                    longitude: prevPosition.coords.longitude
     //                });
+
+
                 }
-            
             }
-    
-    
+
+            $scope.route.addPoint({
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            });
+
             Marker.current(position);
-            
+
             $scope.map.setCenter(myLatlng);
-            
-            localStorage.setItem('points', JSON.stringify($scope.points));
+
+            //localStorage.setItem('points', JSON.stringify($scope.points));
         }
-        
+
         function onError (error) {
             $log.error('Unable to get location: ' + error.message, error);
         }
@@ -417,43 +371,51 @@ angular.module('app.controllers')
             timeout: 30000,
         }).then(null, onError, onSuccess);
     };
-    
+
     /**
-     * 
+     *
      * @return {undefined}
      */
     $scope.stopWatchingPosition = function(){
         $scope.isWatching = false;
-        
+
         $log.debug('Stop route recording.');
         Gps.clearWatch(watch);
-        
+
+        $scope.route.title = 'Route ' + new Date().getTime();
+        var routeId = $scope.route.save();
+
+        if (routeId) {
+            $state.go('app.view', {id: routeId})
+        }
+
+
         snapPath = [];
-        
+
         waypoints = [];
         tracewaypoints.setPath(waypoints);
         //tracewaypoints.setMap(null);
-        
-        
+
+
         for(var i in markers){
             markers[i].setMap(null);
         }
         markers = [];
-        
-        
-        
+
+
+
         for(var i in lines){
             lines[i].setMap(null);
         }
         lines = [];
-        
-        
-        
+
+
+
         //
         //var tmp = [];
         //for (var i in waypoints) {
         //    tmp.push([
-        //        waypoints[i].lat(), 
+        //        waypoints[i].lat(),
         //        waypoints[i].lng()
         //    ].join(','));
         //}
@@ -473,14 +435,20 @@ angular.module('app.controllers')
         //        //waypoints.push(point);
         //
         //
-        //        tracewaypoints.setPath(waypoints);  
+        //        tracewaypoints.setPath(waypoints);
         //    }
         //
         //}, function(response) {
         //    console.log('$http', response)
         //});
-        
-        
+
+
         $log.debug('Saving route..');
     };
+
+    $scope.$on("$destroy", function () {
+        if (watch) {
+            watch.clearWatch();
+        }
+    });
 })
