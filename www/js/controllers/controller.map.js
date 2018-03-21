@@ -19,12 +19,6 @@ angular.module('app.controllers')
     $scope.isWatching = false;
     $scope.showActions = false;
 
-    $rootScope.routes = [];
-    $rootScope.$watch('routes', function(routes){
-        localStorage.setItem('routes', JSON.stringify(routes));
-        $log.debug("routes:", routes);
-    });
-
     $scope.$watch('debug.enabled', function(debug){
         Gps.simulation = debug && $scope.debug.simulation;
         $log.debug("debug.enabled:" + debug);
@@ -368,7 +362,7 @@ angular.module('app.controllers')
             maximumAge: 3600000,
             timeout: 30000,
         }).then(null, onError, onSuccess);
-    }; 
+    };
 
     /**
      *
