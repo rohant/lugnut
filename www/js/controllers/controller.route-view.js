@@ -12,9 +12,8 @@ angular.module('app.controllers')
 
         Route.findOne($state.params.id).then(function(model){
             $scope.model = model;
-
-            var chunked = $scope.model.getLatLngPoints().chunk(10);
-
+            var chunked = $scope.model.getLatLngPoints().chunk(100);
+            
             chunked.forEach(function(points, i){
 
                 if (i-1 >= 0) {
@@ -52,9 +51,9 @@ angular.module('app.controllers')
                         $scope.map.setCenter(tmp[tmp.length-1]);
                         //$scope.map.setCenter(tmp[Math.ceil(tmp.length/2)]);
 
-                        //Marker
-                        //.createMarker('You are here!', tmp[tmp.length-1])
-                        //.setPosition(tmp[tmp.length-1]);
+                        Marker
+                        .createMarker('You are here!', tmp[tmp.length-1])
+                        .setPosition(tmp[tmp.length-1]);
 
                     }, function(response) {
                         $log.error('snapToRoads:error', response)
