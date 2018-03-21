@@ -1,6 +1,6 @@
 angular.module('app.services')
 
-.factory('Route', function ($injector, $interval, $timeout, $log, $http, $q, Config) {
+.factory('Route', function ($injector, $log, $http, $q, Config) {
 
     var RouteModel = function(data){
         this.id = null;
@@ -42,22 +42,6 @@ angular.module('app.services')
             ));
         }
         return tmp;
-    };
-
-    if (typeof Object.values !== 'function') {
-        Object.values = function(obj){
-            return this.keys(obj).map(function(k){
-                return obj[k];
-            });
-        };
-    };
-
-    if (typeof Object.getIDs !== 'function') {
-        Object.getIDs = function(obj){
-            return this.keys(obj).map(function(k){
-                return +obj[k].id;
-            });
-        };
     };
 
     var storage = {

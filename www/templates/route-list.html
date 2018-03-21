@@ -5,13 +5,15 @@
     <ion-content class="has-header">
 
         <div class="list">
-            <a class="item item-button-right" ng-repeat="(id, route) in routes track by $index" href="#/app/route/{{route.id}}">
-                {{route.title}}
+            <div class="item item-button-right" ng-repeat="route in routes track by $index">
+                <a class="button-link" href="#/app/route/{{route.id}}">
+                    {{route.title}}
+                </a>
 
-                <button class="button button-icon" ng-click="route.delete()" style="z-index: 99999">
+                <button class="button button-icon" ng-click="route.delete()">
                     <i class="icon ion-ios-close"></i>
                 </button>
-            </a>
+            </div>
         </div>
 
         <!--
