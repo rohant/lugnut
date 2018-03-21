@@ -12,7 +12,7 @@ angular.module('app.services')
             return this;
         },
 
-        current: function(position){
+        current: function(position, title){
             var self = this;
 
             var latLng = new google.maps.LatLng(
@@ -27,7 +27,7 @@ angular.module('app.services')
             }
 
             if (!this._marker) {
-                this._marker = self.createMarker('You are here!', latLng);
+                this._marker = self.createMarker(title || 'You are here!', latLng);
 
                 google.maps.event.addListener(self._marker, 'click', function (e) {
                     self._info.open(self._map, self._marker);
@@ -38,7 +38,7 @@ angular.module('app.services')
             this._info.setContent(this._content(position));
             this._marker.setPosition(latLng);
 
-            return this;
+            return this._marker;
         },
 
         _content: function(position){
