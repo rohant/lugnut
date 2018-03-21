@@ -51,7 +51,7 @@ map {
 .button-link {
     text-decoration: none;
     color: inherit;
-    padding: 10px inherit;
+    /*padding: 10px inherit;*/
     width: 100%;
     overflow: hidden;
 }

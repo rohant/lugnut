@@ -51,7 +51,6 @@ angular.module('app.controllers', [])
     $scope.mapCreated = function(map){
         $scope.map = map;
         $scope.map.setZoom(15);
-        
         Marker.init(map);
 
         Route.findOne($state.params.id).then(function(model){
@@ -66,12 +65,9 @@ angular.module('app.controllers', [])
                 });
             }
 
-            var waypoints = [];
-            for (var i in $scope.model.points) {
-                waypoints.push(Object.keys($scope.model.points[i]).map(function(it) {
-                    return $scope.model.points[i][it]
-                }).join(','));
-            }
+            var waypoints = $scope.model.getLatLngPoints().map(function(point){
+                return [point.lat(), point.lng()].join(',')
+            });
 
             if (waypoints.length) {
                 $http.get("https://roads.googleapis.com/v1/snapToRoads?interpolate=true&key="+$scope.$config.API_KEY+"&path="+waypoints.join('|'))
