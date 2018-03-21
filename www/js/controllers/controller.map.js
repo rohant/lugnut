@@ -110,7 +110,7 @@ angular.module('app.controllers')
         waypoints = [];
         tracewaypoints.setPath(waypoints);
 
-        $scope.route = Route.createEmpty();
+        $rootScope.route = Route.createEmpty();
         $scope.isWatching = true;
 
         if ($scope.debug.enabled && $scope.debug.simulation) {
@@ -180,17 +180,20 @@ angular.module('app.controllers')
         tracewaypoints.setPath([]);
         //tracewaypoints.setMap(null);
 
-        $scope.route.title = 'Route ' + new Date().getTime();
-        var routeId = $scope.route.save();
+        //$scope.route.title = 'Route ' + new Date().getTime();
+        //var routeId = $scope.route.save();
 
-        if (routeId !== -1) {
-            $state.go('app.view', {id: routeId})
-        }
+        //if (routeId !== -1) {
+        //    $state.go('app.view', {id: routeId})
+        //}
+
+        $state.go('app.create')
     };
 
     $scope.$on("$destroy", function () {
+        console.log('$destroy')
         if (watch) {
-            watch.clearWatch();
+            watch.clearWatch(watch);
         }
     });
 })

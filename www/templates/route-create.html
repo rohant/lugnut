@@ -1,4 +1,4 @@
-<ion-view title="Create" hide-back-button="true">
+<ion-view title="Save Route" hide-back-button="true">
     <ion-nav-buttons side="left">
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
@@ -6,21 +6,20 @@
 
         <div class="list">
             <label class="item item-input">
-                <input type="text" placeholder="Title">
+                <input type="text" placeholder="Title" ng-model="route.title">
             </label>
             <label class="item item-input">
-                <input type="text" placeholder="Company">
+                <input type="text" placeholder="Company" ng-model="route.company">
             </label>
             <label class="item item-input">
-                <textarea placeholder="Comments"></textarea>
+                <textarea placeholder="Description" ng-model="route.description"></textarea>
             </label>
+
+            <div class="padding">
+                <button class="button button-positive button-block" ng-click="create()">
+                    Save
+                </button>
+            </div>
         </div>
     </ion-content>
-
-<!--    <ion-footer-bar class="bar-stable">
-        <a ng-click="" class="button button-positive button-block">
-            Save route
-        </a>
-    </ion-footer-bar>-->
-
 </ion-view>

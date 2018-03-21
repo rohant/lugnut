@@ -9,7 +9,7 @@
 
     <ion-side-menu side="left">
         <header class="bar bar-header bar-stable">
-            <h1 class="title">Left</h1>
+            <h1 class="title">Menu</h1>
         </header>
         <ion-content class="has-header">
             <ion-list>
@@ -18,16 +18,12 @@
                     Map
                 </ion-item>
 
-                <ion-item nav-clear menu-close href="#/app/route">
+                <ion-item nav-clear menu-close href="#/app/route/list">
                     Route list
                 </ion-item>
 
-                <ion-item nav-clear menu-close href="#/app/create">
-                    Route create
-                </ion-item>
-
                 <ul class="list">
-                    <li class="item item-toggle">
+                    <li class="item item-toggle" menu-close>
                         Debug Mode
                         <label class="toggle toggle-positive">
                             <input type="checkbox" ng-model="debug.enabled">

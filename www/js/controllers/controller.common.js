@@ -4,6 +4,7 @@ angular.module('app.controllers', [])
     $scope.$config = Config;
     $scope.$state = $state;
     $scope.debug = Config.debug;
+    $scope.platform = ionic.Platform.platform();
 
     $log.info('Start application!');
 })
