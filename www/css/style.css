@@ -53,4 +53,5 @@ map {
     color: inherit;
     padding: 10px inherit;
     width: 100%;
+    overflow: hidden;
 }

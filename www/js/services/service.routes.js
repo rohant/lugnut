@@ -53,7 +53,7 @@ angular.module('app.services')
         }
         return tmp;
     };
-    
+
     var route = {
 
         findAll: function () {
@@ -62,7 +62,13 @@ angular.module('app.services')
             //var routes = [];
 
             if (!routes.length) {
-                routes = JSON.parse(localStorage.getItem('routes'));
+                var tmp = JSON.parse(localStorage.getItem('routes'));
+
+                for (var i in tmp ) {
+                    routes[tmp[i].id] = new RouteModel(tmp[i]);
+                }
+
+                console.log('routes', routes);
             }
 
             deferred.resolve(routes);
@@ -83,10 +89,16 @@ angular.module('app.services')
             var deferred = $q.defer();
 
             if (!routes.length) {
-                routes = JSON.parse(localStorage.getItem('routes'));
+                var tmp = JSON.parse(localStorage.getItem('routes'));
+
+                for (var i in tmp ) {
+                    routes[tmp[i].id] = new RouteModel(tmp[i]);
+                }
+
+                console.log('routes', routes);
             }
 
-            deferred.resolve(new RouteModel(routes[id]));
+            deferred.resolve(routes[id]);
 
 
             //var data = {};

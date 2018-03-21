@@ -357,8 +357,6 @@ angular.module('app.controllers')
             Marker.current(position);
 
             $scope.map.setCenter(myLatlng);
-
-            //localStorage.setItem('points', JSON.stringify($scope.points));
         }
 
         function onError (error) {
@@ -370,7 +368,7 @@ angular.module('app.controllers')
             maximumAge: 3600000,
             timeout: 30000,
         }).then(null, onError, onSuccess);
-    };
+    }; 
 
     /**
      *
@@ -385,7 +383,7 @@ angular.module('app.controllers')
         $scope.route.title = 'Route ' + new Date().getTime();
         var routeId = $scope.route.save();
 
-        if (routeId) {
+        if (routeId !== -1) {
             $state.go('app.view', {id: routeId})
         }
 

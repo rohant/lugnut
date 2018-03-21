@@ -50,6 +50,8 @@ angular.module('app.controllers', [])
 
     $scope.mapCreated = function(map){
         $scope.map = map;
+        $scope.map.setZoom(15);
+        
         Marker.init(map);
 
         Route.findOne($state.params.id).then(function(model){
@@ -86,7 +88,6 @@ angular.module('app.controllers', [])
                         tracewaypoints.setPath(tmp);
                     }
 
-                    $scope.map.setZoom(15);
                     $scope.map.setCenter(tmp[tmp.length-1]);
                     //$scope.map.setCenter(tmp[Math.ceil(tmp.length/2)]);
 
