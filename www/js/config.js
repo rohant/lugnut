@@ -1,8 +1,12 @@
 angular.module('app.config', [])
 
 .value('Config', {
-
+    
+    // Google Map API key
     API_KEY: 'AIzaSyDBbNcRgAaE9L4Q6IuAFchPqT1BA61kHvw',
+    
+    // server url
+    apiUrl: 'http://www.lugnut.loc/',
 
     debug: {
         enabled: true,

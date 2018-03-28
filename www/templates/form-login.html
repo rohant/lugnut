@@ -1,0 +1,32 @@
+<form ng-submit="login()" name="LoginForm" ng-controller="LoginCtrl" ng-class="processing ? 'loader' : ''">
+
+    <!-- <h3>Login</h3> -->
+
+    <div class="user-info__field form-group" data-has-errors>
+        <label for="l-email">Email:</label>
+        <div class="err-box__inline">
+            <div class="err-box__block">
+                <input name="email" ng-model="model.email" type="email" id="l-email" required>
+                <errors/>
+            </div>
+        </div>
+    </div>
+    <div class="user-info__field form-group" data-has-errors>
+        <label for="l-password">Password:</label>
+        <div class="err-box__inline">
+            <div class="err-box__block">
+                <input name="password" ng-model="model.password" type="password" id="l-password" required>
+                <errors/>
+            </div>
+        </div>
+    </div>
+
+    <div ng-if="error" class="alert alert-danger">
+        <span ng-bind="error"></span>
+    </div>
+
+    <div class="sub-btn">
+        <button type="submit" ng-class="!LoginForm.$valid ? 'disabled' : ''" class="closest__btn btn btn-play-now  btn-lg ">{{'Login'| translate}}</button>
+    </div>
+
+</form>
