@@ -4,11 +4,7 @@ angular.module('app.services')
 
     var RouteModel = function(data){
         this.id = null;
-        this.user_id = 1;
-        this.title = '';
-        this.city = 'Lorem ipsum..';
-        this.address = 'Lorem ipsum..';
-        this.description = 'Lorem ipsum..';
+        this.title = [];
         this.points = [];
 
         if (data) {
@@ -21,39 +17,20 @@ angular.module('app.services')
     };
 
     RouteModel.prototype.addPoint = function (point) {
-        if (angular.isArray(this.points))
-            this.points.push(point);
+        this.points.push(point);
         return this;
     };
 
     RouteModel.prototype.delete = function () {
         console.log('RouteModel:delete')
-        //storage.delete(this.id);
-        
-        return ApiService.get('route/delete?id='+this.id).then(function (response) {
-            console.log('delete', response)
-            return response;
-        });
-        
+        storage.delete(this.id);
         return true;
     };
 
     RouteModel.prototype.save = function () {
         console.log('RouteModel:save')
         this.created = new Date().getTime();
-        //return storage.add(this);
-        
-        return ApiService.post('route/create', {
-            city: 'New York',
-            address: 'Main str.',
-            user_id: 1,
-            title: this.title,
-            points: this.points,
-            description: 'This is test route!',
-        }).then(function (response) {
-            console.log('save', response)
-            return response.model;
-        });
+        return storage.add(this);
     };
 
     RouteModel.prototype.getLatLngPoints = function () {
@@ -67,7 +44,7 @@ angular.module('app.services')
         return tmp;
     };
 
-    /*var storage = {
+    var storage = {
         _i: 0,
         _data: {},
         _key: 'routes',
@@ -105,35 +82,43 @@ angular.module('app.services')
             this.update();
             return this._i;
         },
-    }*/
+    }
 
     var route = {
 
         findAll: function () {
-            //var scope = this;
-            //var deferred = $q.defer();
-            //deferred.resolve(storage.data());
-            //return deferred.promise;
+            var scope = this;
+            var deferred = $q.defer();
+            //var routes = [];
 
-            return ApiService.get('route/list').then(function (data) {
-                var routes = [];
-                
-                data.models.forEach(function (data) {
-                    routes.push(new RouteModel(data));
-                });
-                
-                return routes;
-            });
+            deferred.resolve(storage.data());
+
+            //$http.get(apiUrl + '/routes').success(function (array) {
+            //    array.forEach(function (data) {
+            //        routes.push(new RouteModel(data));
+            //    });
+            //    deferred.resolve(routes);
+            //}).error(function () {
+            //    deferred.reject();
+            //});
+
+            return deferred.promise;
         },
         findOne: function (id) {
-            //var scope = this;
-            //var deferred = $q.defer();
-            //deferred.resolve(storage.data(id));
-            //return deferred.promise;
+            var scope = this;
+            var deferred = $q.defer();
 
-            return ApiService.get('route/view?id=' + id).then(function (data) {
-                return new RouteModel(data.model);
-            });
+            deferred.resolve(storage.data(id));
+
+            //var data = {};
+            //$http.get(apiUrl + '/routes/' + id).success(function (data) {
+            //    deferred.resolve(new RouteModel(data));
+            //})
+            //.error(function () {
+            //    deferred.reject();
+            //});
+
+            return deferred.promise;
         },
 
         createEmpty: function (data) {

@@ -52,7 +52,7 @@ angular.module('app', [
     })
 
     .state('app.view', {
-      url: '/route/:id',
+      url: '/route/view/:id',
       views: {
         'menuContent': {
           templateUrl: 'templates/route-view.html',

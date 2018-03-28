@@ -1,13 +1,13 @@
 
 angular.module('app.services')
 
-.factory('ApiService', function ($q, $http, $httpParamSerializer, $state, Config) {
+.factory('ApiService', function ($q, $http, Config) {
 
   var obj = {
       get: function (action, data) {
           data = data || {};
 
-          return $http.get(Config.apiUrl + action + '?' + $httpParamSerializer(data), {
+          return $http.get(Config.apiUrl + action + '?' + $.param(data), {
               withCredentials: true,
           }).then(function (response) {
             return response.data;

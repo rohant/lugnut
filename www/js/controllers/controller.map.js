@@ -9,6 +9,9 @@ angular.module('app.controllers')
     $scope.isWatching = false;
     $scope.showActions = false;
 
+    // todo:
+    Gps.simulation = true;
+    
     $scope.$watch('debug.enabled', function(debug){
         Gps.simulation = debug && $scope.debug.simulation;
         $log.debug("debug.enabled:" + debug);
@@ -193,7 +196,8 @@ angular.module('app.controllers')
     $scope.$on("$destroy", function () {
         console.log('$destroy')
         if (watch) {
-            watch.clearWatch(watch);
+            //watch.clearWatch(watch);
+            Gps.clearWatch(watch);
         }
     });
 })

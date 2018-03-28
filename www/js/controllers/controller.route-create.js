@@ -2,12 +2,21 @@ angular.module('app.controllers')
 
 .controller('RouteCreateCtrl', function ($scope, $rootScope, $state) {
 
-    $scope.create = function () {
-        var routeID = $rootScope.route.save();
+    if (!$rootScope.route)
+        $state.go('app.list');
+    
+    // todo:
+    if ($scope.$config.debug.enabled)
+        $rootScope.route.title = 'Test route #';
 
-        if (routeID !== -1) {
-            $state.go('app.view', {id: routeID})
-        }
-    }
+    $scope.create = function (route) {
+        route.save().then(function(model){
+            var routeID = model.id;
+            
+            if (routeID !== -1) {
+                $state.go('app.view', {id: routeID})
+            }
+        });
+    };
 
 });
