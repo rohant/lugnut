@@ -4,8 +4,10 @@ angular.module('app.controllers')
 
     // todo:
     $scope.route.setData({
-        city: 'Lorem ipsum..',
-        address: 'Lorem ipsum..',
+        city: 'New York',
+        address: 'Main str. 1',
+        company: 'Test Company',
+        description: 'Lorem ipsum..',
     });
 
     if (!$scope.auth.isLoggedIn())
