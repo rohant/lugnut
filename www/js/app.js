@@ -31,6 +31,36 @@ angular.module('app', [
       controller: 'AppCtrl'
     })
 
+    .state('app.account', {
+      url: '/account',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/account.html',
+          controller: 'AccountCtrl'
+        }
+      }
+    })
+
+    .state('app.signin', {
+      url: '/signin',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/signin.html',
+          controller: 'SignInCtrl'
+        }
+      }
+    })
+
+    .state('app.signup', {
+      url: '/signup',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/signup.html',
+          controller: 'SignUpCtrl'
+        }
+      }
+    })
+
     .state('app.map', {
       url: '/map',
       views: {

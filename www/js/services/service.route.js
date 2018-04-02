@@ -4,13 +4,19 @@ angular.module('app.services')
 
     var RouteModel = function(data){
         this.id = null;
-        this.user_id = 1;
-        this.title = '';
-        this.city = 'Lorem ipsum..';
-        this.address = 'Lorem ipsum..';
-        this.description = 'Lorem ipsum..';
+        this.errors = {};
         this.points = [];
-
+        
+		this.attributes = [
+			'id',
+			'user_id',
+			'title',
+			'city',
+			'address',
+			'description',
+			'points',
+		];
+        
         if (data) {
             this.setData(data);
         }
@@ -19,13 +25,66 @@ angular.module('app.services')
     RouteModel.prototype.setData = function (data) {
         angular.extend(this, data);
     };
-
+    
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
+	RouteModel.prototype.isNewRecord = function () {
+		return this.hasOwnProperty('id') && !!this.id;
+	};
+	
+	/**
+	 * 
+	 * @returns {array}
+	 */
+	RouteModel.prototype.getAttributes = function () {
+		var $self = this, data = {};
+		
+		$self.attributes.map(function(el){
+			data[el] = $self[el];
+		});
+        
+		return data;
+	};
+    
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
+	RouteModel.prototype.unsetAttributes = function (attributes) {
+		var $self = this;
+		
+		(attributes || $self.attributes).map(function(el){
+			$self[el] = null;
+		});
+        
+		return $self;
+	};
+    
+	/**
+	 * 
+	 * @returns {int}
+	 */
+	RouteModel.prototype.hasErrors = function () {
+		return Object.keys(this.errors).length;
+	};
+    
+    /**
+     * 
+     * @param {object} point
+     * @return {RouteModel}
+     */
     RouteModel.prototype.addPoint = function (point) {
         if (angular.isArray(this.points))
             this.points.push(point);
         return this;
     };
-
+    
+    /**
+     * 
+     * @return {Boolean}
+     */
     RouteModel.prototype.delete = function () {
         console.log('RouteModel:delete')
         //storage.delete(this.id);
@@ -38,24 +97,43 @@ angular.module('app.services')
         return true;
     };
 
+    /**
+     * 
+     * @return {unresolved}
+     */
     RouteModel.prototype.save = function () {
+        var $self = this;
+        
+        $self.errors = {};
+        $self.created = new Date().getTime();
+        var data = $self.getAttributes();
+        
         console.log('RouteModel:save')
-        this.created = new Date().getTime();
+        
         //return storage.add(this);
         
-        return ApiService.post('route/create', {
-            city: 'New York',
-            address: 'Main str.',
-            user_id: 1,
-            title: this.title,
-            points: this.points,
-            description: 'This is test route!',
-        }).then(function (response) {
+        return ApiService.post('route/create', data).then(function (response) {
             console.log('save', response)
-            return response.model;
-        });
+            
+			if (response.model) {
+				$self.id = response.model.id;
+			}
+			
+			if (response.errors) {
+				$self.errors = response.errors;
+			}
+            
+            return $self;
+            
+        }).catch(function(errors){
+			$self.errors = errors;
+		});
     };
-
+    
+    /**
+     * 
+     * @return {Array}
+     */
     RouteModel.prototype.getLatLngPoints = function () {
         var tmp = [];
         for (var i in this.points) {
@@ -109,13 +187,13 @@ angular.module('app.services')
 
     var route = {
 
-        findAll: function () {
+        findAll: function (criteria) {
             //var scope = this;
             //var deferred = $q.defer();
             //deferred.resolve(storage.data());
             //return deferred.promise;
 
-            return ApiService.get('route/list').then(function (data) {
+            return ApiService.get('route/list', criteria).then(function (data) {
                 var routes = [];
                 
                 data.models.forEach(function (data) {
@@ -125,6 +203,7 @@ angular.module('app.services')
                 return routes;
             });
         },
+        
         findOne: function (id) {
             //var scope = this;
             //var deferred = $q.defer();

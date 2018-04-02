@@ -10,7 +10,7 @@ angular.module('app.config', [])
 
     debug: {
         enabled: true,
-        simulation: false,
+        simulation: true,
         showPoints: false,
         snapToRoadEngine: 0,
     },

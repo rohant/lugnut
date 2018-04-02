@@ -5,6 +5,18 @@ angular.module('app.services')
 .factory('Client', function ($q, $log, ApiService) {
 	
 	var Client = function (data) {
+        
+        this.errors = {};
+        
+		this.attributes = [
+			'id',
+			'first_name',
+			'last_name',
+			'phone',
+			'email',
+			'password',
+		];
+        
 		data && this.setData(data);
 	};
 	
@@ -20,23 +32,46 @@ angular.module('app.services')
 	
 	/**
 	 * 
+	 * @returns {boolean}
+	 */
+	Client.prototype.isNewRecord = function () {
+		return this.hasOwnProperty('id') && !!this.id;
+	};
+	
+	/**
+	 * 
 	 * @returns {array}
 	 */
 	Client.prototype.getAttributes = function () {
 		var $self = this, data = {};
 		
-		var _attributes = [
-			'id',
-			'name',
-			'phone',
-			'email',
-			'password',
-		];
-		
-		_attributes.map(function(el){
+		$self.attributes.map(function(el){
 			data[el] = $self[el]
 		});
+        
 		return data;
+	};
+    
+	/**
+	 * 
+	 * @returns {boolean}
+	 */
+	Client.prototype.unsetAttributes = function (attributes) {
+		var $self = this;
+		
+		(attributes || $self.attributes).map(function(el){
+			$self[el] = null;
+		});
+        
+		return $self;
+	};
+    
+	/**
+	 * 
+	 * @returns {int}
+	 */
+	Client.prototype.hasErrors = function () {
+		return Object.keys(this.errors).length;
 	};
 	
 	/**
@@ -46,6 +81,8 @@ angular.module('app.services')
 	Client.prototype.save = function () {
 		var $self = this;
 		var data = $self.getAttributes();
+        
+        $self.errors = {};
 		
 		return ApiService.post('client/create', data).then(function(response){
 			$log.debug('Create..', response);
@@ -68,7 +105,7 @@ angular.module('app.services')
 	 * 
 	 */
 	Client.prototype.update = function () {
-		// do something
+        return this.save();
 	};
 	
 	var client = {

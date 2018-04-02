@@ -13,7 +13,12 @@
         </header>
         <ion-content class="has-header">
             <ion-list>
-
+                <!--                
+                <ion-item nav-clear menu-close href="#/app/signin" ng-if="!isLoggedIn">
+                    Sign In
+                </ion-item>
+                -->
+                
                 <ion-item nav-clear menu-close href="#/app/map">
                     Map
                 </ion-item>
@@ -62,6 +67,11 @@
                     <ion-radio ng-model="debug.snapToRoadEngine" ng-value="4">Snap to road: V4</ion-radio>
                 </ion-list>
                 -->
+                
+                <ion-item nav-clear menu-close href="#/app/account" ng-if="isLoggedIn">
+                    Profile
+                </ion-item>
+                
             </ion-list>
         </ion-content>
     </ion-side-menu>

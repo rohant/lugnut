@@ -1,0 +1,60 @@
+<ion-view title="Sign Up" hide-back-button="true">
+    <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <ion-content scroll="false" class="has-header">
+        <form name="SignUpForm" novalidate="" ng-submit="signup(model)" ng-class="processing ? 'loader' : ''">
+            <div class="list">
+                <label class="item item-input _item-stacked-label _item-floating-label" ng-class="model.errors['first_name']?'has-error':''">
+                    <!--<span class="input-label">First name</span>-->
+                    <input type="text" placeholder="First name" ng-model="model.first_name">
+                </label>
+                    <div class="help-block" ng-show="model.errors['first_name']">{{model.errors['first_name'].join(', ')}}</div>
+                    
+                <label class="item item-input _item-stacked-label _item-floating-label" ng-class="model.errors['last_name']?'has-error':''">
+                    <!--<span class="input-label">Last Name</span>-->
+                    <input type="text" placeholder="Last Name" ng-model="model.last_name">
+                </label>
+                    <div class="help-block" ng-show="model.errors['last_name']">{{model.errors['last_name'].join(', ')}}</div>
+                
+                <label class="item item-input _item-stacked-label _item-floating-label" ng-class="model.errors['phone']?'has-error':''">
+                    <!--<span class="input-label">Phone</span>-->
+                    <input type="text" placeholder="Phone" ng-model="model.phone">
+                </label>
+                    <div class="help-block" ng-show="model.errors['phone']">{{model.errors['phone'].join(', ')}}</div>
+                    
+                <label class="item item-input _item-stacked-label _item-floating-label" ng-class="model.errors['email']?'has-error':''">
+                    <!--<span class="input-label">Email</span>-->
+                    <input type="text" placeholder="Email" ng-model="model.email">
+                </label>
+                    <div class="help-block" ng-show="model.errors['email']">{{model.errors['email'].join(', ')}}</div>
+                    
+                <label class="item item-input _item-stacked-label _item-floating-label" ng-class="model.errors['password']?'has-error':''">
+                    <!--<span class="input-label">Password</span>-->
+                    <input type="text" placeholder="Password" ng-model="model.password">
+                </label>
+                    <div class="help-block" ng-show="model.errors['password']">{{model.errors['password'].join(', ')}}</div>
+                    
+                <label class="item item-input _item-stacked-label _item-floating-label" ng-class="model.errors['password2']?'has-error':''">
+                    <!--<span class="input-label">Re-password</span>-->
+                    <input type="text" placeholder="Re-password" ng-model="model.password2">
+                </label>
+                    <div class="help-block" ng-show="model.errors['password2']">{{model.errors['password2'].join(', ')}}</div>
+            </div>
+
+            <div ng-if="error" class="alert alert-danger">
+                <span ng-bind="error"></span>
+            </div>
+
+            <div class="padding">
+                <button class="button button-positive button-block">
+                    Sign Up
+                </button>
+                
+                <a class="button button-link button-block" href="#/app/signin">
+                    Sign In
+                </a>
+            </div>
+        </form>
+    </ion-content>
+</ion-view>
