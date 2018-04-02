@@ -3,7 +3,7 @@
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
     <ion-content scroll="false" class="has-header">
-        <form name="AccountForm" novalidate="" ng-submit="update(identity)" ng-class="processing ? 'loader' : ''">
+        <form name="AccountForm" novalidate="" ng-class="processing ? 'loader' : ''">
             <div class="list">
                 <label class="item item-input _item-stacked-label _item-floating-label" ng-class="identity.errors['first_name'] ? 'has-error' : ''">
                     <!--<span class="input-label">First name</span>-->
@@ -47,7 +47,7 @@
             </div>
 
             <div class="padding">
-                <button class="button button-positive button-block" disabled="disabled">
+                <button class="button button-positive button-block" disabled="disabled" ng-click="update(identity)">
                     Update
                 </button>
                 
