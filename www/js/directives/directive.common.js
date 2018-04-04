@@ -87,9 +87,9 @@ angular.module('app.directives', [])
     //template: '&nbsp;<ng-transclude></ng-transclude>',
     link: function($scope, $el, attrs) {
         
-        if (document.getElementById($scope.id))
+        if (document.getElementById($scope.id)) {
             $scope.onLoaded({$el:$el});
-        else {
+        } else {
             var fjs = document.getElementsByTagName('script')[0];
             var js = document.createElement('script'); 
             js.id = $scope.id;
@@ -118,6 +118,8 @@ angular.module('app.directives', [])
     ].join(' '),
     controller: function($scope, $element, $attrs, $transclude/*, other..*/){
         $scope.id = 'google-map';
+        
+        // to get apiKey from server..
         var apiKey = 'AIzaSyDBbNcRgAaE9L4Q6IuAFchPqT1BA61kHvw';
         $scope.src = 'https://maps.googleapis.com/maps/api/js?key=' + apiKey;
         
