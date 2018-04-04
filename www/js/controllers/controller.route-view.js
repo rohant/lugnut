@@ -6,7 +6,8 @@ angular.module('app.controllers')
         $scope.map = map;
         $scope.map.setZoom(15);
         Marker.init(map);
-
+        
+        var bounds  = new google.maps.LatLngBounds();
         var polylines = [];
         var path = [];
 
@@ -32,10 +33,15 @@ angular.module('app.controllers')
                         var tmp = [];
                         for (var i in response.data.snappedPoints) {
                             var point = response.data.snappedPoints[i];
-                            tmp.push(new google.maps.LatLng(
+                            
+                            var pointLatLng = new google.maps.LatLng(
                                 point.location.latitude,
                                 point.location.longitude
-                            ));
+                            );
+                    
+                            tmp.push(pointLatLng);
+                            
+                            bounds.extend(pointLatLng);
                         }
 
                         var tracewaypoints = new google.maps.Polyline({
@@ -48,7 +54,11 @@ angular.module('app.controllers')
                         path = path.concat(tmp);
 
                         tracewaypoints.setPath(tmp);
-                        $scope.map.setCenter(tmp[tmp.length-1]);
+                        
+                        $scope.map.fitBounds(bounds);      // auto-zoom
+                        $scope.map.panToBounds(bounds);    // auto-center
+                        
+                        //$scope.map.setCenter(tmp[tmp.length-1]);
                         //$scope.map.setCenter(tmp[Math.ceil(tmp.length/2)]);
 
                         Marker
