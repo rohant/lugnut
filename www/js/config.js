@@ -6,7 +6,8 @@ angular.module('app.config', [])
     API_KEY: 'AIzaSyDBbNcRgAaE9L4Q6IuAFchPqT1BA61kHvw',
     
     // server url
-    apiUrl: 'http://192.168.122.17/api/',
+    //apiUrl: 'http://192.168.122.17/api/',
+    apiUrl: 'http://lugnut.rmasyahin-wd.office.webdevs.us/api/',
 
     debug: {
         enabled: true,
