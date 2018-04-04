@@ -11,7 +11,7 @@ angular.module('app.controllers')
         var polylines = [];
         var path = [];
 
-        Route.findOne($state.params.id).then(function(model){
+        Route.findOne($state.params.id).then(function (model) {
             $scope.model = model;
             var chunked = $scope.model.getLatLngPoints().chunk(100);
             
@@ -40,7 +40,6 @@ angular.module('app.controllers')
                             );
                     
                             tmp.push(pointLatLng);
-                            
                             bounds.extend(pointLatLng);
                         }
 
@@ -52,7 +51,6 @@ angular.module('app.controllers')
                         });
 
                         path = path.concat(tmp);
-
                         tracewaypoints.setPath(tmp);
                         
                         $scope.map.fitBounds(bounds);      // auto-zoom
