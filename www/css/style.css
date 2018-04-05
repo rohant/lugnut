@@ -86,3 +86,16 @@ label.item.valid-lr {
   padding: 2px 0 5px 15px;
   color: red;
 }
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    margin:0 10px;
+}
+.alert.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
