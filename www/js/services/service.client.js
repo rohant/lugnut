@@ -4,12 +4,22 @@ angular.module('app.services')
 // The Client model
 .factory('Client', function ($q, $log, ApiService) {
 	
+    var services = {
+        GOOGLE_PLUS: 1,
+        // other..
+    };
+    
 	var Client = function (data) {
+        
+        this.availableServices = services;
         
         this.errors = {};
         
 		this.attributes = [
 			'id',
+			'soc_id',
+			'soc_provider',
+			'soc_access_token',
 			'first_name',
 			'last_name',
 			'phone',
@@ -109,6 +119,8 @@ angular.module('app.services')
 	};
 	
 	var client = {
+        
+        availableServices: services,
 		
 		findAll: function () {
 			// do something

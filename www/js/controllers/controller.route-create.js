@@ -3,12 +3,14 @@ angular.module('app.controllers')
 .controller('RouteCreateCtrl', function ($scope, $rootScope, $state) {
 
     // todo:
-    $scope.route.setData({
-        city: 'New York',
-        address: 'Main str. 1',
-        company: 'Test Company',
-        description: 'Lorem ipsum..',
-    });
+    if ($scope.debug.enabled) {
+        $scope.route.setData({
+            city: 'New York',
+            address: 'Main str. 1',
+            company: 'Test Company',
+            description: 'Lorem ipsum..',
+        });
+    }
 
     if (!$scope.auth.isLoggedIn())
     {
