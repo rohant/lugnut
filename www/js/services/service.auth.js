@@ -7,7 +7,7 @@ angular.module('app.services')
 
 	var auth = {
 		
-		login: function (data) {
+		signIn: function (data) {
 			return ApiService.post('client/login', data).then(function (response) {
 				$log.debug('Login..', response);
 
