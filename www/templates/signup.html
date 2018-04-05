@@ -3,7 +3,7 @@
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
     <ion-content scroll="false" class="has-header">
-        <form name="SignUpForm" novalidate="" ng-submit="signup(model)" ng-class="processing ? 'loader' : ''">
+        <form name="SignUpForm" novalidate="" ng-class="processing ? 'loader' : ''">
             <div class="list">
 
                 <div class="row">
@@ -67,7 +67,7 @@
             </div>
 
             <div class="padding">
-                <button class="button button-positive button-block">
+                <button class="button button-positive button-block" ng-click="signup(model)">
                     Sign Up
                 </button>
 
