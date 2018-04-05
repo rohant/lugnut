@@ -20,7 +20,7 @@
         </div>
         
         <div class="padding">
-            <button class="button button-positive button-block" ng-click="signin(route)">
+            <button class="button button-positive button-block" ng-click="signIn()">
                 Sign In
             </button>
             
@@ -32,9 +32,15 @@
                 OR
             </div>
             
-            <a class="button button-assertive button-block" href="#/app/signup">
+            <button class="button button-assertive button-block" ng-click="signInWithGoogle()">
                 Sign In with Google+
-            </a>
+            </button>
+            <!--            
+            <button class="button button-assertive button-block" ng-click="logoutFromGoogle()">
+                Logout from Google+
+            </button>
+            -->
+
         </div>
     </ion-content>
 </ion-view>

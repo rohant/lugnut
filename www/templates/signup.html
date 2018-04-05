@@ -23,17 +23,26 @@
                     </div>
                 </div>
 
-                <label class="item item-input _item-stacked-label _item-floating-label" ng-class="model.errors['email'] ? 'has-error' : ''">
-                    <!--<span class="input-label">Email</span>-->
-                    <input type="text" placeholder="Email" ng-model="model.email">
-                </label>
-                <div class="help-block" ng-show="model.errors['email']">{{model.errors['email'].join(', ')}}</div>
 
-                <label class="item item-input _item-stacked-label _item-floating-label" ng-class="model.errors['phone'] ? 'has-error' : ''">
-                    <!--<span class="input-label">Phone</span>-->
-                    <input type="text" placeholder="Phone" ng-model="model.phone">
-                </label>
-                <div class="help-block" ng-show="model.errors['phone']">{{model.errors['phone'].join(', ')}}</div>
+                <div class="row">
+                    <div class="col">
+                        <label class="item item-input _item-stacked-label _item-floating-label" ng-class="model.errors['email'] ? 'has-error' : ''">
+                            <!--<span class="input-label">Email</span>-->
+                            <input type="text" placeholder="Email" ng-model="model.email">
+                        </label>
+                        <div class="help-block" ng-show="model.errors['email']">{{model.errors['email'].join(', ')}}</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <label class="item item-input _item-stacked-label _item-floating-label" ng-class="model.errors['phone'] ? 'has-error' : ''">
+                            <!--<span class="input-label">Phone</span>-->
+                            <input type="text" placeholder="Phone" ng-model="model.phone">
+                        </label>
+                        <div class="help-block" ng-show="model.errors['phone']">{{model.errors['phone'].join(', ')}}</div>
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col">
@@ -51,7 +60,6 @@
                         <div class="help-block" ng-show="model.errors['password2']">{{model.errors['password2'].join(', ')}}</div>
                     </div>
                 </div>
-
             </div>
 
             <div ng-if="error" class="alert alert-danger">
@@ -71,9 +79,9 @@
                     OR
                 </div>
 
-                <a class="button button-assertive button-block" href="#/app/signup">
+                <button class="button button-assertive button-block" ng-click="signUpWithGoogle()">
                     Sign Up with Google+
-                </a>
+                </button>
 
             </div>
         </form>
