@@ -9,23 +9,27 @@
 
     <ion-side-menu side="left">
         <header class="bar bar-header bar-stable">
-            <h1 class="title">Left</h1>
+            <h1 class="title">Menu</h1>
         </header>
         <ion-content class="has-header">
             <ion-list>
-
+                                
+                <ion-item nav-clear menu-close href="#/app/signin" ng-if="!isLoggedIn">
+                    Sign In
+                </ion-item>
+                
                 <ion-item nav-clear menu-close href="#/app/map">
                     Map
                 </ion-item>
 
-                <ion-item nav-clear menu-close href="#/app/route">
+                <ion-item nav-clear menu-close href="#/app/route/list">
                     Route list
                 </ion-item>
 
-                <ion-item nav-clear menu-close href="#/app/create">
-                    Route create
+                <ion-item nav-clear menu-close href="#/app/account" ng-if="isLoggedIn">
+                    Profile
                 </ion-item>
-
+                
                 <ul class="list">
                     <li class="item item-toggle">
                         Debug Mode
@@ -66,6 +70,7 @@
                     <ion-radio ng-model="debug.snapToRoadEngine" ng-value="4">Snap to road: V4</ion-radio>
                 </ion-list>
                 -->
+                
             </ion-list>
         </ion-content>
     </ion-side-menu>

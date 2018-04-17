@@ -3,37 +3,8 @@
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
     <ion-content scroll="false" class="has-header">
-        <map on-create="mapCreated(map)"></map>
-
-        <!--
-        <div id="console" ng-controller="LogCtrl" ng-show="debug.enabled">
-            <div ng-repeat="(i, item) in logs track by $index" class="log-item">
-                <div>
-                    <span ng-class="cssClass(item.type)" ng-if="isString(item.message)">{{item.message}}</span>
-                    <pre ng-class="cssClass(item.type)" ng-if="isObject(item.message)">{{item.message| json}}</pre>
-                </div>
-            </div>
-            <a href="javascript:void()" class="button button-block button-stable" ng-if="showReloadBtn" ng-click="init()">
-                Reset
-            </a>
-        </div>
-        -->
-
-        <!--
-        <div class="map-actions" ng-show="showActions">
-            <button class="button button-positive icon-left ion-record" ng-click="watchPosition()" ng-show="!isWatching">
-                Record route
-            </button>
-            <button class="button button-assertive icon-left ion-stop" ng-click="stopWatchingPosition()" ng-show="isWatching">
-                Stop recording
-            </button>
-        </div>
-        -->
-
+        <load-google-map>
+            <map on-create="mapCreated(map)"></map>
+        </load-google-map>
     </ion-content>
-    <!--
-    <ion-footer-bar class="bar-stable">
-        <a ng-click="watchPosition()" class="button button-icon icon ion-navigate"></a>
-    </ion-footer-bar>
-    -->
 </ion-view>

@@ -1,8 +1,6 @@
 angular.module('app.services')
 
-.factory('Route', function ($injector, $interval, $timeout, $log, $http, $q, Config) {
-
-    var routes = {}, pointer = 0;
+.factory('Route', function ($injector, $log, $http, $q, ApiService, Config) {
 
     var RouteModel = function(data){
         this.id = null;
@@ -24,23 +22,15 @@ angular.module('app.services')
     };
 
     RouteModel.prototype.delete = function () {
-        delete routes[this.id];
-
         console.log('RouteModel:delete')
-
-        localStorage.setItem('routes', JSON.stringify(routes));
-
+        storage.delete(this.id);
         return true;
     };
 
     RouteModel.prototype.save = function () {
-        this.id = pointer++;
+        console.log('RouteModel:save')
         this.created = new Date().getTime();
-        routes[this.id] = this;
-
-        localStorage.setItem('routes', JSON.stringify(routes));
-
-        return this.id;
+        return storage.add(this);
     };
 
     RouteModel.prototype.getLatLngPoints = function () {
@@ -54,6 +44,46 @@ angular.module('app.services')
         return tmp;
     };
 
+    var storage = {
+        _i: 0,
+        _data: {},
+        _key: 'routes',
+
+        getPk: function(i){
+            return '_' + i;
+        },
+
+        update: function(){
+            localStorage.setItem(this._key, JSON.stringify(this._data));
+            console.log('updated:', this._data, this._i);
+            return this;
+        },
+        data: function(id){
+            if (!Object.keys(this._data).length) {
+                var tmp = JSON.parse(localStorage.getItem(this._key));
+                if (tmp) {
+                    for (var i in tmp ) {
+                        this._data[this.getPk(+tmp[i].id)] = new RouteModel(tmp[i]);
+                    }
+                    this._i = +Math.max.apply(null, Object.getIDs(this._data));
+                    console.log('restored:', this._data, this._i);
+                }
+            }
+            return id ? this._data[this.getPk(id)] : this._data;
+        },
+        delete: function(id){
+            delete this._data[this.getPk(id)];
+            this.update();
+            return this;
+        },
+        add: function(obj){
+            this._i++;
+            this._data[this.getPk(this._i)] = angular.extend(obj, {id:this._i});
+            this.update();
+            return this._i;
+        },
+    }
+
     var route = {
 
         findAll: function () {
@@ -61,17 +91,7 @@ angular.module('app.services')
             var deferred = $q.defer();
             //var routes = [];
 
-            if (!routes.length) {
-                var tmp = JSON.parse(localStorage.getItem('routes'));
-
-                for (var i in tmp ) {
-                    routes[tmp[i].id] = new RouteModel(tmp[i]);
-                }
-
-                console.log('routes', routes);
-            }
-
-            deferred.resolve(routes);
+            deferred.resolve(storage.data());
 
             //$http.get(apiUrl + '/routes').success(function (array) {
             //    array.forEach(function (data) {
@@ -88,18 +108,7 @@ angular.module('app.services')
             var scope = this;
             var deferred = $q.defer();
 
-            if (!routes.length) {
-                var tmp = JSON.parse(localStorage.getItem('routes'));
-
-                for (var i in tmp ) {
-                    routes[tmp[i].id] = new RouteModel(tmp[i]);
-                }
-
-                console.log('routes', routes);
-            }
-
-            deferred.resolve(routes[id]);
-
+            deferred.resolve(storage.data(id));
 
             //var data = {};
             //$http.get(apiUrl + '/routes/' + id).success(function (data) {

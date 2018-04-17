@@ -1,26 +1,35 @@
-<ion-view title="Create" hide-back-button="true">
+<ion-view title="Save Route" hide-back-button="true">
     <ion-nav-buttons side="left">
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
     <ion-content scroll="false" class="has-header">
 
         <div class="list">
-            <label class="item item-input">
-                <input type="text" placeholder="Title">
+            <label class="item item-input _item-stacked-label item-floating-label">
+                <span class="input-label">Title</span>
+                <input type="text" placeholder="Title" ng-model="route.title">
             </label>
-            <label class="item item-input">
-                <input type="text" placeholder="Company">
+            <label class="item item-input _item-stacked-label item-floating-label">
+                <span class="input-label">Company</span>
+                <input type="text" placeholder="Company" ng-model="route.company">
             </label>
-            <label class="item item-input">
-                <textarea placeholder="Comments"></textarea>
+            <label class="item item-input _item-stacked-label item-floating-label">
+                <span class="input-label">City</span>
+                <input type="text" placeholder="City" ng-model="route.city">
+            </label>
+            <label class="item item-input _item-stacked-label item-floating-label">
+                <span class="input-label">Address</span>
+                <input type="text" placeholder="Address" ng-model="route.address">
+            </label>
+            <label class="item item-input _item-stacked-label item-floating-label">
+                <span class="input-label">Description</span>
+                <textarea placeholder="Description" ng-model="route.description"></textarea>
             </label>
         </div>
+        <div class="padding">
+            <button class="button button-positive button-block" ng-click="create(route)">
+                Save
+            </button>
+        </div>
     </ion-content>
-
-<!--    <ion-footer-bar class="bar-stable">
-        <a ng-click="" class="button button-positive button-block">
-            Save route
-        </a>
-    </ion-footer-bar>-->
-
 </ion-view>

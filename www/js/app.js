@@ -31,6 +31,36 @@ angular.module('app', [
       controller: 'AppCtrl'
     })
 
+    .state('app.account', {
+      url: '/account',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/account.html',
+          controller: 'AccountCtrl'
+        }
+      }
+    })
+
+    .state('app.signin', {
+      url: '/signin',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/signin.html',
+          controller: 'SignInCtrl'
+        }
+      }
+    })
+
+    .state('app.signup', {
+      url: '/signup',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/signup.html',
+          controller: 'SignUpCtrl'
+        }
+      }
+    })
+
     .state('app.map', {
       url: '/map',
       views: {
@@ -41,18 +71,8 @@ angular.module('app', [
       }
     })
 
-    .state('app.create', {
-      url: '/route/create',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/route-create.html',
-          //controller: 'RouteListCtrl'
-        }
-      }
-    })
-
-    .state('app.routes', {
-      url: '/route',
+    .state('app.list', {
+      url: '/route/list',
       views: {
         'menuContent': {
           templateUrl: 'templates/route-list.html',
@@ -62,11 +82,21 @@ angular.module('app', [
     })
 
     .state('app.view', {
-      url: '/route/:id',
+      url: '/route/view/:id',
       views: {
         'menuContent': {
           templateUrl: 'templates/route-view.html',
           controller: 'RouteViewCtrl'
+        }
+      }
+    })
+
+    .state('app.create', {
+      url: '/route/create',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/route-create.html',
+          controller: 'RouteCreateCtrl'
         }
       }
     });

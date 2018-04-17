@@ -51,7 +51,51 @@ map {
 .button-link {
     text-decoration: none;
     color: inherit;
-    padding: 10px inherit;
+    /*padding: 10px inherit;*/
     width: 100%;
     overflow: hidden;
+}
+
+/*.help-block {
+    display: none;
+}*/
+
+/** Styling for the username field **/
+label.item.has-error {  
+  border-bottom: 2px solid red;
+}
+
+/** Styling for the password field when an error exists**/
+label.item.has-error-lr {  
+  border-left: 2px solid red;
+  border-right: 2px solid red;
+}
+
+/** Styling for the password field when an error has been resolved**/
+label.item.valid-lr {  
+  border-left: 2px solid green;
+  border-right: 2px solid green;
+}
+
+/** Styling for the error text and container **/
+.form-errors {
+  margin: 5px 0
+}
+/*.form-error,*/ 
+.help-block {
+  padding: 2px 0 5px 15px;
+  color: red;
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    margin:0 10px;
+}
+.alert.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
 }
