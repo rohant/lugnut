@@ -1,1 +1,2 @@
-# My project's README
+# lugnut
+A truckers favorite mobile app
