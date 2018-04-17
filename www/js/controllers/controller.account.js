@@ -5,10 +5,13 @@ angular.module('app.controllers')
     
 	$scope.logout = function (model) {
         
-        window.plugins.googleplus.logout(function (message) {
-            console.log(message);
-            
-        });
+        try {
+            window.plugins.googleplus.logout(function (message) {
+                console.log(message);
+            });
+        } catch (e) {
+            console.log(e)
+        }
         
 		return AuthService.logout().then(function (response) {
 			$state.go('app.signin');
