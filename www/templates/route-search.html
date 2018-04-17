@@ -1,0 +1,26 @@
+<ion-view title="Find route" hide-back-button="true">
+    <ion-nav-buttons side="left">
+      <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <ion-content class="has-header">
+
+        <div class="list list-inset">
+            <label class="item item-input">
+                <i class="icon ion-search placeholder-icon"></i>
+                <input type="text" placeholder="Query string" ng-model="criteria.query">
+            </label>
+            <button class="button button-block button-positive activated" ng-click="reload()" ng-disabled="processing || !criteria.query">
+                <i class="icon ion-search"></i> Search
+            </button>
+        </div>
+        
+        <div class="list padding" ng-class="processing ? 'loader' : ''">
+            <div class="item item-button-right" ng-repeat="route in routes track by $index">
+                <a class="button-link" href="#/app/route/view/{{route.id}}">
+                    {{route.title}}
+                </a>
+            </div>
+        </div>
+
+    </ion-content>
+</ion-view>

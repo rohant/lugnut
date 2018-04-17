@@ -81,6 +81,16 @@ angular.module('app', [
       }
     })
 
+    .state('app.search', {
+      url: '/route/search',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/route-search.html',
+          controller: 'RouteSearchCtrl'
+        }
+      }
+    })
+
     .state('app.view', {
       url: '/route/view/:id',
       views: {
