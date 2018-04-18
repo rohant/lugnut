@@ -3,9 +3,11 @@ angular.module('app.controllers')
 .controller('RouteCreateCtrl', function ($scope, $rootScope, $state, AuthService, Config) {
 
     $scope.create = function (route) {
+        $scope.processing = true;
         route.user_id = $scope.identity.id;
         
         route.save().then(function(model){
+            $scope.processing = false;
             var routeID = model.id;
             
             if (routeID !== -1) {
