@@ -1,10 +1,10 @@
 angular.module('app.controllers')
 
-.controller('RouteCreateCtrl', function ($scope, $rootScope, $state) {
+.controller('RouteCreateCtrl', function ($scope, $rootScope, $state, AuthService) {
 
     // todo:
-    if ($scope.debug.enabled) {
-        $scope.route.setData({
+    if ($rootScope.debug.enabled) {
+        $rootScope.route.setData({
             city: 'New York',
             address: 'Main str. 1',
             company: 'Test Company',
@@ -15,8 +15,8 @@ angular.module('app.controllers')
     if (!$scope.auth.isLoggedIn())
     {
         // set "to back" function
-        $rootScope.toBack = function(){
-            $rootScope.toBack = null;
+        AuthService.toBack = function(){
+            AuthService.toBack = null;
             $state.go('app.create');
         }
         
@@ -28,7 +28,7 @@ angular.module('app.controllers')
             $state.go('app.list');
 
         // todo:
-        if ($scope.$config.debug.enabled)
+        if ($rootScope.debug.enabled)
             $rootScope.route.title = 'Test route #';
     }
     

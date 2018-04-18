@@ -1,12 +1,12 @@
 angular.module('app.controllers')
 
-.controller('RouteListCtrl', function ($scope, $rootScope, $state, Route) {
+.controller('RouteListCtrl', function ($scope, $state, Route, AuthService) {
     
-    if (!$scope.auth.isLoggedIn()) {
+    if (!AuthService.isLoggedIn()) {
         
         // set "to back" function
-        $rootScope.toBack = function(){
-            $rootScope.toBack = null;
+        AuthService.toBack = function(){
+            AuthService.toBack = null;
             $state.go('app.list');
         }
         
@@ -31,6 +31,6 @@ angular.module('app.controllers')
         });
     };
     
-    if ($scope.auth.isLoggedIn())
+    if (AuthService.isLoggedIn())
         $scope.reload();
 });

@@ -26,8 +26,8 @@ angular.module('app.controllers')
                 //$scope.success = 'Client is registration successfully!';
                 AuthService.setIdentity(client);
                 
-                if (typeof $scope.toBack === 'function') {
-                    $scope.toBack();
+                if (typeof AuthService.toBack === 'function') {
+                    AuthService.toBack();
                 } else {
                     $state.go('app.map');
                 }
@@ -87,8 +87,8 @@ angular.module('app.controllers')
                 {
                     AuthService.setIdentity(client);
 
-                    if (typeof $scope.toBack === 'function') {
-                        $scope.toBack();
+                    if (typeof AuthService.toBack === 'function') {
+                        AuthService.toBack();
                     } else {
                         $state.go('app.map');
                     }

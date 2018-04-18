@@ -29,8 +29,8 @@ angular.module('app.controllers')
 		return AuthService.logout().then(function () {
 			return AuthService.signIn($scope.model).then(function (response) {
                 
-                if (typeof $scope.toBack === 'function') {
-                    $scope.toBack();
+                if (typeof AuthService.toBack === 'function') {
+                    AuthService.toBack();
                 } else {
                     $state.go('app.map');
                 }
@@ -100,8 +100,8 @@ angular.module('app.controllers')
                 {
                     AuthService.setIdentity(client);
 
-                    if (typeof $scope.toBack === 'function') {
-                        $scope.toBack();
+                    if (typeof AuthService.toBack === 'function') {
+                        AuthService.toBack();
                     } else {
                         $state.go('app.map');
                     }
