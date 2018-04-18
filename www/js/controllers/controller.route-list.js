@@ -17,9 +17,9 @@ angular.module('app.controllers')
     }
     
     $scope.delete = function(route){
-        //$scope.processing = true;
+        $scope.processing = true;
         return route.delete().then(function(){
-            //$scope.processing = false;
+            $scope.processing = false;
             $scope.reload();
         });
     };
