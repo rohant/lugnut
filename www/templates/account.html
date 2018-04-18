@@ -6,7 +6,7 @@
         <form name="AccountForm" novalidate="" ng-class="processing ? 'loader' : ''">
             <div class="list">
                 <div class="item item-avatar" href="#">
-                    <img src="{{identity.imageUrl || '/img/avatar/no.s.jpg'}}">
+                    <img ng-src="{{identity.getImageUrl()}}">
                     <h2>{{identity.first_name}} {{identity.last_name}}</h2>
                     <p>{{identity.email}}</p>
                     <p>{{identity.phone}}</p>
