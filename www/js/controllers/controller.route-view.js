@@ -1,6 +1,6 @@
 angular.module('app.controllers')
 
-.controller('RouteViewCtrl', function ($scope, $state, $log, $http, Route, Marker) {
+.controller('RouteViewCtrl', function ($scope, $state, $log, $ionicLoading, $http, Route, Marker) {
 
     $scope.mapCreated = function(map){
         $scope.map = map;
@@ -10,8 +10,19 @@ angular.module('app.controllers')
         var bounds  = new google.maps.LatLngBounds();
         var polylines = [];
         var path = [];
+        
+        $scope.loading = $ionicLoading.show({
+            template: 'Logging in...'
+        });
 
         Route.findOne($state.params.id).then(function (model) {
+            
+            try {
+                $scope.loading.hide();
+            } catch (e) {
+                $ionicLoading.hide();
+            }
+            
             $scope.model = model;
             var chunked = $scope.model.getLatLngPoints().chunk(100);
             
