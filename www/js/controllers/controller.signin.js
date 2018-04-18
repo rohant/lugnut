@@ -42,19 +42,6 @@ angular.module('app.controllers')
 		});
 	}
     
-    
-	$scope.logoutFromGoogle = function () {
-        window.plugins.googleplus.logout(function (message) {
-            console.log(message);
-            
-            window.plugins.googleplus.disconnect(function (message) {
-                console.log('googleplus.disconnect success',message);
-            }, function (message) {
-                console.log('googleplus.disconnect error',message);
-            });
-        });
-	}
-    
     /**
      * 
      * @return {undefined}
