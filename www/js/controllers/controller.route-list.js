@@ -4,6 +4,7 @@ angular.module('app.controllers')
     
     $scope.reload = function(){
         var identity = AuthService.getIdentity();
+        //$scope.processing = true;
         
         var criteria = {
             user_id: identity.id
@@ -11,25 +12,31 @@ angular.module('app.controllers')
         
         return Route.findAll(criteria).then(function(items){
             $scope.routes = items;
+            //$scope.processing = false;
         });
     }
     
     $scope.delete = function(route){
+        //$scope.processing = true;
         return route.delete().then(function(){
+            //$scope.processing = false;
             $scope.reload();
         });
     };
     
-    if (AuthService.isLoggedIn()) {
-        $scope.reload();
-    } else {
+    $scope.$on("$ionicView.enter", function (event) {
         
-        // set "to back" function
-        AuthService.toBack = function(){
-            AuthService.toBack = null;
-            $state.go('app.list');
+        if (AuthService.isLoggedIn()) {
+            $scope.reload();
+        } else {
+
+            // set "to back" function
+            AuthService.toBack = function(){
+                AuthService.toBack = null;
+                $state.go('app.list');
+            }
+
+            $state.go('app.signin');
         }
-        
-        $state.go('app.signin');
-    }
+    })
 });

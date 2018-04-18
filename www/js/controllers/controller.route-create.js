@@ -1,37 +1,7 @@
 angular.module('app.controllers')
 
-.controller('RouteCreateCtrl', function ($scope, $rootScope, $state, AuthService) {
+.controller('RouteCreateCtrl', function ($scope, $rootScope, $state, AuthService, Config) {
 
-    // todo:
-    if ($rootScope.debug.enabled) {
-        $rootScope.route.setData({
-            city: 'New York',
-            address: 'Main str. 1',
-            company: 'Test Company',
-            description: 'Lorem ipsum..',
-        });
-    }
-
-    if (!AuthService.isLoggedIn())
-    {
-        // set "to back" function
-        AuthService.toBack = function(){
-            AuthService.toBack = null;
-            $state.go('app.create');
-        }
-        
-        $state.go('app.signin');
-        
-    } else {
-    
-        if (!$rootScope.route)
-            $state.go('app.list');
-
-        // todo:
-        if ($rootScope.debug.enabled)
-            $rootScope.route.title = 'Test route #';
-    }
-    
     $scope.create = function (route) {
         route.user_id = $scope.identity.id;
         
@@ -43,5 +13,29 @@ angular.module('app.controllers')
             }
         });
     };
-
+    
+    if (!$rootScope.route)
+        $state.go('app.list');
+    
+    if (!AuthService.isLoggedIn())
+    {
+        // set "to back" function
+        AuthService.toBack = function(){
+            AuthService.toBack = null;
+            $state.go('app.create');
+        }
+        
+        $state.go('app.signin');
+    }
+    
+    // todo:
+    if (Config.debug.enabled) {
+        $rootScope.route.setData({
+            title: 'Test route #',
+            city: 'New York',
+            address: 'Main str. 1',
+            company: 'Test Company',
+            description: 'Lorem ipsum..',
+        });
+    }
 });
