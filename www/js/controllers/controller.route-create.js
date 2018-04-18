@@ -12,7 +12,7 @@ angular.module('app.controllers')
         });
     }
 
-    if (!$scope.auth.isLoggedIn())
+    if (!AuthService.isLoggedIn())
     {
         // set "to back" function
         AuthService.toBack = function(){

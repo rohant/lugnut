@@ -1,6 +1,7 @@
 angular.module('app.controllers')
 
 .controller('SignUpCtrl', function ($scope, $state, $ionicLoading, Client, AuthService) {
+    
 	$scope.model = Client.createEmpty();
     
     if ($scope.debug.enabled) {
@@ -101,25 +102,31 @@ angular.module('app.controllers')
             });
         }
         
-        window.plugins.googleplus.trySilentLogin({}, setIdentity, function (error) {
-            console.log(error)
+        try {
             
-            try {
-                $scope.loading.hide();
-            } catch (e) {
-                $ionicLoading.hide();
-            }
+            window.plugins.googleplus.trySilentLogin({}, setIdentity, function (error) {
+                console.log(error)
 
-            window.plugins.googleplus.login({}, setIdentity, function (error) {
-                
                 try {
                     $scope.loading.hide();
                 } catch (e) {
                     $ionicLoading.hide();
                 }
 
-                console.log(error)
+                window.plugins.googleplus.login({}, setIdentity, function (error) {
+
+                    try {
+                        $scope.loading.hide();
+                    } catch (e) {
+                        $ionicLoading.hide();
+                    }
+
+                    console.log(error)
+                });
             });
-        });
+            
+        } catch (e) {
+            console.log(e)
+        }
     }
 });

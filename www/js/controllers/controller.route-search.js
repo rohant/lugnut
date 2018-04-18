@@ -2,7 +2,7 @@ angular.module('app.controllers')
 
 .controller('RouteSearchCtrl', function ($scope, $state, Route, AuthService) {
     
-    if (!$scope.auth.isLoggedIn()) {
+    if (!AuthService.isLoggedIn()) {
         
         // set "to back" function
         AuthService.toBack = function(){

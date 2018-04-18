@@ -9,6 +9,11 @@ angular.module('app.controllers')
             window.plugins.googleplus.logout(function (message) {
                 console.log(message);
             });
+            
+            //window.plugins.googleplus.disconnect(function (message) {
+            //    console.log('googleplus.disconnect',message); // do something useful instead of alerting
+            //});
+            
         } catch (e) {
             console.log(e)
         }
@@ -18,17 +23,6 @@ angular.module('app.controllers')
 		});
 	}
     
-//	$scope.logoutFromGoogle = function (model) {
-//        
-//        //window.plugins.googleplus.logout(function (message) {
-//        //    alert(message); // do something useful instead of alerting
-//        //});
-//        
-//        window.plugins.googleplus.disconnect(function (message) {
-//            console.log('googleplus.disconnect',message); // do something useful instead of alerting
-//        });
-//	}
-  
 	$scope.$watch(AuthService.isLoggedIn, function (isLoggedIn) {
 		$scope.isLoggedIn = isLoggedIn;
 		$scope.identity = AuthService.getIdentity();
