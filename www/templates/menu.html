@@ -13,17 +13,21 @@
         </header>
         <ion-content class="has-header">
             <ion-list>
-                                
+                
                 <ion-item nav-clear menu-close href="#/app/signin" ng-if="!isLoggedIn">
                     Sign In
                 </ion-item>
                 
-                <ion-item nav-clear menu-close href="#/app/map">
-                    Map
+                <ion-item nav-clear menu-close href="#/app/route/search">
+                    Find route
                 </ion-item>
-
+                
+                <ion-item nav-clear menu-close href="#/app/map">
+                    Record route
+                </ion-item>
+                
                 <ion-item nav-clear menu-close href="#/app/route/list">
-                    Route list
+                    My routes
                 </ion-item>
 
                 <ion-item nav-clear menu-close href="#/app/account" ng-if="isLoggedIn">

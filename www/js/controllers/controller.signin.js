@@ -29,8 +29,8 @@ angular.module('app.controllers')
 		return AuthService.logout().then(function () {
 			return AuthService.signIn($scope.model).then(function (response) {
                 
-                if (typeof $scope.toBack === 'function') {
-                    $scope.toBack();
+                if (typeof AuthService.toBack === 'function') {
+                    AuthService.toBack();
                 } else {
                     $state.go('app.map');
                 }
@@ -40,19 +40,6 @@ angular.module('app.controllers')
 		}).finally(function(){
 			$scope.processing = false;
 		});
-	}
-    
-    
-	$scope.logoutFromGoogle = function () {
-        window.plugins.googleplus.logout(function (message) {
-            console.log(message);
-            
-            window.plugins.googleplus.disconnect(function (message) {
-                console.log('googleplus.disconnect success',message);
-            }, function (message) {
-                console.log('googleplus.disconnect error',message);
-            });
-        });
 	}
     
     /**
@@ -100,8 +87,8 @@ angular.module('app.controllers')
                 {
                     AuthService.setIdentity(client);
 
-                    if (typeof $scope.toBack === 'function') {
-                        $scope.toBack();
+                    if (typeof AuthService.toBack === 'function') {
+                        AuthService.toBack();
                     } else {
                         $state.go('app.map');
                     }

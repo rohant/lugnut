@@ -50,6 +50,20 @@ angular.module('app.services')
 	
 	/**
 	 * 
+	 * @returns {string}
+	 */
+	Client.prototype.getImageUrl = function (defaultImageUrl) {
+        
+		if (this.hasOwnProperty('imageUrl'))
+            return this.imageUrl;
+        
+        return defaultImageUrl 
+            ? defaultImageUrl 
+            : './img/avatar/no.s.jpg';
+	};
+	
+	/**
+	 * 
 	 * @returns {array}
 	 */
 	Client.prototype.getAttributes = function () {
