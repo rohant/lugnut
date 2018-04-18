@@ -17,6 +17,7 @@ angular.module('app.services')
         
 		this.attributes = [
 			'id',
+			'device_id',
 			'soc_id',
 			'soc_provider',
 			'soc_access_token',
