@@ -1,26 +1,14 @@
 angular.module('app.controllers')
 
-.controller('AccountCtrl', function ($scope, $state, AuthService) {
+.controller('AccountCtrl', function ($scope, $state, AuthService, GoogleOAuthService) {
 	$scope.auth = AuthService;
     
-	$scope.logout = function (model) {
-        
-        try {
-            window.plugins.googleplus.logout(function (message) {
-                console.log(message);
+	$scope.logout = function () {
+        return GoogleOAuthService.logout().then(function () {
+            return AuthService.logout().then(function (response) {
+                $state.go('app.signin');
             });
-            
-            //window.plugins.googleplus.disconnect(function (message) {
-            //    console.log('googleplus.disconnect',message); // do something useful instead of alerting
-            //});
-            
-        } catch (e) {
-            console.log(e)
-        }
-        
-		return AuthService.logout().then(function (response) {
-			$state.go('app.signin');
-		});
+        });
 	}
     
 	$scope.$watch(AuthService.isLoggedIn, function (isLoggedIn) {

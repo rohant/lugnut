@@ -53,7 +53,6 @@ angular.module('app.controllers')
         });
         
         return GoogleOAuthService.signIn().then(function(client){
-            
             AuthService.setIdentity(client);
             
             if (typeof AuthService.toBack === 'function') {
