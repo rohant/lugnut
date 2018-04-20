@@ -21,6 +21,7 @@ angular.module('app.services')
 			'soc_id',
 			'soc_provider',
 			'soc_access_token',
+			'routesCount',
 			'first_name',
 			'last_name',
 			'phone',
@@ -113,7 +114,8 @@ angular.module('app.services')
 			$log.debug('Create..', response);
 
 			if (response.identity) {
-				$self.id = response.identity.id;
+				//$self.id = response.identity.id;
+				angular.extend($self, response.identity);
 			}
 			
 			if (response.errors) {
