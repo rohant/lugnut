@@ -10,7 +10,7 @@ angular.module('app.controllers')
     $scope.showActions = false;
 
     // todo:
-    Gps.simulation = false;
+    Gps.simulation = true;
     
     $scope.$watch('debug.enabled', function(debug){
         Gps.simulation = debug && $scope.debug.simulation;
