@@ -17,6 +17,7 @@ angular.module('app.services')
         
 		this.attributes = [
 			'id',
+			'device_id',
 			'soc_id',
 			'soc_provider',
 			'soc_access_token',
@@ -46,6 +47,20 @@ angular.module('app.services')
 	 */
 	Client.prototype.isNewRecord = function () {
 		return this.hasOwnProperty('id') && !!this.id;
+	};
+	
+	/**
+	 * 
+	 * @returns {string}
+	 */
+	Client.prototype.getImageUrl = function (defaultImageUrl) {
+        
+		if (this.hasOwnProperty('imageUrl'))
+            return this.imageUrl;
+        
+        return defaultImageUrl 
+            ? defaultImageUrl 
+            : './img/avatar/no.s.jpg';
 	};
 	
 	/**

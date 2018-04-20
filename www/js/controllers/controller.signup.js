@@ -1,13 +1,20 @@
 angular.module('app.controllers')
 
-.controller('SignUpCtrl', function ($scope, $state, $ionicLoading, Client, AuthService) {
+.controller('SignUpCtrl', function ($scope, $state, $ionicLoading, Client, AuthService, $sim) {
+    
 	$scope.model = Client.createEmpty();
+    
+    $sim.getInfo().then(function(simData, error){
+        if (!error) {
+            $scope.model.phone = simData.phoneNumber;
+        }
+    });
     
     if ($scope.debug.enabled) {
         $scope.model.setData({
             first_name: 'John',
             last_name: 'Doe',
-            phone: '+123456789',
+            //phone: '+123456789',
             email: 'm325917+lugnut@gmail.com',
             password: '12345',
             password2: '12345',
@@ -26,8 +33,8 @@ angular.module('app.controllers')
                 //$scope.success = 'Client is registration successfully!';
                 AuthService.setIdentity(client);
                 
-                if (typeof $scope.toBack === 'function') {
-                    $scope.toBack();
+                if (typeof AuthService.toBack === 'function') {
+                    AuthService.toBack();
                 } else {
                     $state.go('app.map');
                 }
@@ -54,7 +61,7 @@ angular.module('app.controllers')
         
         var setIdentity = function(userData)
         {
-            console.log(userData);
+            //console.log(userData);
             
             try {
                 $scope.loading.hide();
@@ -64,10 +71,11 @@ angular.module('app.controllers')
             
             var client = Client.createEmpty();
 
-            client.setData({
+            client.setData({ 
                 
                 // todo:
                 id: userData.userId,
+                device_id: window.device.uuid,
 
                 soc_id: userData.userId,
                 soc_provider: Client.availableServices.GOOGLE_PLUS,
@@ -81,45 +89,59 @@ angular.module('app.controllers')
                 password: 12345,
             });
 
-            client.save().then(function (client) {
-            
-                if (!client.hasErrors()) 
-                {
-                    AuthService.setIdentity(client);
-
-                    if (typeof $scope.toBack === 'function') {
-                        $scope.toBack();
-                    } else {
-                        $state.go('app.map');
-                    }
+            $sim.getInfo().then(function(simData, error){
+                
+                if (!error) {
+                    client.phone = simData.phoneNumber;
                 }
+                
+                client.save().then(function (client) {
 
-            }).catch(function (error) {
-                $scope.error = error;
-            }).finally(function() {
-                $scope.processing = false;
+                    if (!client.hasErrors()) 
+                    {
+                        AuthService.setIdentity(client);
+
+                        if (typeof AuthService.toBack === 'function') {
+                            AuthService.toBack();
+                        } else {
+                            $state.go('app.map');
+                        }
+                    }
+
+                }).catch(function (error) {
+                    $scope.error = error;
+                }).finally(function() {
+                    $scope.processing = false;
+                });
+            
             });
         }
         
-        window.plugins.googleplus.trySilentLogin({}, setIdentity, function (error) {
-            console.log(error)
+        try {
             
-            try {
-                $scope.loading.hide();
-            } catch (e) {
-                $ionicLoading.hide();
-            }
+            window.plugins.googleplus.trySilentLogin({}, setIdentity, function (error) {
+                console.log(error)
 
-            window.plugins.googleplus.login({}, setIdentity, function (error) {
-                
                 try {
                     $scope.loading.hide();
                 } catch (e) {
                     $ionicLoading.hide();
                 }
 
-                console.log(error)
+                window.plugins.googleplus.login({}, setIdentity, function (error) {
+
+                    try {
+                        $scope.loading.hide();
+                    } catch (e) {
+                        $ionicLoading.hide();
+                    }
+
+                    console.log(error)
+                });
             });
-        });
+            
+        } catch (e) {
+            console.log(e)
+        }
     }
 });
