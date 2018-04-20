@@ -1,6 +1,6 @@
 angular.module('app.controllers')
 
-.controller('SignInCtrl', function ($scope, $state, $log, AuthService, Client, $ionicLoading) {
+.controller('SignInCtrl', function ($scope, $state, $log, $ionicLoading, AuthService, Client, $sim) {
 	
 	$scope.auth = AuthService;
 	
@@ -68,10 +68,12 @@ angular.module('app.controllers')
                 
                 // todo:
                 id: userData.userId,
-
+                device_id: window.device.uuid,
+                
                 soc_id: userData.userId,
                 soc_provider: Client.availableServices.GOOGLE_PLUS,
                 soc_access_token: userData.accessToken,
+                
                 email: userData.email,
                 first_name: userData.givenName,
                 last_name: userData.familyName,
@@ -80,24 +82,31 @@ angular.module('app.controllers')
                 // todo:
                 password: 12345,
             });
-
-            client.save().then(function (client) {
             
-                if (!client.hasErrors()) 
-                {
-                    AuthService.setIdentity(client);
-
-                    if (typeof AuthService.toBack === 'function') {
-                        AuthService.toBack();
-                    } else {
-                        $state.go('app.map');
-                    }
+            $sim.getInfo().then(function(simData, error){
+                
+                if (!error) {
+                    client.phone = simData.phoneNumber;
                 }
+                
+                client.save().then(function (client) {
 
-            }).catch(function (error) {
-                $scope.error = error;
-            }).finally(function() {
-                $scope.processing = false;
+                    if (!client.hasErrors()) 
+                    {
+                        AuthService.setIdentity(client);
+
+                        if (typeof AuthService.toBack === 'function') {
+                            AuthService.toBack();
+                        } else {
+                            $state.go('app.map');
+                        }
+                    }
+
+                }).catch(function (error) {
+                    $scope.error = error;
+                }).finally(function() {
+                    $scope.processing = false;
+                });                
             });
         }
         
