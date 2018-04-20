@@ -3,101 +3,116 @@ angular.module('app.services')
 .factory('Gps', function ($injector, $interval, $timeout, $log, $q, Config) {
     var $gl = $injector.get('$cordovaGeolocation');
 
-    function GeoSimulator (delay, points) {
-        var $s = {
-            watcher: null,
-
-            then: function(onSuccess, onError, onUpdate) {
-                var i = 0;
-
-                this.watcher = setInterval(function(){
-                    if (i > points.length-1) {
-                        clearInterval($s.watcher);
-                        $log.debug('end.');
-                    } else {
-                        $log.debug('simulated position.', points[i]);
-
-                        onUpdate({
-                            coords: {
-                                accuracy: 15.720999717712402,
-                                altitude: 181,
-                                altitudeAccuracy: null,
-                                heading: null,
-                                latitude: points[i][0],
-                                longitude: points[i][1],
-                                speed: null
-                            },
-                            timestamp: new Date().getTime(),
-                            simulated: true
-                        });
-                        i++;
-                    }
-
-                }, +delay);
-
-                return this.watcher;
-            },
-
-            catch: function() {
-                // do something
-            },
-
-            finally: function() {
-                // do something
-            },
-
-            clearWatch: function() {
-                return clearInterval(this.watcher)
-                //return $interval.clear(this.watcher);
-            },
-        };
-
-        return $s;
-    }
-
-
-    var service = {
+    var simulator = {
+        
+        fakeID: 0,
+        
+        getFakeRoutes: function(){
+            return Config.simulate.fakeRoutes;
+        },
+        getFakeRoute: function(id){
+            return this.getFakeRoutes()[id];
+        },
 
         /**
          *
          * @return {unresolved}
          */
         getCurrentPosition: function () {
+            var route = this.getFakeRoute(this.fakeID);
 
-            if (!this.simulation) {
-                return $gl.getCurrentPosition.apply(this, arguments);
-            } else {
-                return $timeout(function(){}, 3000).then(function(){
-                    $log.debug('simulated current position.');
+            return $timeout(function(){}, route.interval).then(function() {
+                $log.debug('simulated current position.');
 
-                    return {
-                        coords: {
-                            accuracy: 15.720999717712402,
-                            altitude: 181,
-                            altitudeAccuracy: null,
-                            heading: null,
-                            latitude: 37.804165,
-                            longitude: -122.271213,
-                            speed: null
-                        },
-                        timestamp: new Date().getTime(),
-                        simulated: true
-                    }
-                });
-            }
+                return {
+                    coords: {
+                        accuracy: null,
+                        altitude: null,
+                        altitudeAccuracy: null,
+                        heading: null,
+                        latitude: route.points[0][0],
+                        longitude: route.points[0][1],
+                        speed: route.speed
+                    },
+                    timestamp: new Date().getTime(),
+                    simulated: true
+                }
+            });
         },
+        
         /**
          *
          * @return {unresolved}
          */
-        watchPosition: function (onSuccess, onError, onUpdate) {
+        watchPosition: function () {
+            var deferred = $q.defer(), i = 0;
+            var route = this.getFakeRoute(this.fakeID);
+            
+            var watcher = setInterval(function(){
+                if (i > route.points.length-1) {
+                    clearInterval(watcher);
+                    $log.debug('end.');
+                } else {
+                    $log.debug('simulated position.', route.points[i]);
 
-            if (!this.simulation) {
-                return (this.watcher = $gl.watchPosition.apply(this, arguments));
-            } else {
-                return (this.watcher = new GeoSimulator (1000, Config.simulate.points));
-            }
+                    deferred.notify({
+                        coords: {
+                            accuracy: null,
+                            altitude: null,
+                            altitudeAccuracy: null,
+                            heading: null,
+                            latitude: route.points[i][0],
+                            longitude: route.points[i][1],
+                            speed: route.speed
+                        },
+                        timestamp: new Date().getTime(),
+                        simulated: true
+                    });
+                    
+                    i++;
+                }
+
+            }, +route.interval);
+            
+            deferred.promise.clearWatch = function() {
+                return clearInterval(watcher)
+            };
+            
+            return deferred.promise;
         },
+    }
+
+    var gps = {
+        
+        simulation: false,
+        simulator: simulator,
+        
+        /**
+         * 
+         * @return {simulator|$cordovaGeolocation}
+         */
+        getSource: function(){
+            return !this.simulation ? $gl : this.simulator;
+        },
+        
+        /**
+         *
+         * @return {unresolved}
+         */
+        getCurrentPosition: function () {//debugger;
+            var source = this.getSource();
+            return source.getCurrentPosition.apply(source, arguments);
+        },
+        
+        /**
+         *
+         * @return {unresolved}
+         */
+        watchPosition: function () {
+            var source = this.getSource();
+            return (this.watcher = source.watchPosition.apply(source, arguments));
+        },
+        
         /**
          *
          * @return {unresolved}
@@ -106,11 +121,8 @@ angular.module('app.services')
             if (this.watcher) {
                 return this.watcher.clearWatch();
             }
-            //return $gl.clearWatch.apply(this, arguments);
         },
-
-        simulation: false,
     };
 
-    return service;
+    return gps;
 })
