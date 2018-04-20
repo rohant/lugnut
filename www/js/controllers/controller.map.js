@@ -20,7 +20,7 @@ angular.module('app.controllers')
     $scope.$watch('debug.simulation', function(_n,_o){
         Gps.simulation = _n && $scope.debug.enabled;
         $log.debug("debug.simulation:" + Gps.simulation);
-        //if (_n != _o) $scope.init();
+        if (_n != _o) $scope.init();
     });
 
     $scope.$watch('debug.showPoints', function(showPoins){
@@ -189,8 +189,9 @@ angular.module('app.controllers')
         //if (routeId !== -1) {
         //    $state.go('app.view', {id: routeId})
         //}
-
-        $state.go('app.create')
+        
+        if ($scope.route.points.length > 3)
+            $state.go('app.create')
     };
 
     $scope.$on("$destroy", function () {
