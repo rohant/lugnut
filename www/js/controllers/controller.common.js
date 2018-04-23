@@ -1,10 +1,10 @@
 angular.module('app.controllers', [])
 
-.controller('AppCtrl', function ($scope, $log, $state, $controller, Config, Gps) {
+.controller('AppCtrl', function ($scope, $log, $state, $controller, Config, $gps) {
+    $scope.$gps = $gps;
     $scope.$config = Config;
     $scope.$state = $state;
     $scope.debug = Config.debug;
-    $scope.$gps = Gps;
     $scope.platform = ionic.Platform.platform();
     
     // todo: it must be refactored

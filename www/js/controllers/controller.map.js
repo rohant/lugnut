@@ -1,6 +1,6 @@
 angular.module('app.controllers')
 
-.controller('MapCtrl', function ($scope, $rootScope, $log, $http, $state, $ionicLoading, Gps, Marker, Route) {
+.controller('MapCtrl', function ($scope, $rootScope, $log, $http, $state, $ionicLoading, $gps, Marker, Route) {
 
     var watch, marker;
     var waypoints = [];
@@ -10,16 +10,18 @@ angular.module('app.controllers')
     $scope.showActions = false;
 
     // todo:
-    Gps.simulationEnabled(true);
+    $gps.simulationEnabled(true);
+    
+    console.log('$gps', $gps.getSource())
     
     $scope.$watch('debug.enabled', function(debug){
-        Gps.simulationEnabled(debug && $scope.debug.simulation);
+        $gps.simulationEnabled(debug && $scope.debug.simulation);
         $log.debug("debug.enabled:" + debug);
     });
 
     $scope.$watch('debug.simulation', function(_n,_o){
-        Gps.simulationEnabled(_n && $scope.debug.enabled);
-        $log.debug("debug.simulation:" + Gps.simulation);
+        $gps.simulationEnabled(_n && $scope.debug.enabled);
+        $log.debug("debug.simulation:" + $gps.simulation);
         if (_n != _o) $scope.init();
     });
 
@@ -51,7 +53,7 @@ angular.module('app.controllers')
             });
         }
 
-        Gps.getCurrentPosition({
+        $gps.getCurrentPosition({
             enableHighAccuracy: true,
             maximumAge: 6000,
             timeout: 30000,
@@ -120,7 +122,7 @@ angular.module('app.controllers')
             $log.info("Start simulation..");
         }
 
-        watch = Gps.watchPosition({
+        watch = $gps.watchPosition({
             enableHighAccuracy: true,
             maximumAge: 3600000,
             timeout: 30000,
@@ -178,7 +180,7 @@ angular.module('app.controllers')
         $log.debug('Stop route recording.');
         $log.debug('Saving route..');
 
-        Gps.clearWatch(watch);
+        $gps.clearWatch(watch);
 
         tracewaypoints.setPath([]);
         //tracewaypoints.setMap(null);
@@ -198,7 +200,7 @@ angular.module('app.controllers')
         console.log('$destroy')
         if (watch) {
             //watch.clearWatch(watch);
-            Gps.clearWatch(watch);
+            $gps.clearWatch(watch);
         }
     });
 })
