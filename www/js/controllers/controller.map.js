@@ -10,22 +10,22 @@ angular.module('app.controllers')
     $scope.showActions = false;
 
     // todo:
-    Gps.simulation = true;
+    Gps.simulationEnabled(true);
     
     $scope.$watch('debug.enabled', function(debug){
-        Gps.simulation = debug && $scope.debug.simulation;
+        Gps.simulationEnabled(debug && $scope.debug.simulation);
         $log.debug("debug.enabled:" + debug);
     });
 
     $scope.$watch('debug.simulation', function(_n,_o){
-        Gps.simulation = _n && $scope.debug.enabled;
+        Gps.simulationEnabled(_n && $scope.debug.enabled);
         $log.debug("debug.simulation:" + Gps.simulation);
         if (_n != _o) $scope.init();
     });
 
-    $scope.$watch('debug.showPoints', function(showPoins){
-        $log.debug("debug.showPoins:" + showPoins);
-    });
+    //$scope.$watch('debug.showPoints', function(showPoins){
+    //    $log.debug("debug.showPoins:" + showPoins);
+    //});
 
     /**
      *

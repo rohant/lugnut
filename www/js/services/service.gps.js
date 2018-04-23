@@ -1,6 +1,6 @@
 angular.module('app.services')
 
-.factory('Gps', function ($injector, $interval, $timeout, $log, $q, Config) {
+.factory('Gps', function ($injector, $timeout, $log, $q, Config) {
     var $gl = $injector.get('$cordovaGeolocation');
 
     var simulator = {
@@ -86,6 +86,16 @@ angular.module('app.services')
         
         simulation: false,
         simulator: simulator,
+        
+        /**
+         * 
+         * @param {Boolean} enable
+         * @return {gps}
+         */
+        simulationEnabled: function(enable){
+            this.simulation = enable;
+            return this;
+        },
         
         /**
          * 

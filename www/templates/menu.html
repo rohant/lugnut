@@ -75,6 +75,10 @@
                 </ion-list>
                 -->
                 
+                <ion-list ng-show="debug.enabled && debug.simulation">
+                    <ion-radio ng-model="$gps.simulator.fakeID" ng-value="{{id}}" ng-repeat="(id, route) in $config.simulate.fakeRoutes track by $index">{{route.name}}</ion-radio>
+                </ion-list>
+                
             </ion-list>
         </ion-content>
     </ion-side-menu>
