@@ -34,46 +34,53 @@
                     Profile
                 </ion-item>
                 
-                <ul class="list">
-                    <li class="item item-toggle">
-                        Debug Mode
-                        <label class="toggle toggle-positive">
-                            <input type="checkbox" ng-model="debug.enabled">
-                            <div class="track">
-                                <div class="handle"></div>
-                            </div>
-                        </label>
-                    </li>
+                <div menu-close ng-controller="DebugCtrl">
+
+                    <ul class="list">
+                        <li class="item item-toggle">
+                            Debug Mode
+                            <label class="toggle toggle-positive">
+                                <input type="checkbox" ng-model="debug.enabled">
+                                <div class="track">
+                                    <div class="handle"></div>
+                                </div>
+                            </label>
+                        </li>
+                        <!--
+                        <li class="item item-toggle" ng-show="debug.enabled">
+                            Show points
+                            <label class="toggle toggle-positive">
+                                <input type="checkbox" ng-model="debug.showPoins">
+                                <div class="track">
+                                    <div class="handle"></div>
+                                </div>
+                            </label>
+                        </li>
+                        -->
+                        <li class="item item-toggle" menu-close ng-show="debug.enabled">
+                            Simulation
+                            <label class="toggle toggle-positive">
+                                <input type="checkbox" ng-model="debug.simulation">
+                                <div class="track">
+                                    <div class="handle"></div>
+                                </div>
+                            </label>
+                        </li>
+                    </ul>
                     <!--
-                    <li class="item item-toggle" ng-show="debug.enabled">
-                        Show points
-                        <label class="toggle toggle-positive">
-                            <input type="checkbox" ng-model="debug.showPoins">
-                            <div class="track">
-                                <div class="handle"></div>
-                            </div>
-                        </label>
-                    </li>
+                    <ion-list ng-show="debug.enabled">
+                        <ion-radio ng-model="debug.snapToRoadEngine" ng-value="0">Snap to road: No</ion-radio>
+                        <ion-radio ng-model="debug.snapToRoadEngine" ng-value="1">Snap to road: V1</ion-radio>
+                        <ion-radio ng-model="debug.snapToRoadEngine" ng-value="2">Snap to road: V2</ion-radio>
+                        <ion-radio ng-model="debug.snapToRoadEngine" ng-value="3">Snap to road: V3</ion-radio>
+                        <ion-radio ng-model="debug.snapToRoadEngine" ng-value="4">Snap to road: V4</ion-radio>
+                    </ion-list>
                     -->
-                    <li class="item item-toggle" menu-close ng-show="debug.enabled">
-                        Simulation
-                        <label class="toggle toggle-positive">
-                            <input type="checkbox" ng-model="debug.simulation">
-                            <div class="track">
-                                <div class="handle"></div>
-                            </div>
-                        </label>
-                    </li>
-                </ul>
-                <!--
-                <ion-list ng-show="debug.enabled">
-                    <ion-radio ng-model="debug.snapToRoadEngine" ng-value="0">Snap to road: No</ion-radio>
-                    <ion-radio ng-model="debug.snapToRoadEngine" ng-value="1">Snap to road: V1</ion-radio>
-                    <ion-radio ng-model="debug.snapToRoadEngine" ng-value="2">Snap to road: V2</ion-radio>
-                    <ion-radio ng-model="debug.snapToRoadEngine" ng-value="3">Snap to road: V3</ion-radio>
-                    <ion-radio ng-model="debug.snapToRoadEngine" ng-value="4">Snap to road: V4</ion-radio>
-                </ion-list>
-                -->
+
+                    <ion-list ng-show="debug.enabled && debug.simulation">
+                        <ion-radio ng-model="fakeRouteId" ng-click="setFakeRoute(route)" ng-value="{{id}}" ng-repeat="(id, route) in fakeRoutes track by $index">{{route.name}}</ion-radio>
+                    </ion-list>
+                </div>
                 
             </ion-list>
         </ion-content>

@@ -1,32 +1,17 @@
 angular.module('app.controllers')
 
-.controller('MapCtrl', function ($scope, $rootScope, $log, $http, $state, $ionicLoading, Gps, Marker, Route) {
+.controller('MapCtrl', function ($scope, $rootScope, $log, $http, $state, $ionicLoading, Marker, Route, Geolocation, Config) {
 
     var watch, marker;
     var waypoints = [];
     var tracewaypoints;
 
+    // todo:
+    Geolocation.simulationEnabled(true);
+    
     $scope.isWatching = false;
     $scope.showActions = false;
-
-    // todo:
-    Gps.simulation = true;
     
-    $scope.$watch('debug.enabled', function(debug){
-        Gps.simulation = debug && $scope.debug.simulation;
-        $log.debug("debug.enabled:" + debug);
-    });
-
-    $scope.$watch('debug.simulation', function(_n,_o){
-        Gps.simulation = _n && $scope.debug.enabled;
-        $log.debug("debug.simulation:" + Gps.simulation);
-        if (_n != _o) $scope.init();
-    });
-
-    $scope.$watch('debug.showPoints', function(showPoins){
-        $log.debug("debug.showPoins:" + showPoins);
-    });
-
     /**
      *
      * @param {type} map
@@ -51,7 +36,7 @@ angular.module('app.controllers')
             });
         }
 
-        Gps.getCurrentPosition({
+        Geolocation.getCurrentPosition({
             enableHighAccuracy: true,
             maximumAge: 6000,
             timeout: 30000,
@@ -116,11 +101,11 @@ angular.module('app.controllers')
         $rootScope.route = Route.createEmpty();
         $scope.isWatching = true;
 
-        if ($scope.debug.enabled && $scope.debug.simulation) {
+        if (Config.debug.enabled && Config.debug.simulation) {
             $log.info("Start simulation..");
         }
 
-        watch = Gps.watchPosition({
+        watch = Geolocation.watchPosition({
             enableHighAccuracy: true,
             maximumAge: 3600000,
             timeout: 30000,
@@ -178,7 +163,7 @@ angular.module('app.controllers')
         $log.debug('Stop route recording.');
         $log.debug('Saving route..');
 
-        Gps.clearWatch(watch);
+        Geolocation.clearWatch(watch);
 
         tracewaypoints.setPath([]);
         //tracewaypoints.setMap(null);
@@ -198,7 +183,19 @@ angular.module('app.controllers')
         console.log('$destroy')
         if (watch) {
             //watch.clearWatch(watch);
-            Gps.clearWatch(watch);
+            Geolocation.clearWatch(watch);
+        }
+    });
+    
+    $scope.$on("$ionicView.enter", function (event) {
+        
+        if ($scope.debug.simulation) {
+            
+            var fakeRoute = Geolocation
+                .getGeolocationSimulator()
+                .getFakeRoute();
+        
+            $log.info('Used the fake route: ' + fakeRoute.name);
         }
     });
 })

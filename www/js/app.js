@@ -1,4 +1,4 @@
-angular.module('app', [
+var app = angular.module('app', [
     'ionic',
     'ngCordova',
     'app.config',

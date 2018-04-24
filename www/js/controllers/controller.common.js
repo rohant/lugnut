@@ -1,10 +1,11 @@
 angular.module('app.controllers', [])
 
-.controller('AppCtrl', function ($scope, $log, $state, $controller, Config, AuthService) {
-    $scope.$config = Config;
-    $scope.$state = $state;
-    $scope.debug = Config.debug;
+.controller('AppCtrl', function ($scope, $log, $state, $controller, Config, FakeRoutes) {
     $scope.platform = ionic.Platform.platform();
+    $scope.$state = $state;
+    
+    $scope.$config = Config;
+    $scope.debug = Config.debug;
     
     // todo: it must be refactored
     $controller('AccountCtrl', { $scope: $scope });
@@ -37,4 +38,33 @@ angular.module('app.controllers', [])
         }
         return classList[type] || '';
     };
+})
+
+.controller('DebugCtrl', function ($scope, $log, FakeRoutes, Geolocation) {
+    var $mapScope = angular.element('map').scope();
+    var simulator = Geolocation.getGeolocationSimulator();
+    
+    $scope.fakeRoutes = FakeRoutes.getRoutes();
+    $scope.fakeRouteId = FakeRoutes.getActiveRoute().id;
+    
+    $scope.setFakeRoute = function(route){
+        simulator.setFakeRoute(route);
+        $mapScope.init();
+    }
+    
+    $scope.$watch('debug.enabled', function(_n,_o){
+        Geolocation.simulationEnabled(_n && $scope.debug.simulation);
+        $log.debug("debug.enabled:" + _n);
+        if (_n != _o) $mapScope.init();
+    });
+
+    $scope.$watch('debug.simulation', function(_n,_o){
+        Geolocation.simulationEnabled(_n && $scope.debug.enabled);
+        $log.debug("debug.simulation:" + Geolocation.simulation);
+        if (_n != _o) $mapScope.init();
+    });
+
+    //$scope.$watch('debug.showPoints', function(showPoins){
+    //    $log.debug("debug.showPoins:" + showPoins);
+    //});
 });

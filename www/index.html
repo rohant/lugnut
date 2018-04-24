@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html ng-app="app">
+<!--<html ng-app="app">-->
+<html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
@@ -30,10 +31,25 @@
     <!--<script src="vendor/math.min.js"></script>-->
     <!--<script src="vendor/kalman.js"></script>-->
     <script src="vendor/helpers.js"></script>
+    
+    <script>
+        ionic.Platform.ready(function() {
+            angular.bootstrap(document, ['app']);
+            //var app = angular.module('app', []);
+        });
+        
+        //if (!window.cordova) {
+        //    angular.bootstrap(document, ['app']);
+        //} else {
+        //    document.addEventListener('deviceready', function() {
+        //        angular.bootstrap(document, ['app']);
+        //    }, false);
+        //}
 
+    </script>
+    
     <!-- your ap ng-app="app"p's js -->
     <script src="js/app.js"></script>
-    <script src="js/config.js"></script>
 
     <script src="js/controllers/controller.common.js"></script>
     <script src="js/controllers/controller.account.js"></script>
@@ -58,6 +74,7 @@
     <script src="js/services/service.marker.js"></script>
     <script src="js/services/service.route.js"></script>
     
+    <script src="js/config.js"></script>
   </head>
 
   <body>
