@@ -1,11 +1,12 @@
 angular.module('app.controllers', [])
 
-.controller('AppCtrl', function ($scope, $log, $state, $controller, Config, $gps) {
-    $scope.$gps = $gps;
+.controller('AppCtrl', function ($scope, $log, $state, $controller, Config, FakeRoutes) {
     $scope.$config = Config;
     $scope.$state = $state;
     $scope.debug = Config.debug;
     $scope.platform = ionic.Platform.platform();
+    
+    $scope.fakeRoutes = FakeRoutes.getRoutes();
     
     // todo: it must be refactored
     $controller('AccountCtrl', { $scope: $scope });
