@@ -136,3 +136,58 @@ angular.module('app.directives', [])
 //    }
 //  }
 //});
+
+
+.directive('debugToolbar', function(Config, $timeout) {
+  return {
+    restrict: 'E',
+    template: [
+        '<div id="console" ng-show="debug.enabled">',
+            '<div ng-repeat="(i, item) in logs track by $index" class="log-item">',
+                '<div>',
+                    '<span ng-class="cssClass(item.type)" ng-if="isString(item.message)">{{item.message}}</span>',
+                    '<pre ng-class="cssClass(item.type)" ng-if="isObject(item.message)">{{item.message| json}}</pre>',
+                '</div>',
+            '</div>',
+            '<a href="javascript:void()" class="button button-block button-stable" ng-if="showReloadBtn" ng-click="init()">',
+                'Reset',
+            '</a>',
+        '</div>',
+    ].join(' '),
+    
+    controller: function($scope, $element, $attrs, Logging, $timeout){
+
+        var scroller = $element.find('#console')[0];
+        
+        $scope.debug = Config.debug;
+        $scope.logs = Logging.logs;
+        
+        $scope.$on('log:updated', function (event, data) {
+            $scope.logs = data.logs;
+
+            $timeout(function() {
+                //var scroller = document.getElementById("console");
+                scroller.scrollTop = scroller.scrollHeight;
+            }, 0, false);
+            
+            //if(!$scope.$$phase) {
+            //  $scope.$apply();
+            //}
+        });
+
+        $scope.cssClass = function (type) {
+            var classList = {
+                debug: '',
+                error: 'assertive',
+                warn: 'energized',
+                info: 'positive',
+            }
+            return classList[type] || '';
+        };
+        
+    },
+    link: function($scope, $el, attrs, ctrl, transclude) {
+        // do something
+    }
+  }
+});
