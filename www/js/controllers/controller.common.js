@@ -45,10 +45,13 @@ angular.module('app.controllers', [])
     var simulator = Geolocation.getGeolocationSimulator();
     
     $scope.fakeRoutes = FakeRoutes.getRoutes();
-    $scope.fakeRouteId = FakeRoutes.getActiveRoute().id;
+    $scope.fakeRoute = FakeRoutes.getActiveRoute();
+    $scope.fakeRouteId = $scope.fakeRoute.id;
     
-    $scope.setFakeRoute = function(route){
-        simulator.setFakeRoute(route);
+    $scope.setFakeRoute = function(route){route.apply()
+        simulator.setFakeRoute(route.apply());
+        $scope.fakeRouteId = route.id;
+        $scope.fakeRoute = route;
         $mapScope.init();
     }
     

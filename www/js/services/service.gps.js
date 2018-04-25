@@ -80,7 +80,7 @@ angular.module('app.services')
          * @return {simulator}
          */
         setFakeRoute: function(route){
-            this.fakeRoute = route.apply();
+            this.fakeRoute = route;
             
             $log.info('Fake route: "' + route.name + '"');
             
@@ -92,6 +92,8 @@ angular.module('app.services')
          * @return {Object}
          */
         getFakeRoute: function(){
+            
+            //return FakeRoutes.getActiveRoute();
             
             if (!this.fakeRoute)
                 throw new Error("Fake route is wrong!");
@@ -105,7 +107,7 @@ angular.module('app.services')
          */
         getCurrentPosition: function () {
 
-            var route = this.getFakeRoute(this.fakeID);
+            var route = this.getFakeRoute();
 
             return $timeout(function(){}, +route.interval).then(function() {
                 $log.debug('simulated current position.');
@@ -132,7 +134,7 @@ angular.module('app.services')
          */
         watchPosition: function () {
             var deferred = $q.defer(), i = 0;
-            var route = this.getFakeRoute(this.fakeID);
+            var route = this.getFakeRoute();
 
             var watcher = setInterval(function(){
                 if (i > route.points.length-1) {
