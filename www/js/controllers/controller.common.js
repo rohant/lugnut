@@ -13,33 +13,6 @@ angular.module('app.controllers', [])
     $log.info('Start application!');
 })
 
-.controller('LogCtrl', function ($scope, $timeout, Logging) {
-    $scope.logs = Logging.logs;
-
-    $scope.$on('log:updated', function (event, data) {
-        $scope.logs = data.logs;
-
-        if(!$scope.$$phase) {
-          $scope.$apply();
-        }
-
-        $timeout(function() {
-          var scroller = document.getElementById("console");
-          scroller.scrollTop = scroller.scrollHeight;
-        }, 0, false);
-    });
-
-    $scope.cssClass = function (type) {
-        var classList = {
-            debug: '',
-            error: 'assertive',
-            warn: 'energized',
-            info: 'positive',
-        }
-        return classList[type] || '';
-    };
-})
-
 .controller('DebugCtrl', function ($scope, $log, FakeRoutes, Geolocation) {
     var $mapScope = angular.element('map').scope();
     var simulator = Geolocation.getGeolocationSimulator();
