@@ -63,7 +63,7 @@ angular.module('app.services')
                 return new google.maps.Marker({
                     map: self._map,
                     title: title || 'Point - ' + counter++,
-                    zIndex: Math.round(latLng.lat() * -100000) << 5
+                    //zIndex: Math.round(latLng.lat() * -100000) << 5
                 });
             }(this));
         },

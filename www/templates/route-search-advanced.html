@@ -5,18 +5,27 @@
     <ion-content class="has-header">
 
         <load-google-map>
-            <map on-create="mapCreated(map)"></map>
+            <map on-create="init(map)"></map>
         </load-google-map>
         
         <debug-toolbar></debug-toolbar>
 
-        <div class="map-actions" ng-show="showActions">
-            <button class="button button-positive icon-left ion-record" ng-click="watchPosition()" ng-show="!isWatching">
-                Record route
-            </button>
-            <button class="button button-assertive icon-left ion-stop" ng-click="stopWatchingPosition()" ng-show="isWatching">
-                Stop recording
-            </button>
+        <div class="adv-search" ng-show="pointA && pointB">
+            
+            <!--<div id=""></div>-->
+            
+            <div class="row">
+                <div class="col">
+                    <button class="button button-block button-positive" ng-class="{'active':current == pointA}" ng-click="active(pointA)">
+                        A
+                    </button>
+                </div>
+                <div class="col">
+                    <button class="button button-block button-assertive" ng-class="{'active':current == pointB}" ng-click="active(pointB)">
+                        B
+                    </button>
+                </div>
+            </div>
         </div>
 
     </ion-content>
