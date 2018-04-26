@@ -50,6 +50,18 @@ angular.module('app.controllers')
             $scope.$A.pristine = false;
             $scope.$A.setPosition(myLatlng);
             $scope.$B.setPosition(myLatlng);
+            
+            $scope.currentMarker = Marker.createMarker('You here!');
+            $scope.currentMarker.setIcon('./img/markers/darkgreen_MarkerA.png');
+            $scope.currentMarker.setAnimation(google.maps.Animation.DROP);
+            $scope.currentMarker.setPosition(myLatlng);
+
+            google.maps.event.addListener($scope.currentMarker, 'click', function(e) {
+                $scope.$A.pristine = false;
+                $scope.$A.setPosition(e.latLng);
+                drawDirection();
+            });
+
 
         }, function (error) {
 
@@ -127,9 +139,9 @@ angular.module('app.controllers')
         $scope.$B.setDraggable(false);
         current.setDraggable(true);
 
-        $scope.$A.setZIndex(0);
-        $scope.$B.setZIndex(0);
-        current.setZIndex(1);
+        $scope.$A.setZIndex(1);
+        $scope.$B.setZIndex(1);
+        current.setZIndex(2);
 
         $scope.current = current;
     }
@@ -188,8 +200,8 @@ angular.module('app.controllers')
         //markerA.setDraggable(true);
         //markerB.setDraggable(true);
         
-        $scope.$A.setZIndex(1);
-        $scope.$B.setZIndex(0);
+        $scope.$A.setZIndex(2);
+        $scope.$B.setZIndex(1);
         
         //var image = {
         //    url: image,
@@ -203,26 +215,26 @@ angular.module('app.controllers')
         $scope.$B.setIcon('./img/markers/red_MarkerB.png');
 
         google.maps.event.addListener(tracewaypoints, 'click', function () {
-            console.log('click on track');
+            $log.debug('click on track');
             //tracewaypoints.setOptions({strokeOpacity: 1.0});
         });
         
         google.maps.event.addListener($scope.$A, 'dragend', function(e) {
-            console.log('dragend', e, [e.latLng.lat(),e.latLng.lng()]);
+            $log.debug('A:dragend');
             $scope.$A.pristine = false;
             $scope.$A.setPosition(e.latLng);
             drawDirection();
         });
         
         google.maps.event.addListener($scope.$B, 'dragend', function(e) {
-            console.log('dragend', e, [e.latLng.lat(),e.latLng.lng()]);
+            $log.debug('B:dragend');
             $scope.$B.pristine = false;
             $scope.$B.setPosition(e.latLng);
             drawDirection();
         });
         
         google.maps.event.addListener(map, 'click', function(e) {
-            console.log('click', e);
+            $log.debug('Map:click');
             $scope.current.pristine = false;
             $scope.current.setPosition(e.latLng);
             //tracewaypoints.setOptions({strokeOpacity: 0.5});
@@ -252,20 +264,21 @@ angular.module('app.controllers')
         var latLngA = $scope.$A.getPosition(); 
         var latLngB = $scope.$B.getPosition();
         
-        $scope.criteria = {
+        var criteria = {
+            
             detour: {
-                A: [
-                    latLngA.lat(),
-                    latLngA.lng(),
-                ],
-                B: [
-                    latLngB.lat(),
-                    latLngB.lng(),
-                ]
+                A: {
+                    lat: latLngA.lat(),
+                    lng: latLngA.lng(),
+                },
+                B: {
+                    lat: latLngB.lat(),
+                    lng: latLngB.lng(),
+                }
             },
         }
         
-        return Route.findAll($scope.criteria).then(function(items){
+        return Route.findAll(criteria).then(function(items){
             $scope.processing = false;
             $scope.routes = items;
         });
