@@ -4,56 +4,15 @@ angular.module('app.controllers')
     
     // todo:
     Geolocation.simulationEnabled(true);
-
-    var point = {
-        pristine: true,
-        latLng: null,
-        marker: null,
-
-        setPosition: function(latLng){
-            this.latLng = latLng;
-
-            if (this.marker){
-                this.marker.setPosition(latLng);
-            }
-            
-            return this;
-        }
-    };
     
     var tracewaypoints = new google.maps.Polyline({
         //map: $scope.map,
         path: [],
         strokeColor: "blue",
-        //strokeOpacity: 1.0,
-        strokeOpacity: 0.5,
+        strokeOpacity: 1.0,
+        //strokeOpacity: 0.5,
         strokeWeight: 5
     });
-    
-    /**
-     * 
-     * @param {Object} point
-     * @return {undefined}
-     */
-    $scope.active = function(current){
-
-        //$scope.pointA.marker.setMap(null);
-        //$scope.pointB.marker.setMap(null);
-        //current.marker.setMap($scope.map);
-
-        //current.marker.setAnimation(google.maps.Animation.DROP);
-        //current.marker.setAnimation(google.maps.Animation.BOUNCE);
-
-        $scope.pointA.marker.setDraggable(false);
-        $scope.pointB.marker.setDraggable(false);
-        current.marker.setDraggable(true);
-
-        $scope.pointA.marker.setZIndex(0);
-        $scope.pointB.marker.setZIndex(0);
-        current.marker.setZIndex(1);
-
-        $scope.current = current;
-    }
     
     /**
      * 
@@ -88,9 +47,9 @@ angular.module('app.controllers')
 
             $scope.map.setCenter(myLatlng);
             
-            $scope.pointA.pristine = false;
-            $scope.pointA.setPosition(myLatlng);
-            $scope.pointB.setPosition(myLatlng);
+            $scope.$A.pristine = false;
+            $scope.$A.setPosition(myLatlng);
+            $scope.$B.setPosition(myLatlng);
 
         }, function (error) {
 
@@ -115,18 +74,14 @@ angular.module('app.controllers')
         //    content: 'Wait..',
         //    showBackdrop: false
         //});
-
-        if (!$scope.pointA.pristine && !$scope.pointB.pristine)
+        
+        if ($scope.isCriteriaCompleate())
         {
-            //console.log('drawDirection()', 
-            //    [$scope.pointA.latLng.lat(), $scope.pointA.latLng.lng()], 
-            //    [$scope.pointB.latLng.lat(), $scope.pointB.latLng.lng()]);
-
             var service = new google.maps.DirectionsService();
             
             service.route({
-                origin: $scope.pointA.latLng,
-                destination: $scope.pointB.latLng,
+                origin: $scope.$A.getPosition(),
+                destination: $scope.$B.getPosition(),
                 travelMode: google.maps.DirectionsTravelMode.DRIVING
             }, function (result, status) {
 
@@ -147,8 +102,62 @@ angular.module('app.controllers')
                     $log.error("Directions request failed: " + status);
                 }
             });
+            
+            //if(!$scope.$$phase) {
+            //  $scope.$apply();
+            //}
         }
     }
+    
+    /**
+     * 
+     * @param {Object} point
+     * @return {undefined}
+     */
+    $scope.active = function(current){
+
+        //$scope.$A.setMap(null);
+        //$scope.$B.setMap(null);
+        //current.setMap($scope.map);
+
+        //current.setAnimation(google.maps.Animation.DROP);
+        //current.setAnimation(google.maps.Animation.BOUNCE);
+
+        $scope.$A.setDraggable(false);
+        $scope.$B.setDraggable(false);
+        current.setDraggable(true);
+
+        $scope.$A.setZIndex(0);
+        $scope.$B.setZIndex(0);
+        current.setZIndex(1);
+
+        $scope.current = current;
+    }
+    
+    /**
+     * 
+     * @return {Boolean}
+     */
+    $scope.isCriteriaCompleate = function(){
+        
+        
+        var dirty = (!$scope.$A.pristine && !$scope.$B.pristine);
+
+        if (dirty) {
+            try {
+                var distance = getDistance(
+                    $scope.$A.getPosition(), 
+                    $scope.$B.getPosition()
+                );
+                return (distance > 10);
+            } catch (e) {
+                //console.log(e); 
+            }
+        } 
+
+        return dirty;
+    }
+
     
     /**
      *
@@ -159,24 +168,28 @@ angular.module('app.controllers')
         $scope.map = map;
         $scope.map.setZoom(15);
         $scope.showReloadBtn = false;
+        $scope.initialized = true;
         
         Marker.init(map);
         tracewaypoints.setMap(map);
+
+        $scope.$A = Marker.createMarker('Point A');
+        $scope.$B = Marker.createMarker('Point B');
         
-        var markerA = Marker.createMarker('Point A');
-        var markerB = Marker.createMarker('Point B');
+        $scope.$A.pristine = true;
+        $scope.$B.pristine = true;
         
-        //markerA.setLabel('A');
-        //markerB.setLabel('B');
+        //$scope.$A.setLabel('A');
+        //$scope.$B.setLabel('B');
         
-        markerA.setAnimation(google.maps.Animation.DROP);
-        markerB.setAnimation(google.maps.Animation.DROP);
+        $scope.$A.setAnimation(google.maps.Animation.DROP);
+        $scope.$B.setAnimation(google.maps.Animation.DROP);
         
         //markerA.setDraggable(true);
         //markerB.setDraggable(true);
         
-        markerA.setZIndex(1);
-        markerB.setZIndex(0);
+        $scope.$A.setZIndex(1);
+        $scope.$B.setZIndex(0);
         
         //var image = {
         //    url: image,
@@ -186,36 +199,25 @@ angular.module('app.controllers')
         //    scaledSize: new google.maps.Size(25, 50)
         //};
         
-        markerA.setIcon('./img/markers/blue_MarkerA.png');
-        markerB.setIcon('./img/markers/red_MarkerB.png');
-    
-        $scope.pointA = angular.extend(angular.copy(point), {
-            name: 'Point A',
-            marker: markerA,
-        });
+        $scope.$A.setIcon('./img/markers/blue_MarkerA.png');
+        $scope.$B.setIcon('./img/markers/red_MarkerB.png');
 
-        $scope.pointB = angular.extend(angular.copy(point), {
-            name: 'Point B',
-            marker: markerB,
-        });
-        
         google.maps.event.addListener(tracewaypoints, 'click', function () {
             console.log('click on track');
-            
             //tracewaypoints.setOptions({strokeOpacity: 1.0});
         });
         
-        google.maps.event.addListener($scope.pointA.marker, 'dragend', function(e) {
+        google.maps.event.addListener($scope.$A, 'dragend', function(e) {
             console.log('dragend', e, [e.latLng.lat(),e.latLng.lng()]);
-            $scope.pointA.pristine = false;
-            $scope.pointA.setPosition(e.latLng);
+            $scope.$A.pristine = false;
+            $scope.$A.setPosition(e.latLng);
             drawDirection();
         });
         
-        google.maps.event.addListener($scope.pointB.marker, 'dragend', function(e) {
+        google.maps.event.addListener($scope.$B, 'dragend', function(e) {
             console.log('dragend', e, [e.latLng.lat(),e.latLng.lng()]);
-            $scope.pointB.pristine = false;
-            $scope.pointB.setPosition(e.latLng);
+            $scope.$B.pristine = false;
+            $scope.$B.setPosition(e.latLng);
             drawDirection();
         });
         
@@ -223,13 +225,11 @@ angular.module('app.controllers')
             console.log('click', e);
             $scope.current.pristine = false;
             $scope.current.setPosition(e.latLng);
-            
             //tracewaypoints.setOptions({strokeOpacity: 0.5});
-            
             drawDirection();
         });
         
-        $scope.active($scope.pointB);
+        $scope.active($scope.$B);
         getCurrentPosition();
     }
     
@@ -245,12 +245,25 @@ angular.module('app.controllers')
     //    $state.go('app.signin');
     //}
     
-    $scope.criteria = {
-        query: '',
-    }
     
-    $scope.reload = function(){
+    $scope.search = function(){
         $scope.processing = true;
+        
+        var latLngA = $scope.$A.getPosition(); 
+        var latLngB = $scope.$B.getPosition();
+        
+        $scope.criteria = {
+            detour: {
+                A: [
+                    latLngA.lat(),
+                    latLngA.lng(),
+                ],
+                B: [
+                    latLngB.lat(),
+                    latLngB.lng(),
+                ]
+            },
+        }
         
         return Route.findAll($scope.criteria).then(function(items){
             $scope.processing = false;
