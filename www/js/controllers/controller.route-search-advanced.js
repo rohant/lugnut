@@ -202,7 +202,7 @@ angular.module('app.controllers')
         google.maps.event.addListener(tracewaypoints, 'click', function () {
             console.log('click on track');
             
-            tracewaypoints.setOptions({strokeOpacity: 1.0});
+            //tracewaypoints.setOptions({strokeOpacity: 1.0});
         });
         
         google.maps.event.addListener($scope.pointA.marker, 'dragend', function(e) {
@@ -232,8 +232,6 @@ angular.module('app.controllers')
         $scope.active($scope.pointB);
         getCurrentPosition();
     }
-    
-    
     
     
     //if (!AuthService.isLoggedIn()) {
