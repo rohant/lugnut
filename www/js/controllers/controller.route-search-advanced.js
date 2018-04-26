@@ -152,7 +152,6 @@ angular.module('app.controllers')
      */
     $scope.isCriteriaCompleate = function(){
         
-        
         var dirty = (!$scope.$A.pristine && !$scope.$B.pristine);
 
         if (dirty) {
@@ -177,14 +176,17 @@ angular.module('app.controllers')
      * @return {undefined}
      */
     $scope.init = function (map) {
-        $scope.map = map;
-        $scope.map.setZoom(15);
-        $scope.showReloadBtn = false;
-        $scope.initialized = true;
         
-        Marker.init(map);
-        tracewaypoints.setMap(map);
+        if (map) {
+            $scope.map = map;
+            $scope.map.setZoom(15);
+            $scope.showReloadBtn = false;
+            $scope.initialized = true;
 
+            Marker.init(map);
+            tracewaypoints.setMap(map);
+        }
+        
         $scope.$A = Marker.createMarker('Point A');
         $scope.$B = Marker.createMarker('Point B');
         
@@ -283,4 +285,20 @@ angular.module('app.controllers')
             $scope.routes = items;
         });
     }
+    
+    $scope.$on("$destroy", function () {
+        console.log('$destroy')
+    });
+    
+    $scope.$on("$ionicView.enter", function (event) {
+        
+        if ($scope.debug.simulation) {
+            
+            var fakeRoute = Geolocation
+                .getGeolocationSimulator()
+                .getFakeRoute();
+        
+            $log.info('Used the fake route: ' + fakeRoute.name);
+        }
+    });
 });
