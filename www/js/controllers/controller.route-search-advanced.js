@@ -3,7 +3,7 @@ angular.module('app.controllers')
 .controller('RouteAdvancedSearchCtrl', function ($scope, $state, $log, $ionicLoading, Route, AuthService, Geolocation, Marker) {
     
     // todo:
-    Geolocation.simulationEnabled(true);
+    //Geolocation.simulationEnabled(true);
     
     var tracewaypoints = new google.maps.Polyline({
         //map: $scope.map,
@@ -11,7 +11,8 @@ angular.module('app.controllers')
         strokeColor: "blue",
         strokeOpacity: 1.0,
         //strokeOpacity: 0.5,
-        strokeWeight: 5
+        strokeWeight: 5,
+        zIndex: 1000
     });
     
     /**
@@ -81,7 +82,9 @@ angular.module('app.controllers')
      * @return {undefined}
      */
     function drawDirection() {
-
+        
+        removeAlternativeRoutes();
+        
         //$scope.loading = $ionicLoading.show({
         //    content: 'Wait..',
         //    showBackdrop: false
@@ -272,10 +275,12 @@ angular.module('app.controllers')
                 A: {
                     lat: latLngA.lat(),
                     lng: latLngA.lng(),
+                    precision: 5,
                 },
                 B: {
                     lat: latLngB.lat(),
                     lng: latLngB.lng(),
+                    precision: 6,
                 }
             },
         }
@@ -283,8 +288,46 @@ angular.module('app.controllers')
         return Route.findAll(criteria).then(function(items){
             $scope.processing = false;
             $scope.routes = items;
+            drawAlternativeRoutes();
         });
     }
+    
+    
+    var polilines = []; 
+    
+    
+    
+    function removeAlternativeRoutes () {
+        
+        for (var i in polilines) {
+            polilines[i].setMap(null);
+        }
+        polilines = [];
+    }
+    
+    function drawAlternativeRoutes () 
+    {
+        for (var i in $scope.routes) {
+            
+            var poliline = new google.maps.Polyline({
+                map: $scope.map,
+                path: $scope.routes[i].points,
+                strokeColor: "grey",
+                //strokeColor: getRandomColor(),
+                //strokeOpacity: 1.0,
+                strokeOpacity: 0.5,
+                strokeWeight: 5,
+                zIndex: i
+            });
+            
+            polilines.push(poliline);
+        }
+    }
+    
+    /*function getRandomColor() {
+        return '#' + Math.floor(Math.random()*16777215).toString(16);
+    }*/
+    
     
     $scope.$on("$destroy", function () {
         console.log('$destroy')
