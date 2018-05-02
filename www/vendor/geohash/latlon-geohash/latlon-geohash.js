@@ -249,12 +249,13 @@ if (typeof module != 'undefined' && module.exports) module.exports = Geohash; //
  * Test
  */
 
-//var geohash1 = Geohash.encode(-36.863389, 174.744247, 7);
-//var geohash2 = Geohash.encode(-36.863159, 174.744036, 7);
-//var geohash3 = Geohash.encode(-36.863204, 174.744125, 7);
+//var geohash1 = Geohash.encode(-36.863389, 174.744247, 9);
+//var geohash2 = Geohash.encode(-36.863077, 174.743706, 9);
+//var geohash3 = Geohash.encode(-36.863204, 174.744125, 9);
 //
 //console.clear();
 //console.info('geohash: ', geohash1, geohash2, geohash3);
+//console.info('decode H1: ', Geohash.decode(geohash1));
 //
 //var neighbours = Geohash.neighbours(geohash1);
 //console.info('neighbours: ', neighbours);
