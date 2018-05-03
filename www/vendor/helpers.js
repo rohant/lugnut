@@ -120,3 +120,120 @@ var getDistance = function (p1, p2) {
 //
 //    return (earth_radius_km * d_sigma);
 //}
+
+
+
+
+/* 
+ * INTERPOLATION 
+ */
+
+
+// This is our Linear Interpolation method. It takes 3 parameters:
+// a: The starting value
+// b: The destination value
+// n: The normal value (between 0 and 1) to control the Linear Interpolation
+//
+// If your normal value is equal to 1 the circle will instantly switch from A to B.
+// If your normal value is equal to 0 the circle will not move.
+// The closer your normal is to 0 the smoother will be the interpolation.
+// The closer your normal is to 1 the sharper will be the interpolation.
+function lerp(a, b, n) {
+  return (1 - n) * a + n * b;
+}
+
+// Obtient une valeur comprise dans un interval
+Math.clamp = function (value, min, max) {
+	return Math.min(Math.max(value, min), max);
+};
+
+// Obtient une interpolation linéaire entre 2 valeurs
+Math.lerp = function (value1, value2, amount) {
+	amount = amount < 0 ? 0 : amount;
+	amount = amount > 1 ? 1 : amount;
+	return (1 - amount) * value1 + amount * value2;
+};
+
+Math.wrap = function(inValue, inMin, inMax) {
+    var valueRange = inMax - inMin;
+    return (inMin + ((((inValue - inMin) % valueRange) + valueRange) % valueRange));
+}
+// Use it like this:
+//angle = Math.wrap(angle, 0, 360); // wrap between 0 & 360°
+//angle = Math.wrap(angle, -90, +90); // wrap between +/-90°
+
+
+
+//// OP's algorithm
+//function lerp1 (a, b, f) {
+//    return (a * (1.0 * f - f)) + (b * f);
+//}
+//
+//// Algebraically simplified algorithm
+//function lerp2 (a, b, f) {
+//    return a + f * (b - a);
+//}
+//
+//console.log('lerp', lerp(1, 3, 0.5),lerp(1, 3, 0.1),lerp(1, 10, 0.5),lerp(1, 10, 0.1));
+//console.log('lerp1', lerp1(1, 3, 0.5),lerp1(1, 3, 0.1),lerp1(1, 10, 0.5),lerp1(1, 10, 0.1));
+//console.log('lerp2', lerp2(1, 3, 0.5),lerp2(1, 3, 0.1),lerp2(1, 10, 0.5),lerp2(1, 10, 0.1));
+
+
+
+
+
+//var convert = {
+//    toCompass: function(degrees)
+//    {
+//        return ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW', 'N'][Math.round(degrees / 11.25 / 2)];
+//    }
+//}
+//
+//alert(convert.toCompass(140));      // SE
+
+function getCompassDirection(degrees) {
+    return ['N','NNW','NW','WNW','W','WSW','SW','SSW','S','SSE','SE','ESE','E','ENE','NE','NNE','N'][Math.round(degrees/11.25/2)];
+}
+//console.log('Compass direction:',getCompassDirection(140));      // SE
+
+
+
+//var query = window.matchMedia("(orientation:landscape)");
+//console.log("Device held " + (query.matches ? "horizontally" : "vertically"));
+
+
+//if (window.DeviceOrientationEvent) {
+//    window.addEventListener('deviceorientation', function (event) {
+//        var alpha = event.alpha;
+//        var beta = event.beta;
+//        var gamma = event.gamma;
+//
+//        if (alpha != null || beta != null || gamma != null)
+//            console.log('deviceorientation','alpha: ' + alpha + ' beta: ' + beta + ' gamma: ' + gamma);
+//        
+//    }, false);
+//}
+//
+//// Check for support for DeviceMotion events
+//if (window.DeviceMotionEvent) {
+//    window.addEventListener('devicemotion', function (event) {
+//        var x = event.accelerationIncludingGravity.x;
+//        var y = event.accelerationIncludingGravity.y;
+//        var z = event.accelerationIncludingGravity.z;
+//        
+//        var r = event.rotationRate;
+//        var ralpha = event.rotationRate.alpha;
+//        var rbeta = event.rotationRate.beta;
+//        var rgamma = event.rotationRate.gamma;
+//        
+//        var interval = event.interval;
+//        
+//        var html = "Acceleration:\n";
+//        html += "x: " + x + "\ny: " + y + "\nz: " + z + "\n";
+//        html += "Rotation rate:\n";
+//        if (r != null)
+//            html += "alpha: " + r.alpha + "\nbeta: " + r.beta + "\ngamma: " + r.gamma + "\n";
+//        
+//        console.log('devicemotion', html);
+//    });
+//}
