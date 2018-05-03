@@ -7,8 +7,9 @@
 //            : event.alpha;
 //        
 //        if (event.absolute) {
-//            //console.log('Compass heading:', Math.floor(event.alpha));
-//            console.log('Compass direction:', getCompassDirection(Math.floor(alpha)));
+//            //console.log('Compass heading:', Math.floor(alpha));
+//            //console.log('Compass direction:', getCompassDirection(Math.floor(alpha)));
+//            console.log('Compass direction:', convert.toCompass(360 - Math.floor(alpha)));
 //        }
 //        //if (window.orientation == 90 || window.orientation == -90) {
 //        //    console.log('landscape mode')

@@ -188,8 +188,8 @@ Math.wrap = function(inValue, inMin, inMax) {
 //        return ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW', 'N'][Math.round(degrees / 11.25 / 2)];
 //    }
 //}
-//
 //alert(convert.toCompass(140));      // SE
+//console.log('Compass direction:', convert.toCompass(360 - Math.floor(alpha)));
 
 function getCompassDirection(degrees) {
     return ['N','NNW','NW','WNW','W','WSW','SW','SSW','S','SSE','SE','ESE','E','ENE','NE','NNE','N'][Math.round(degrees/11.25/2)];
