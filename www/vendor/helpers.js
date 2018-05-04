@@ -1,3 +1,73 @@
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
+
+// Returns a function, that, when invoked, will only be triggered at most once
+// during a given window of time. Normally, the throttled function will run
+// as much as it can, without ever going more than once per `wait` duration;
+// but if you'd like to disable the execution on the leading edge, pass
+// `{leading: false}`. To disable execution on the trailing edge, ditto.
+function throttle(func, wait, options) {
+  var context, args, result;
+  var timeout = null;
+  var previous = 0;
+  if (!options) options = {};
+  var later = function() {
+    previous = options.leading === false ? 0 : Date.now();
+    timeout = null;
+    result = func.apply(context, args);
+    if (!timeout) context = args = null;
+  };
+  return function() {
+    var now = Date.now();
+    if (!previous && options.leading === false) previous = now;
+    var remaining = wait - (now - previous);
+    context = this;
+    args = arguments;
+    if (remaining <= 0 || remaining > wait) {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+      previous = now;
+      result = func.apply(context, args);
+      if (!timeout) context = args = null;
+    } else if (!timeout && options.trailing !== false) {
+      timeout = setTimeout(later, remaining);
+    }
+    return result;
+  };
+};
+
+
+function once(fn, context) {
+	var result;
+	return function() { 
+		if(fn) {
+			result = fn.apply(context || this, arguments);
+			fn = null;
+		}
+		return result;
+	};
+}
+
+
+
 
 //function latlng2distance(lat1, long1, lat2, long2) {
 //    var R = 6372795;
@@ -51,22 +121,6 @@ var getDistance = function (p1, p2) {
     var d = R * c;
     return Math.round(d * 100) / 100;
 };
-
-//google.maps.LatLng.prototype.distanceFrom = function(latlng) {
-//  var lat = [this.lat(), latlng.lat()]
-//  var lng = [this.lng(), latlng.lng()]
-//  var R = 6378137;
-//  var dLat = (lat[1]-lat[0]) * Math.PI / 180;
-//  var dLng = (lng[1]-lng[0]) * Math.PI / 180;
-//  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-//  Math.cos(lat[0] * Math.PI / 180 ) * Math.cos(lat[1] * Math.PI / 180 ) *
-//  Math.sin(dLng/2) * Math.sin(dLng/2);
-//  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-//  var d = R * c;
-//  return Math.round(d);
-//}
-
-
 
 
 //
@@ -235,5 +289,33 @@ function getCompassDirection(degrees) {
 //            html += "alpha: " + r.alpha + "\nbeta: " + r.beta + "\ngamma: " + r.gamma + "\n";
 //        
 //        console.log('devicemotion', html);
+//    });
+//}
+
+
+//if (window.DeviceOrientationEvent) {
+//    window.addEventListener("deviceorientation", function (event) {
+//
+//
+//        var alpha = event.webkitCompassHeading 
+//            ? event.webkitCompassHeading 
+//            : event.alpha;
+//
+//        if (event.absolute) {
+//            //console.log('Compass heading:', Math.floor(alpha));
+//            //console.log('Compass direction:', getCompassDirection(Math.floor(alpha)));
+//            //console.log('Compass direction:', convert.toCompass(360 - Math.floor(alpha)));
+//
+//        }
+//        //if (window.orientation == 90 || window.orientation == -90) {
+//        //    console.log('landscape mode')
+//        //} else {
+//        //    console.log('portrait mode')
+//        //}
+//
+//        /*var $rs = $injector.get('$rootScope');
+//        $rs.$broadcast('log:updated', {
+//            logs: service.logs
+//        });*/
 //    });
 //}
