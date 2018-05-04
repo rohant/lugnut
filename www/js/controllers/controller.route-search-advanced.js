@@ -1,29 +1,7 @@
-//if (window.DeviceOrientationEvent) {
-//    window.addEventListener("deviceorientation", function (event) {
-//        
-//
-//        var alpha = event.webkitCompassHeading 
-//            ? event.webkitCompassHeading 
-//            : event.alpha;
-//        
-//        if (event.absolute) {
-//            //console.log('Compass heading:', Math.floor(alpha));
-//            //console.log('Compass direction:', getCompassDirection(Math.floor(alpha)));
-//            console.log('Compass direction:', convert.toCompass(360 - Math.floor(alpha)));
-//        }
-//        //if (window.orientation == 90 || window.orientation == -90) {
-//        //    console.log('landscape mode')
-//        //} else {
-//        //    console.log('portrait mode')
-//        //}
-//    });
-//}
-
 angular.module('app.controllers')
 
 .controller('RouteAdvancedSearchCtrl', function ($scope, $state, $log, $ionicLoading, Route, AuthService, Geolocation, Marker) {
     
-            
     // todo:
     //Geolocation.simulationEnabled(true);
     
