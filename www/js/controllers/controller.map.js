@@ -1,3 +1,16 @@
+//window.addEventListener("deviceorientation", throttle(function (event) {
+//
+//    var alpha = event.webkitCompassHeading 
+//        ? event.webkitCompassHeading 
+//        : event.alpha;
+//
+//    if (event.absolute) {
+//        console.log('Compass direction:', getCompassDirection(Math.floor(alpha)), Math.floor(alpha));
+//    }
+//    
+//}, 1000));
+
+
 angular.module('app.controllers')
 
 .controller('MapCtrl', function ($scope, $rootScope, $log, $http, $state, $ionicLoading, Marker, Route, Geolocation, Config) {
@@ -20,6 +33,27 @@ angular.module('app.controllers')
     $scope.init = function () {
         $scope.map.setZoom(15);
         $scope.showReloadBtn = false;
+
+        //if (window.DeviceOrientationEvent) {
+        //    window.addEventListener("deviceorientation", throttle(function (event) {
+        //
+        //        var alpha = event.webkitCompassHeading 
+        //            ? event.webkitCompassHeading 
+        //            : event.alpha;
+        //
+        //        if (event.absolute) {
+        //            var angle = 360 - Math.floor(alpha);
+        //            console.log("deviceorientation", angle);
+        //
+        //            if ($scope.map) {
+        //                //$scope.map.setCompassEnabled(true);
+        //                var heading = $scope.map.getHeading() || 0;
+        //                $scope.map.setHeading(heading + angle);
+        //            }
+        //        }
+        //
+        //    }, 1000));
+        //}
 
         $scope.loading = $ionicLoading.show({
             content: 'Getting current location...',
@@ -118,24 +152,19 @@ angular.module('app.controllers')
                 position.coords.latitude,
                 position.coords.longitude
             );
-
-    //            if (!prevPosition || (
-    //                Math.abs(prevPosition.coords.latitude - position.coords.latitude) > 0.000001
-    //            ) || (
-    //                Math.abs(prevPosition.coords.longitude - position.coords.longitude) > 0.000001
-    //            ))
-    //            {
-    //                prevPosition = new google.maps.LatLng(
-    //                    position.coords.latitude,
-    //                    position.coords.longitude
-    //                );
-
-    //                $scope.points.push({
-    //                    latitude: prevPosition.coords.latitude,
-    //                    longitude: prevPosition.coords.longitude
-    //                });
-    //            }
-
+    
+            if (waypoints.length) 
+            {
+                var lastPosition = waypoints[waypoints.length-1];
+                
+                if (lastPosition) {
+                    var spherical = google.maps.geometry.spherical;
+                    var heading = spherical.computeHeading(lastPosition, myLatlng);
+                    heading = Math.abs(360 - Math.abs(heading));
+                    $log.info('Direction: ' + getCompassDirection(heading));
+                }
+            }
+            
             $scope.route.addPoint({
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
