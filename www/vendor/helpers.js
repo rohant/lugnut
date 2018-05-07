@@ -123,58 +123,79 @@ var getDistance = function (p1, p2) {
 };
 
 
-//
-//var earth_radius_km = 6371.0;
-//
-//function deg_to_rad(deg) {
-//    return (deg * Math.PI / 180.0);
-//}
-//
-//function haversine_distance(latitude1, longitude1, latitude2, longitude2) {
-//    var lat1 = deg_to_rad(latitude1);
-//    var lng1 = deg_to_rad(longitude1);
-//    var lat2 = deg_to_rad(latitude2);
-//    var lng2 = deg_to_rad(longitude2);
-//
-//    var d_lat = Math.abs(lat1 - lat2);
-//    var d_lng = Math.abs(lng1 - lng2);
-//
-//    var a = Math.pow(Math.sin(d_lat / 2.0), 2.0) + Math.cos(lat1)
-//            * Math.cos(lat2) * Math.pow(Math.sin(d_lng / 2.0), 2.0);
-//
-//    var d_sigma = 2.0 * Math.asin(Math.sqrt(a));
-//
-//    return (earth_radius_km * d_sigma);
-//}
-//
-//function vincenty_distance(latitude1, longitude1, latitude2, longitude2) {
-//    var lat1 = deg_to_rad(latitude1);
-//    var lng1 = deg_to_rad(longitude1);
-//    var lat2 = deg_to_rad(latitude2);
-//    var lng2 = deg_to_rad(longitude2);
-//
-//    var d_lng = Math.abs(lng1 - lng2);
-//
-//    // Numerator
-//    var a = Math.pow(Math.cos(lat2) * Math.sin(d_lng), 2.0);
-//
-//    var b = Math.cos(lat1) * Math.sin(lat2);
-//    var c = Math.sin(lat1) * Math.cos(lat2) * Math.cos(d_lng);
-//    var d = Math.pow(b - c, 2.0);
-//
-//    var e = Math.sqrt(a + d);
-//
-//    // Denominator
-//    var f = Math.sin(lat1) * Math.sin(lat2);
-//    var g = Math.cos(lat1) * Math.cos(lat2) * Math.cos(d_lng);
-//
-//    var h = f + g;
-//
-//    var d_sigma = Math.atan2(e, h);
-//
-//    return (earth_radius_km * d_sigma);
-//}
+;(function(){
 
+    var earth_radius_km = 6371.0;
+
+    function deg_to_rad(deg) {
+        return (deg * Math.PI / 180.0);
+    }
+    
+    /**
+     * 
+     * @param {Number} latitude1
+     * @param {Number} longitude1
+     * @param {Number} latitude2
+     * @param {Number} longitude2
+     * @return {Number} km
+     */
+    function haversine_distance(latitude1, longitude1, latitude2, longitude2) {
+        var lat1 = deg_to_rad(latitude1);
+        var lng1 = deg_to_rad(longitude1);
+        var lat2 = deg_to_rad(latitude2);
+        var lng2 = deg_to_rad(longitude2);
+
+        var d_lat = Math.abs(lat1 - lat2);
+        var d_lng = Math.abs(lng1 - lng2);
+
+        var a = Math.pow(Math.sin(d_lat / 2.0), 2.0) + Math.cos(lat1)
+                * Math.cos(lat2) * Math.pow(Math.sin(d_lng / 2.0), 2.0);
+
+        var d_sigma = 2.0 * Math.asin(Math.sqrt(a));
+
+        return (earth_radius_km * d_sigma);
+    }
+    
+    /**
+     * 
+     * @param {Number} latitude1
+     * @param {Number} longitude1
+     * @param {Number} latitude2
+     * @param {Number} longitude2
+     * @return {Number} km
+     */
+    function vincenty_distance(latitude1, longitude1, latitude2, longitude2) {
+        var lat1 = deg_to_rad(latitude1);
+        var lng1 = deg_to_rad(longitude1);
+        var lat2 = deg_to_rad(latitude2);
+        var lng2 = deg_to_rad(longitude2);
+
+        var d_lng = Math.abs(lng1 - lng2);
+
+        // Numerator
+        var a = Math.pow(Math.cos(lat2) * Math.sin(d_lng), 2.0);
+
+        var b = Math.cos(lat1) * Math.sin(lat2);
+        var c = Math.sin(lat1) * Math.cos(lat2) * Math.cos(d_lng);
+        var d = Math.pow(b - c, 2.0);
+
+        var e = Math.sqrt(a + d);
+
+        // Denominator
+        var f = Math.sin(lat1) * Math.sin(lat2);
+        var g = Math.cos(lat1) * Math.cos(lat2) * Math.cos(d_lng);
+
+        var h = f + g;
+
+        var d_sigma = Math.atan2(e, h);
+
+        return (earth_radius_km * d_sigma);
+    }
+    
+    window.haversine_distance = haversine_distance;
+    window.vincenty_distance = vincenty_distance;
+    
+}());
 
 
 
@@ -251,6 +272,36 @@ function getCompassDirection(degrees) {
 //console.log('Compass direction:',getCompassDirection(140));      // SE
 
 
+//given "0-360" returns the nearest cardinal direction "N/NE/E/SE/S/SW/W/NW/N" 
+function getDirectionByAngle(angle) {
+    //easy to customize by changing the number of directions you have 
+    var directions = 8;
+
+    var degree = 360 / directions;
+    angle = angle + degree/2;
+
+    if (angle >= 0 * degree && angle < 1 * degree)
+        return "N";
+    if (angle >= 1 * degree && angle < 2 * degree)
+        return "NE";
+    if (angle >= 2 * degree && angle < 3 * degree)
+        return "E";
+    if (angle >= 3 * degree && angle < 4 * degree)
+        return "SE";
+    if (angle >= 4 * degree && angle < 5 * degree)
+        return "S";
+    if (angle >= 5 * degree && angle < 6 * degree)
+        return "SW";
+    if (angle >= 6 * degree && angle < 7 * degree)
+        return "W";
+    if (angle >= 7 * degree && angle < 8 * degree)
+        return "NW";
+    //Should never happen: 
+    return "N";
+}
+
+
+
 
 //var query = window.matchMedia("(orientation:landscape)");
 //console.log("Device held " + (query.matches ? "horizontally" : "vertically"));
@@ -319,3 +370,13 @@ function getCompassDirection(degrees) {
 //        });*/
 //    });
 //}
+
+
+function midPoint (lat1, lon1, lat2, lon2) {
+    var Bx = Math.cos(lat2) * Math.cos(lon2-lon1); 
+    var By = Math.cos(lat2) * Math.sin(lon2-lon1); 
+    var lat3 = Math.atan2(Math.sin(lat1)+Math.sin(lat2), 
+        Math.sqrt((Math.cos(lat1)+Bx)*(Math.cos(lat1)+Bx) + By*By)); 
+    var lon3 = lon1.toRad() + Math.atan2(By, Math.cos(lat1) + Bx); 
+}
+ 

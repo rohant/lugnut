@@ -239,6 +239,28 @@ Geohash.neighbours = function(geohash) {
     };
 };
 
+/**
+ * Returns precision for max error
+ * 
+ * @param {integer} distance
+ * @param {integer} def
+ * @return {Number}
+ */
+Geohash.precision = function(distance, def) {
+    var precision = def || 8;
+
+    if (distance < 19) {
+        precision = 8;
+    } else if (19 < distance < 76) {
+        precision = 7;
+    } else if (76 < distance < 610) {
+        precision = 6;
+    } else if (610 < distance < 2400) {
+        precision = 5;
+    }
+    return precision;
+};
+
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 if (typeof module != 'undefined' && module.exports) module.exports = Geohash; // CommonJS, node.js
