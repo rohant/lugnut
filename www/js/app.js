@@ -91,6 +91,16 @@ var app = angular.module('app', [
       }
     })
 
+    .state('app.search-advanced', {
+      url: '/route/search-advanced',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/route-search-advanced.html',
+          controller: 'RouteAdvancedSearchCtrl'
+        }
+      }
+    })
+
     .state('app.view', {
       url: '/route/view/:id',
       views: {

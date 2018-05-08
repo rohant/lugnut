@@ -1,3 +1,16 @@
+//window.addEventListener("deviceorientation", throttle(function (event) {
+//
+//    var alpha = event.webkitCompassHeading 
+//        ? event.webkitCompassHeading 
+//        : event.alpha;
+//
+//    if (event.absolute) {
+//        console.log('Compass direction:', getCompassDirection(Math.floor(alpha)), Math.floor(alpha));
+//    }
+//    
+//}, 1000));
+
+
 angular.module('app.controllers')
 
 .controller('MapCtrl', function ($scope, $rootScope, $log, $http, $state, $ionicLoading, Marker, Route, Geolocation, Config) {
@@ -5,6 +18,7 @@ angular.module('app.controllers')
     var watch, marker;
     var waypoints = [];
     var tracewaypoints;
+    var predictPoints = [];
 
     // todo:
     Geolocation.simulationEnabled(true);
@@ -20,6 +34,28 @@ angular.module('app.controllers')
     $scope.init = function () {
         $scope.map.setZoom(15);
         $scope.showReloadBtn = false;
+
+        //if (window.DeviceOrientationEvent) {
+        //    window.addEventListener("deviceorientation", throttle(function (event) {
+        //
+        //        var alpha = event.webkitCompassHeading 
+        //            ? event.webkitCompassHeading 
+        //            : event.alpha;
+        //
+        //        if (event.absolute) {
+        //            var angle = 360 - Math.floor(alpha);
+        //            console.log("deviceorientation", angle);
+        //
+        //            if ($scope.map) {
+        //                //$scope.map.setCompassEnabled(true);
+        //                var heading = $scope.map.getHeading() || 0;
+        //                $scope.map.setHeading(heading + angle);
+        //            }
+        //        }
+        //
+        //    }, 1000));
+        //}
+
 
         $scope.loading = $ionicLoading.show({
             content: 'Getting current location...',
@@ -111,6 +147,7 @@ angular.module('app.controllers')
             timeout: 30000,
         }).then(null, onError, onSuccess);
 
+
         function onSuccess (position) {
             $log.debug('Got position:', position);
 
@@ -118,24 +155,51 @@ angular.module('app.controllers')
                 position.coords.latitude,
                 position.coords.longitude
             );
-
-    //            if (!prevPosition || (
-    //                Math.abs(prevPosition.coords.latitude - position.coords.latitude) > 0.000001
-    //            ) || (
-    //                Math.abs(prevPosition.coords.longitude - position.coords.longitude) > 0.000001
-    //            ))
-    //            {
-    //                prevPosition = new google.maps.LatLng(
-    //                    position.coords.latitude,
-    //                    position.coords.longitude
-    //                );
-
-    //                $scope.points.push({
-    //                    latitude: prevPosition.coords.latitude,
-    //                    longitude: prevPosition.coords.longitude
-    //                });
-    //            }
-
+    
+            /**
+             * Prediction the next position by Geohash algorithm
+             * Measurement error: ~ 88m
+             */
+            //if (waypoints.length) 
+            //{
+            //    var lastPosition = waypoints[waypoints.length-1];
+            //
+            //    if (lastPosition) {
+            //
+            //        var spherical = google.maps.geometry.spherical;
+            //
+            //        //var averageDistance = tracewaypoints.inKm() / waypoints.length;
+            //        var averageDistance = spherical.computeLength(tracewaypoints.getPath()) / waypoints.length;
+            //        var precision = Geohash.precision(averageDistance, 7);
+            //
+            //        $log.info('Average distance: ' + averageDistance);
+            //        $log.info('Precision: ' + precision);
+            //
+            //        var heading = spherical.computeHeading(lastPosition, myLatlng);
+            //        heading = Math.abs(360 - Math.abs(heading));
+            //
+            //        var direction = getDirectionByAngle(heading);
+            //        var geohash = Geohash.encode(myLatlng.lat(), myLatlng.lng(), precision);
+            //
+            //        try {
+            //            var predictHash = Geohash.adjacent(geohash, direction.toLowerCase());
+            //            var predictPoint = Geohash.decode(predictHash);
+            //
+            //            $log.info('Direction: ' + direction);
+            //            $log.info('Predict point: ', predictPoint);
+            //
+            //            var ppM = Marker.createMarker('Predicted Point!');
+            //            ppM.setIcon('./img/markers/yellow_MarkerB.png');
+            //            ppM.setPosition(new google.maps.LatLng(
+            //                predictPoint.lat, predictPoint.lon
+            //            ));
+            //
+            //            predictPoints.push(ppM);
+            //
+            //        } catch (e) {}
+            //    }
+            //}
+            
             $scope.route.addPoint({
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
@@ -175,16 +239,22 @@ angular.module('app.controllers')
         //    $state.go('app.view', {id: routeId})
         //}
         
+        
+        for (var i in predictPoints) {
+            predictPoints[i].setMap(null);
+        }
+        predictPoints = [];
+        
+        
         if ($scope.route.points.length > 3)
             $state.go('app.create')
     };
 
     $scope.$on("$destroy", function () {
         console.log('$destroy')
-        if (watch) {
-            //watch.clearWatch(watch);
-            Geolocation.clearWatch(watch);
-        }
+        
+        Geolocation.clearWatch(watch);
+        tracewaypoints.setPath([]);
     });
     
     $scope.$on("$ionicView.enter", function (event) {

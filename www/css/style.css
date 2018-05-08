@@ -129,3 +129,11 @@ label.item.valid-lr {
     display: block;
     z-index: 1000; 
 }
+
+
+.adv-search {
+    position: absolute;
+    bottom:80px;
+    height: 50px;
+    width: 100%;
+}
