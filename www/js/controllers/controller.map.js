@@ -63,12 +63,21 @@ angular.module('app.controllers')
         });
 
         if (!tracewaypoints) {
+            
+            var closedArrowIcon = {
+                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+            };
+            
             tracewaypoints = new google.maps.Polyline({
                 map: $scope.map,
                 path: waypoints,
                 strokeColor: "blue",
                 strokeOpacity: 1.0,
-                strokeWeight: 2
+                strokeWeight: 2,
+                icons: [{
+                    icon: closedArrowIcon,
+                    offset: '100%'
+                }]
             });
         }
 

@@ -54,11 +54,20 @@ angular.module('app.controllers')
                             bounds.extend(pointLatLng);
                         }
 
+                        var closedArrowIcon = {
+                            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+                        };
+
+
                         var tracewaypoints = new google.maps.Polyline({
                             map: $scope.map,
                             strokeColor: "blue",
                             strokeOpacity: 1.0,
-                            strokeWeight: 2
+                            strokeWeight: 2,
+                            icons: [{
+                                icon: closedArrowIcon,
+                                offset: '100%'
+                            }]
                         });
 
                         path = path.concat(tmp);
