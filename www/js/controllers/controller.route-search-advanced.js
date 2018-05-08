@@ -5,6 +5,11 @@ angular.module('app.controllers')
     // todo:
     //Geolocation.simulationEnabled(true);
     
+    var closedArrowIcon = {
+        //path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+        //scale: 2.5,
+    };
+    
     var tracewaypoints = new google.maps.Polyline({
         //map: $scope.map,
         path: [],
@@ -12,7 +17,11 @@ angular.module('app.controllers')
         strokeOpacity: 1.0,
         //strokeOpacity: 0.5,
         strokeWeight: 5,
-        zIndex: 1000
+        zIndex: 1000,
+        icons: [{
+            icon: closedArrowIcon,
+            offset: '100%'
+        }]
     });
     
     /**
@@ -317,7 +326,11 @@ angular.module('app.controllers')
                 //strokeOpacity: 1.0,
                 strokeOpacity: 0.5,
                 strokeWeight: 5,
-                zIndex: i
+                zIndex: i,
+                icons: [{
+                    icon: closedArrowIcon,
+                    offset: '100%'
+                }]
             });
             
             polilines.push(poliline);
