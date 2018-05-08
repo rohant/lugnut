@@ -8,8 +8,19 @@ angular.module('app.controllers')
         Marker.init(map);
         
         var bounds  = new google.maps.LatLngBounds();
-        var polylines = [];
         var path = [];
+        
+        
+        $scope.$A = Marker.createMarker('Point A');
+        $scope.$B = Marker.createMarker('Point B');
+        $scope.$A.setAnimation(google.maps.Animation.DROP);
+        $scope.$B.setAnimation(google.maps.Animation.DROP);
+        $scope.$A.setZIndex(2);
+        $scope.$B.setZIndex(1);
+        $scope.$A.setIcon('./img/markers/blue_MarkerA.png');
+        $scope.$B.setIcon('./img/markers/red_MarkerB.png');
+        
+        
         
         $scope.loading = $ionicLoading.show({
             template: 'Logging in...'
@@ -79,9 +90,12 @@ angular.module('app.controllers')
                         //$scope.map.setCenter(tmp[tmp.length-1]);
                         //$scope.map.setCenter(tmp[Math.ceil(tmp.length/2)]);
 
-                        Marker
-                        .createMarker('You are here!', tmp[tmp.length-1])
-                        .setPosition(tmp[tmp.length-1]);
+                        //Marker
+                        //.createMarker('You are here!', tmp[tmp.length-1])
+                        //.setPosition(tmp[tmp.length-1]);
+                
+                        $scope.$A.setPosition(tmp[0]);
+                        $scope.$B.setPosition(tmp[tmp.length-1]);
 
                     }, function(response) {
                         $log.error('snapToRoads:error', response)
