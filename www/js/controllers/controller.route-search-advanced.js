@@ -256,7 +256,7 @@ angular.module('app.controllers')
     //    // set "to back" function
     //    AuthService.toBack = function(){
     //        AuthService.toBack = null;
-    //        $state.go('app.search-advanced');
+    //        $state.go('app.route-search-advanced');
     //    }
     //
     //    $state.go('app.signin');

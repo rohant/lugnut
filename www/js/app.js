@@ -81,7 +81,7 @@ var app = angular.module('app', [
       }
     })
 
-    .state('app.search', {
+    .state('app.route-search', {
       url: '/route/search',
       views: {
         'menuContent': {
@@ -91,7 +91,7 @@ var app = angular.module('app', [
       }
     })
 
-    .state('app.search-advanced', {
+    .state('app.route-search-advanced', {
       url: '/route/search-advanced',
       views: {
         'menuContent': {

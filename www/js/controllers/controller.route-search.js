@@ -7,7 +7,7 @@ angular.module('app.controllers')
         // set "to back" function
         AuthService.toBack = function(){
             AuthService.toBack = null;
-            $state.go('app.search');
+            $state.go('app.route-search');
         }
         
         $state.go('app.signin');
