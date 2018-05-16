@@ -236,7 +236,7 @@ angular.module('app.controllers')
         //var routeId = $scope.route.save();
 
         //if (routeId !== -1) {
-        //    $state.go('app.view', {id: routeId})
+        //    $state.go('app.route-view', {id: routeId})
         //}
         
         

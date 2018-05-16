@@ -11,7 +11,7 @@ angular.module('app.controllers')
             var routeID = model.id;
             
             if (routeID !== -1) {
-                $state.go('app.view', {id: routeID})
+                $state.go('app.route-view', {id: routeID})
             }
         });
     };
