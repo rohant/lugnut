@@ -36,7 +36,7 @@ angular.module('app.controllers')
                 if (typeof AuthService.toBack === 'function') {
                     AuthService.toBack();
                 } else {
-                    $state.go('app.map');
+                    $state.go('app.route-record');
                 }
             }
             
@@ -66,7 +66,7 @@ angular.module('app.controllers')
             if (typeof AuthService.toBack === 'function') {
                 AuthService.toBack();
             } else {
-                $state.go('app.map');
+                $state.go('app.route-record');
             }
             
         }).finally(function() {

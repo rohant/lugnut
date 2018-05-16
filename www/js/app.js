@@ -61,17 +61,17 @@ var app = angular.module('app', [
       }
     })
 
-    .state('app.map', {
-      url: '/map',
+    .state('app.route-record', {
+      url: '/route/record',
       views: {
         'menuContent': {
-          templateUrl: 'templates/map.html',
-          controller: 'MapCtrl'
+          templateUrl: 'templates/route-record.html',
+          controller: 'RouteRecordCtrl'
         }
       }
     })
 
-    .state('app.list', {
+    .state('app.route-list', {
       url: '/route/list',
       views: {
         'menuContent': {
@@ -122,5 +122,5 @@ var app = angular.module('app', [
     });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/map');
+  $urlRouterProvider.otherwise('/app/route/record');
 });

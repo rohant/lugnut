@@ -13,7 +13,7 @@
 
 angular.module('app.controllers')
 
-.controller('MapCtrl', function ($scope, $rootScope, $log, $http, $state, $ionicLoading, Marker, Route, Geolocation, Config) {
+.controller('RouteRecordCtrl', function ($scope, $rootScope, $log, $http, $state, $ionicLoading, Marker, Route, Geolocation, Config) {
 
     var watch, marker;
     var waypoints = [];
