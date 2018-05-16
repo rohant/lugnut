@@ -247,7 +247,7 @@ angular.module('app.controllers')
         
         
         if ($scope.route.points.length > 3)
-            $state.go('app.create')
+            $state.go('app.route-create')
     };
 
     $scope.$on("$destroy", function () {

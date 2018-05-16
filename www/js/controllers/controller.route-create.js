@@ -24,7 +24,7 @@ angular.module('app.controllers')
         // set "to back" function
         AuthService.toBack = function(){
             AuthService.toBack = null;
-            $state.go('app.create');
+            $state.go('app.route-create');
         }
         
         $state.go('app.signin');

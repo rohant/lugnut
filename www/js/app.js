@@ -111,7 +111,7 @@ var app = angular.module('app', [
       }
     })
 
-    .state('app.create', {
+    .state('app.route-create', {
       url: '/route/create',
       views: {
         'menuContent': {
