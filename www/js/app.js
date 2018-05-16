@@ -101,7 +101,7 @@ var app = angular.module('app', [
       }
     })
 
-    .state('app.view', {
+    .state('app.route-view', {
       url: '/route/view/:id',
       views: {
         'menuContent': {
