@@ -23,7 +23,11 @@
             </div>
             <div class="row">
                 <div class="col">Author</div>
-                <div class="col">{{model.client.name}}</div>
+                <div class="col">{{model.user.name}}</div>
+            </div>
+            
+            <div>
+                <img ng-src="{{model.getImageUrl()}}" style="width:100%">
             </div>
             
             <a class="button button-block button-positive" href="#/app/route/view/{{model.id}}">
