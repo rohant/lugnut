@@ -1,0 +1,35 @@
+<ion-view title="Detail" hide-back-button="true">
+    <ion-nav-buttons side="left">
+      <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <ion-content class="has-header">
+        <ion-refresher on-refresh="reload()"></ion-refresher>
+        
+        <div class="padding" ng-class="!model ? 'loader' : ''">
+            
+            <h1>{{model.title}}</h1>
+            
+            <div class="row">
+                <div class="col">City</div>
+                <div class="col">{{model.city}}</div>
+            </div>
+            <div class="row">
+                <div class="col">Address</div>
+                <div class="col">{{model.address}}</div>
+            </div>
+            <div class="row">
+                <div class="col">Description</div>
+                <div class="col">{{model.description}}</div>
+            </div>
+            <div class="row">
+                <div class="col">Author</div>
+                <div class="col">{{model.client.name}}</div>
+            </div>
+            
+            <a class="button button-block button-positive" href="#/app/route/view/{{model.id}}">
+                Go!
+            </a>
+        </div>
+
+    </ion-content>
+</ion-view>

@@ -101,6 +101,16 @@ var app = angular.module('app', [
       }
     })
 
+    .state('app.route-detail', {
+      url: '/route/detail/:id',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/route-detail.html',
+          controller: 'RouteDetailCtrl'
+        }
+      }
+    })
+
     .state('app.route-view', {
       url: '/route/view/:id',
       views: {
