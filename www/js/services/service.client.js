@@ -144,7 +144,9 @@ angular.module('app.services')
 		},
 		
 		findOne: function (id) {
-			// do something
+            return ApiService.get('client/view?id=' + id).then(function (data) {
+                return new Client(data.model);
+            });
 		},
 		
 		createEmpty: function (data) {
