@@ -1,6 +1,6 @@
 angular.module('app.services')
 
-.factory('Route', function ($injector, $log, $http, $q, ApiService, Client, Config) {
+.factory('Route', function ($injector, $log, $q, ApiService) {
 
     var RouteModel = function(data){
         this.id = null;
@@ -146,13 +146,32 @@ angular.module('app.services')
     };
 
     /**
-     * Returns the Client model (at promise)
+     * Returns the url of static image
      * 
-     * @return {unresolved}
+     * @return {string}
      */
-    //RouteModel.prototype.getUser = function () {
-    //    return Client.findOne(this.user_id);
-    //};
+    RouteModel.prototype.getImageUrl = function (options) {
+        
+        if (!this.imageUrl) {
+            
+            var path = [], gsm = $injector.get('GoogleStaticMap');
+
+            for (var i in this.points) {
+                path.push([this.points[i].lat, this.points[i].lng].join(','));
+            }
+            
+            if (!options) options = {};
+            options['path'] = path;
+            
+            options['markers'] = [
+                ['color:blue','label:A', path[path.length-1]].join('|'),
+                ['color:red','label:B', path[0]].join('|'),
+            ];
+            
+            this.imageUrl = gsm.makeImg(options);
+        }
+        return this.imageUrl;
+    };
 
     
     /**
@@ -170,6 +189,7 @@ angular.module('app.services')
              * @return {unresolved}
              */
             user: function() {
+                var Client = $injector.get('Client');              
                 return Client.findOne(this.user_id);
             }
         };
