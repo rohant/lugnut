@@ -3,7 +3,7 @@
       <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
     <ion-content class="has-header">
-        <ion-refresher on-refresh="reload()"></ion-refresher>
+        <!--<ion-refresher on-refresh="reload()"></ion-refresher>-->
         
         <div class="padding" ng-class="!model ? 'loader' : ''">
             
@@ -22,17 +22,42 @@
                 <div class="col">{{model.description}}</div>
             </div>
             <div class="row">
-                <div class="col">Author</div>
+                <div class="col">Created by</div>
                 <div class="col">{{model.user.name}}</div>
             </div>
-            
-            <div>
-                <img ng-src="{{model.getImageUrl()}}" style="width:100%">
+            <div class="row">
+                <div class="col"></div>
+                <div class="col">
+                    <ul>
+                        <li ng-class="{'highlight': model.user.rating == 1}">★</li>
+                        <li ng-class="{'highlight': model.user.rating == 2}">★</li>
+                        <li ng-class="{'highlight': model.user.rating == 3}">★</li>
+                        <li ng-class="{'highlight': model.user.rating == 4}">★</li>
+                        <li ng-class="{'highlight': model.user.rating == 5}">★</li>
+                    </ul>
+                </div>
             </div>
-            
-            <a class="button button-block button-positive" href="#/app/route/view/{{model.id}}">
-                Go!
-            </a>
+            <div style="position:absolute;bottom:0;left:0;padding:0 10px;">
+                <div style="position:relative">
+                    <img ng-src="{{model.getImageUrl({size:'500x480'})}}" style="width:100%">
+
+                    <div style="position:absolute;bottom:0;left:0;padding:0 10px;width:100%;background:rgba(255,255,255,.5)">
+
+                        <div class="row">
+                            <div class="col">
+                                <a class="button button-block button-positive" href="#/app/route/view/{{model.id}}">
+                                    Go!
+                                </a>
+                            </div>
+                            <div class="col">
+                                <button class="button button-block button-calm" ng-click="share()">
+                                    Share It!
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </ion-content>

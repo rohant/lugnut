@@ -161,9 +161,11 @@ angular.module('app.services')
             }
             
             if (!options) options = {};
+            
             options['path'] = path;
             
-            options['size'] = '500x300';
+            if (!options['size'])
+                options['size'] = '500x300';
             
             options['markers'] = [
                 ['color:blue','label:A', path[0]].join('|'),
