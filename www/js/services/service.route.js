@@ -166,8 +166,8 @@ angular.module('app.services')
             options['size'] = '500x300';
             
             options['markers'] = [
-                ['color:blue','label:A', path[path.length-1]].join('|'),
-                ['color:red','label:B', path[0]].join('|'),
+                ['color:blue','label:A', path[0]].join('|'),
+                ['color:red','label:B', path[path.length-1]].join('|'),
             ];
             
             this.imageUrl = gsm.makeImg(options);
