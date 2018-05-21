@@ -33,7 +33,7 @@ angular.module('app.controllers')
         
         $scope.$A.setAnimation(google.maps.Animation.DROP);
         $scope.$B.setAnimation(google.maps.Animation.DROP);
-        $scope.$C.setAnimation(google.maps.Animation.DROP);
+        //$scope.$C.setAnimation(google.maps.Animation.DROP);
         
         $scope.$A.setZIndex(2);
         $scope.$B.setZIndex(1);
