@@ -27,8 +27,10 @@ angular.module('app.controllers')
             var viewUrl = 'http://lugnut.rmasyahin-wd.office.webdevs.us/route/' + $scope.model.id;
             
             var options = {
-                message: 'This is my message',
-                subject: 'Subject string',
+                //message: 'This is my message',
+                //subject: 'Subject string',
+                message: 'Detour: ' + $scope.model.title,
+                subject: 'Share your detoure',
                 files: ['', ''], // an array of filenames either locally or remotely
                 url: viewUrl,
                 //chooserTitle: 'Pick an app', // Android only, you can override the default share sheet title,
