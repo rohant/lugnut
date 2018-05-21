@@ -53,7 +53,7 @@ angular.module('app.controllers')
                 console.log("Sharing failed with message: " + msg);
             };
             
-            socShar.shareWithOptions(options, onSuccess, onError);
+            socShar.shareWithOptions(options).then(onSuccess, onError);
             
         } catch (e) {
             // ignore
