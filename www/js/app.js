@@ -7,7 +7,7 @@ var app = angular.module('app', [
     'app.directives'
 ])
 
-.run(function($rootScope, $ionicPlatform) {
+.run(function($rootScope, $ionicPlatform, $state) {
   $ionicPlatform.ready(function() {
 
     if(window.StatusBar) {
@@ -17,7 +17,20 @@ var app = angular.module('app', [
     ['isArray', 'isDate', 'isDefined', 'isFunction', 'isNumber', 'isObject', 'isString', 'isUndefined'].forEach(function(name) {
         $rootScope[name] = angular[name];
     });
-
+    
+    // Handle the deep links
+    // 
+    // adb shell am start -W -a android.intent.action.VIEW 
+    // -d "http://lugnut.rmasyahin-wd.office.webdevs.us/route/20" com.wdevs.lugnut
+    // 
+    if (typeof universalLinks != 'undefined') {
+        universalLinks.subscribe('openRouteDetailedPage', function (eventData) {
+            var routeId = +eventData.url.replace(/.*\//,'');
+            console.log('Did launch application from the link: ' + eventData.url);
+            $state.go('app.route-detail', {id: routeId});
+        });
+    }
+    
   });
 })
 
@@ -97,6 +110,16 @@ var app = angular.module('app', [
         'menuContent': {
           templateUrl: 'templates/route-search-advanced.html',
           controller: 'RouteAdvancedSearchCtrl'
+        }
+      }
+    })
+
+    .state('app.route-detail', {
+      url: '/route/detail/:id',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/route-detail.html',
+          controller: 'RouteDetailCtrl'
         }
       }
     })

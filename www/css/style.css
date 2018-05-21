@@ -137,3 +137,7 @@ label.item.valid-lr {
     height: 50px;
     width: 100%;
 }
+
+
+li{display:inline-block;color: #F0F0F0;text-shadow: 0 0 1px #666666;font-size:18px;}
+.highlight, .selected {color:#F4B30A;text-shadow: 0 0 1px #F48F0A;}

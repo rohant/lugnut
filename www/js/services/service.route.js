@@ -1,6 +1,6 @@
 angular.module('app.services')
 
-.factory('Route', function ($injector, $log, $http, $q, ApiService, Config) {
+.factory('Route', function ($injector, $log, $q, ApiService) {
 
     var RouteModel = function(data){
         this.id = null;
@@ -144,6 +144,106 @@ angular.module('app.services')
         }
         return tmp;
     };
+
+    /**
+     * Returns the url of static image
+     * 
+     * @return {string}
+     */
+    RouteModel.prototype.getImageUrl = function (options) {
+        
+        if (!this.imageUrl) {
+            
+            var path = [], gsm = $injector.get('GoogleStaticMap');
+
+            for (var i in this.points) {
+                path.push([this.points[i].lat, this.points[i].lng].join(','));
+            }
+            
+            if (!options) options = {};
+            
+            options['path'] = path;
+            
+            if (!options['size'])
+                options['size'] = '500x300';
+            
+            options['markers'] = [
+                ['color:blue','label:A', path[0]].join('|'),
+                ['color:red','label:B', path[path.length-1]].join('|'),
+            ];
+            
+            this.imageUrl = gsm.makeImg(options);
+        }
+        return this.imageUrl;
+    };
+
+    
+    /**
+     * 
+     * @return {Object}
+     */
+    RouteModel.prototype.relations = function () {
+        return {
+            
+            // HAS_ONE relations
+            
+            /**
+             * Returns the Client model 
+             * 
+             * @return {unresolved}
+             */
+            user: function() {
+                var Client = $injector.get('Client');              
+                return Client.findOne(this.user_id);
+            }
+        };
+    };
+    
+    /**
+     * Greedy data loading
+     * 
+     * @param {array|string} relations Relations names (separated ","). If "*" then will be loaded all related data.
+     * @return {self}
+     */
+    RouteModel.prototype.with = function (relations) 
+    {
+        var self = this;
+        
+        if (angular.isFunction(this.relations))
+        {
+            self._related = {};
+            
+            var promises = [];
+            var _relations = this.relations();
+            
+            if (angular.isString(relations)) {
+                if (relations != '*') {
+                    relations = relations.split(',');
+                } else {
+                    relations = Object.keys(_relations);
+                }
+            }
+            
+            for (var i in relations) {
+                var rel = relations[i];
+                
+                if (!angular.isFunction(_relations[rel])) {
+                    throw Error('Relation ' + _relations[rel] + ' is wrong!');
+                } else {
+                    promises.push(_relations[rel].apply(self).then(function(data){
+                        //self._related[rel] = data;
+                        self[rel] = data;
+                    }));
+                }
+            }
+            
+            $q.all(promises).then(function(){
+                console.log('related loaded!');
+            });
+        }
+        return this;
+    };
+
 
     /*var storage = {
         _i: 0,
