@@ -55,7 +55,8 @@ angular.module('app.controllers')
                 position.coords.longitude
             );
 
-            $scope.map.setCenter(myLatlng);
+            //$scope.map.setCenter(myLatlng);
+            $scope.map.panTo(myLatlng);
             
             $scope.$A.pristine = false;
             $scope.$A.setPosition(myLatlng);

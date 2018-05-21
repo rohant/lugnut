@@ -91,7 +91,8 @@ angular.module('app.controllers')
                 position.coords.longitude
             );
 
-            $scope.map.setCenter(myLatlng);
+            //$scope.map.setCenter(myLatlng);
+            $scope.map.panTo(myLatlng);
             marker = Marker.current(position);
 
         }, function (error) {
@@ -208,7 +209,8 @@ angular.module('app.controllers')
             waypoints.push(myLatlng)
             tracewaypoints.setPath(waypoints);
 
-            $scope.map.setCenter(myLatlng);
+            //$scope.map.setCenter(myLatlng);
+            $scope.map.panTo(myLatlng);
             Marker.current(position);
         }
 
