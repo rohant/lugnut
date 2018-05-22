@@ -16,13 +16,20 @@
             </div>
 
             <div class="list padding" ng-class="processing ? 'loader' : ''">
-                <div class="item item-button-right" ng-repeat="route in routes track by $index">
+                <div class="item item-button-right" ng-repeat="route in items track by $index">
                     <a class="button-link" href="#/app/route/detail/{{route.id}}">
                         {{route.title}}
                     </a>
                 </div>
             </div>
         </form>
+        
+        <ion-infinite-scroll 
+            ng-if="canWeLoadMore" 
+            immediate-check="false" 
+            on-infinite="loadMore()" 
+            distance="1%">
+        </ion-infinite-scroll>
 
     </ion-content>
 </ion-view>
