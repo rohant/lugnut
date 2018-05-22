@@ -3,7 +3,7 @@ angular.module('app.controllers')
 .controller('RouteSearchCtrl', function ($scope, $state, Route, AuthService) {
 
     $scope.items = [];
-    $scope.itemsPerPage = 5;
+    $scope.itemsPerPage = 10;
     $scope.currentPage = 0;
 
     $scope.criteria = {
