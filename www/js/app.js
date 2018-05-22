@@ -18,6 +18,7 @@ var app = angular.module('app', [
         $rootScope[name] = angular[name];
     });
     
+    // 
     // Handle the deep links
     // 
     // adb shell am start -W -a android.intent.action.VIEW 
@@ -42,6 +43,16 @@ var app = angular.module('app', [
       abstract: true,
       templateUrl: 'templates/menu.html',
       controller: 'AppCtrl'
+    })
+
+    .state('app.dashboard', {
+      url: '/dashboard',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/dashboard.html',
+          controller: 'DashboardCtrl'
+        }
+      }
     })
 
     .state('app.account', {
