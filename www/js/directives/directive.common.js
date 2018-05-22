@@ -190,4 +190,27 @@ angular.module('app.directives', [])
         // do something
     }
   }
-});
+})
+
+
+.directive('rating', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            score: '<'
+        },
+        template: [
+            '<ul>',
+                '<li ng-class="{\'highlight\': score == 1}">★</li>',
+                '<li ng-class="{\'highlight\': score == 2}">★</li>',
+                '<li ng-class="{\'highlight\': score == 3}">★</li>',
+                '<li ng-class="{\'highlight\': score == 4}">★</li>',
+                '<li ng-class="{\'highlight\': score == 5}">★</li>',
+            '</ul>',
+        ].join(' '),
+        
+        link: function ($scope, $element, $attr) {
+
+        }
+    }
+})

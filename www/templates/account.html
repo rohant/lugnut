@@ -11,6 +11,9 @@
                     <p>Email: {{identity.email}}</p>
                     <p ng-if="identity.phone">Phone: {{identity.phone}}</p>
                     <p>Routes: {{+identity.routesCount}}</p>
+                    <p>Status: "{{identity.status}}"</p>
+                    
+                    <rating score="identity.rating"></rating>
                 </div>
             </div>
 
