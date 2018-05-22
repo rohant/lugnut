@@ -3,7 +3,7 @@ angular.module('app.controllers')
 .controller('AccountCtrl', function ($scope, $state, AuthService, GoogleOAuthService) {
 	$scope.auth = AuthService;
     
-    if (!AuthService.isLoggedIn()) {
+    /*if (!AuthService.isLoggedIn()) {
         
         // set "to back" function
         AuthService.toBack = function(){
@@ -12,7 +12,7 @@ angular.module('app.controllers')
         }
         
         $state.go('app.signin');
-    }
+    }*/
     
 	$scope.logout = function () {
         return GoogleOAuthService.logout().then(function () {
