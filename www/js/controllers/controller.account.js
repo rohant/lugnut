@@ -4,8 +4,8 @@ angular.module('app.controllers')
 	$scope.auth = AuthService;
     
 	$scope.logout = function () {
-        return GoogleOAuthService.logout().then(function () {
-            return AuthService.logout().then(function (response) {
+        return GoogleOAuthService.logout().finally(function () {
+            return AuthService.logout().finally(function () {
                 $state.go('app.signin');
             });
         });
