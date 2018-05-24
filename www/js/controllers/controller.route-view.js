@@ -45,7 +45,7 @@ angular.module('app.controllers')
         
         
         $scope.loading = $ionicLoading.show({
-            template: 'Logging in...'
+            template: 'Wait...'
         });
 
         Route.findOne($state.params.id).then(function (model) {
