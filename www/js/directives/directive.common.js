@@ -70,73 +70,95 @@ angular.module('app.directives', [])
   };
 })
 
-///**
-// * 
-// * <load-script id="'script-1'" src="'script-url.js'" on-loaded="callback($el)"></load-script>
-// */
-//.directive('loadScript', function() {
-//  return {
-//    restrict: 'E',
-//    //transclude: true,
-//    //replace: true,
-//    scope: {
-//        id: '=',
-//        src: '=',
-//        onLoaded: '&'
-//    },
-//    //template: '&nbsp;<ng-transclude></ng-transclude>',
-//    link: function($scope, $el, attrs) {
-//        
-//        if (document.getElementById($scope.id)) {
-//            $scope.onLoaded({$el:$el});
-//        } else {
-//            var fjs = document.getElementsByTagName('script')[0];
-//            var js = document.createElement('script'); 
-//            js.id = $scope.id;
-//            js.src = $scope.src;
-//            js.onload = function(){
-//                $scope.onLoaded({$el:$el});
-//            };
-//            fjs.parentNode.insertBefore(js, fjs);
-//        }
-//    }
-//  }
-//})
-//
-//
-//.directive('loadGoogleMap', function(Config) {
-//  return {
-//    restrict: 'E',
-//    transclude: true,
-//    replace: false,
-//    scope: {
-//        onLoaded: '&'
-//    },
-//    template: [
-//        '<load-script id="id" src="src" on-loaded="callback($el)"></load-script>',
-//        //'<ng-transclude></ng-transclude>',
-//    ].join(' '),
-//    controller: function($scope, $element, $attrs, $transclude/*, other..*/){
-//        $scope.id = 'google-map';
-//        
-//        // to get apiKey from server..
-//        //var apiKey = 'AIzaSyDBbNcRgAaE9L4Q6IuAFchPqT1BA61kHvw';
-//        var apiKey = Config.API_KEY;
-//        $scope.src = 'https://maps.googleapis.com/maps/api/js?key=' + apiKey;
-//        
-//        $scope.callback = function(){
-//            console.log('Google Map is loaded!');
-//            $element.append($transclude());
-//            $scope.onLoaded({$el:$element});
-//        };
-//        
-//    },
-//    link: function($scope, $el, attrs, ctrl, transclude) {
-//        // do something
-//    }
-//  }
-//});
+/**
+ * 
+ * <load-script id="'script-1'" src="'script-url.js'" on-loaded="callback($el)"></load-script>
+ */
+.directive('loadScript', function() {
+  return {
+    restrict: 'E',
+    //transclude: true,
+    //replace: true,
+    scope: {
+        id: '=',
+        src: '=',
+        onLoaded: '&',
+        onError: '&'
+    },
+    //template: '&nbsp;<ng-transclude></ng-transclude>',
+    link: function($scope, $el, attrs) {
+        
+        function initialize() {
+            if (document.getElementById($scope.id)) {
+                $scope.onLoaded({$el:$el});
+            } else {
+                var fjs = document.getElementsByTagName('script')[0];
+                var js = document.createElement('script'); 
+                js.id = $scope.id;
+                js.src = $scope.src;
+                js.onload = function(){
+                    $scope.onLoaded({$el:$el});
+                };
+                js.onerror = function(){
+                    $scope.onError({$el:$el});
+                };
+                fjs.parentNode.insertBefore(js, fjs);
+            }
+        }
+        
+        if (document.readyState === "complete") {
+            initialize();
+        }
+    }
+  }
+})
 
+
+.directive('loadGoogleMap', function(Config, $cordovaNetwork) {
+  return {
+    restrict: 'E',
+    transclude: true,
+    replace: false,
+    scope: {
+        onLoaded: '&',
+    },
+    template: [
+        '<load-script id="id" src="src" on-loaded="onLoadedCallback()" on-error="onErrorCallback()"></load-script>',
+        //'<ng-transclude></ng-transclude>',
+    ].join(' '),
+    controller: function($scope, $element, $attrs, $transclude/*, other..*/){
+        $scope.id = 'google-map';
+        
+        // to get apiKey from server..
+        //var apiKey = 'AIzaSyDBbNcRgAaE9L4Q6IuAFchPqT1BA61kHvw';
+        var apiKey = Config.API_KEY;
+        $scope.src = 'https://maps.googleapis.com/maps/api/js?libraries=geometry&key=' + apiKey;
+        
+        $scope.onErrorCallback = function(){
+            console.log('Google Map is fail!');
+            
+            //var timer = setInterval(function(){
+            //    if (typeof Connection != 'undefined') {
+            //        if ($cordovaNetwork.isOnline()) {
+            //            $.getJSON($scope.src, function(data) {
+            //                clearInterval(timer);
+            //            });
+            //        }
+            //    }
+            //},1000);
+        }
+        
+        $scope.onLoadedCallback = function(){
+            console.log('Google Map is loaded!');
+            $element.append($transclude());
+            $scope.onLoaded({$el:$element});
+        };
+    },
+    link: function($scope, $el, attrs, ctrl, transclude) {
+        // do something
+    }
+  }
+})
 
 .directive('debugToolbar', function(Config, $timeout) {
   return {

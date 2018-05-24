@@ -7,7 +7,8 @@ var app = angular.module('app', [
     'app.directives'
 ])
 
-.run(function($rootScope, $ionicPlatform, $state) {
+.run(function($rootScope, $ionicPlatform, $state, $cordovaNetwork, $ionicPopup) {
+    
   $ionicPlatform.ready(function() {
 
     if(window.StatusBar) {
@@ -31,6 +32,22 @@ var app = angular.module('app', [
             $state.go('app.route-detail', {id: routeId});
         });
     }
+
+    try {
+        if ($cordovaNetwork.isOffline()) {
+            var appStarted = false;
+
+            $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams, error) {
+                if (!appStarted) {
+                    appStarted = true;
+                    event.preventDefault();
+                    $state.go('app.error-no-internet')
+                }
+            });
+        }
+    } catch (e) {
+        // ignore
+    }
     
   });
 })
@@ -45,6 +62,16 @@ var app = angular.module('app', [
       controller: 'AppCtrl'
     })
 
+    .state('app.error-no-internet', {
+      url: '/error/no-internet',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/error-no-internet.html',
+          controller: 'ErrorNoInternet'
+        }
+      }
+    })
+    
     .state('app.dashboard', {
       url: '/dashboard',
       views: {
@@ -155,6 +182,10 @@ var app = angular.module('app', [
       }
     });
 
-  // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/route/record');
+    // if none of the above states are matched, use this as the fallback
+    //$urlRouterProvider.otherwise('/app/route/record');
+    $urlRouterProvider.otherwise(function ($injector) {
+        var $state = $injector.get('$state');
+        $state.go('app.route-record');
+    });
 });

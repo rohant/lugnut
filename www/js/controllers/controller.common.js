@@ -43,4 +43,10 @@ angular.module('app.controllers', [])
     //$scope.$watch('debug.showPoints', function(showPoins){
     //    $log.debug("debug.showPoins:" + showPoins);
     //});
+})
+
+.controller('ErrorNoInternet', function ($scope, $location) {
+    $scope.$on('$cordovaNetwork:online', function(event, networkState) {
+        $location.path('/');
+    });
 });

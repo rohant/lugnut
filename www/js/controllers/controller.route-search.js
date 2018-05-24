@@ -1,6 +1,70 @@
 angular.module('app.controllers')
 
-.controller('RouteSearchCtrl', function ($scope, $state, Route, AuthService) {
+.controller('RouteSearchCtrl', function ($scope, $state, $cordovaNetwork, $ionicPopup, Route, AuthService) {
+
+    $scope.items = [];
+    $scope.itemsPerPage = 20;
+    $scope.currentPage = 0;
+    
+    $scope.criteria = {
+        query: '',
+        limit: $scope.itemsPerPage,
+    }
+    
+    
+    /**
+     * 
+     * @return {unresolved}
+     */
+    $scope.reload = function(){
+        
+        var isOffline = false;
+        if (typeof Connection != 'undefined') {
+            isOffline = $cordovaNetwork.isOffline();
+        }
+            
+        if (isOffline) {
+            $ionicPopup.confirm({
+                title: "Internet is not working",
+                content: "Internet is not working on your device."
+            }).then(function(isOK){
+                if (isOK) $scope.reload();
+            });
+        } else {
+        
+            $scope.items = [];
+            $scope.currentPage = 0;
+            $scope.processing = true;
+            $scope.criteria.offset = 0;
+            $scope.canWeLoadMore = true;
+
+            return Route.findAll($scope.criteria).then(function(items){
+                $scope.items = items;
+            }).finally(function(){
+                $scope.processing = false;
+            });
+        }
+    }
+    
+    /**
+     * 
+     * @param {Boolean} reload
+     * @return {unresolved}
+     */
+    $scope.loadMore = function (reload) {
+        $scope.currentPage++;
+        //$scope.processing = true;
+        $scope.criteria.offset = ($scope.currentPage * $scope.itemsPerPage);
+
+        return Route.findAll($scope.criteria).then(function(items){
+            $scope.canWeLoadMore = items.length;
+            $scope.items = $scope.items.concat(items);
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        }).finally(function(){
+            $scope.processing = false;
+        });
+    };
+    
     
     if (!AuthService.isLoggedIn()) {
         
@@ -13,16 +77,7 @@ angular.module('app.controllers')
         $state.go('app.signin');
     }
     
-    $scope.criteria = {
-        query: '',
-    }
-    
-    $scope.reload = function(){
-        $scope.processing = true;
-        
-        return Route.findAll($scope.criteria).then(function(items){
-            $scope.processing = false;
-            $scope.routes = items;
-        });
-    }
+    //$scope.$on('$stateChangeSuccess', function () {
+    //    $scope.reload();
+    //});
 });
