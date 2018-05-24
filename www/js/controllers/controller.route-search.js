@@ -18,12 +18,17 @@ angular.module('app.controllers')
      */
     $scope.reload = function(){
         
-        if ($cordovaNetwork.isOffline()) {
-            $ionicPopup.alert({
+        var isOffline = false;
+        if (typeof Connection != 'undefined') {
+            isOffline = $cordovaNetwork.isOffline();
+        }
+            
+        if (isOffline) {
+            $ionicPopup.confirm({
                 title: "Internet is not working",
                 content: "Internet is not working on your device."
-            }).then(function(result){
-                $scope.reload();
+            }).then(function(isOK){
+                if (isOK) $scope.reload();
             });
         } else {
         
