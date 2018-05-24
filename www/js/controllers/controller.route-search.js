@@ -1,15 +1,16 @@
 angular.module('app.controllers')
 
-.controller('RouteSearchCtrl', function ($scope, $state, Route, AuthService) {
+.controller('RouteSearchCtrl', function ($scope, $state, $cordovaNetwork, $ionicPopup, Route, AuthService) {
 
     $scope.items = [];
     $scope.itemsPerPage = 20;
     $scope.currentPage = 0;
-
+    
     $scope.criteria = {
         query: '',
         limit: $scope.itemsPerPage,
     }
+    
     
     /**
      * 
@@ -17,16 +18,32 @@ angular.module('app.controllers')
      */
     $scope.reload = function(){
         
-        $scope.items = [];
-        $scope.currentPage = 0;
-        $scope.processing = true;
-        $scope.criteria.offset = 0;
-        $scope.canWeLoadMore = true;
+        var isOffline = false;
+        if (typeof Connection != 'undefined') {
+            isOffline = $cordovaNetwork.isOffline();
+        }
+            
+        if (isOffline) {
+            $ionicPopup.confirm({
+                title: "Internet is not working",
+                content: "Internet is not working on your device."
+            }).then(function(isOK){
+                if (isOK) $scope.reload();
+            });
+        } else {
         
-        return Route.findAll($scope.criteria).then(function(items){
-            $scope.processing = false;
-            $scope.items = items;
-        });
+            $scope.items = [];
+            $scope.currentPage = 0;
+            $scope.processing = true;
+            $scope.criteria.offset = 0;
+            $scope.canWeLoadMore = true;
+
+            return Route.findAll($scope.criteria).then(function(items){
+                $scope.items = items;
+            }).finally(function(){
+                $scope.processing = false;
+            });
+        }
     }
     
     /**
@@ -40,10 +57,11 @@ angular.module('app.controllers')
         $scope.criteria.offset = ($scope.currentPage * $scope.itemsPerPage);
 
         return Route.findAll($scope.criteria).then(function(items){
-            $scope.processing = false;
             $scope.canWeLoadMore = items.length;
             $scope.items = $scope.items.concat(items);
             $scope.$broadcast('scroll.infiniteScrollComplete');
+        }).finally(function(){
+            $scope.processing = false;
         });
     };
     
