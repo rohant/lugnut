@@ -1,6 +1,6 @@
 angular.module('app.controllers')
 
-.controller('RouteViewCtrl', function ($scope, $state, $log, $ionicLoading, $http, Route, Marker, Geolocation, Config) {
+.controller('RouteViewCtrl', function ($scope, $state, $log, $ionicLoading, $http, Route, Marker, Geolocation, $filter) {
 
     var watch;
     
@@ -17,6 +17,26 @@ angular.module('app.controllers')
         fillColor: '#404040',
         anchor: new google.maps.Point(10, 25)
     };
+    
+    /**
+     * TODO: it must be refactored!
+     * 
+     * @param {Route} model
+     * @param {integer} limit
+     * @return {undefined}
+     */
+    function saveViewedRoute(model, limit)
+    {
+        var _key = 'viewedRoutes';
+        var viewedRoutes = JSON.parse(localStorage.getItem(_key)) || [];
+        var isViewed = $filter('filter')(viewedRoutes, {id: model.id}, true)[0];
+
+        if (!isViewed) {
+            viewedRoutes.reverse().push(model.getAttributes());
+            viewedRoutes.reverse().splice(limit || 10,viewedRoutes.length-1);
+            localStorage.setItem(_key, JSON.stringify(viewedRoutes));
+        }
+    }
 
     $scope.mapCreated = function(map){
         $scope.map = map;
@@ -25,7 +45,6 @@ angular.module('app.controllers')
         
         var bounds  = new google.maps.LatLngBounds();
         var path = [];
-        
         
         $scope.$A = Marker.createMarker('Point A');
         $scope.$B = Marker.createMarker('Point B');
@@ -50,11 +69,7 @@ angular.module('app.controllers')
 
         Route.findOne($state.params.id).then(function (model) {
             
-            try {
-                $scope.loading.hide();
-            } catch (e) {
-                $ionicLoading.hide();
-            }
+            saveViewedRoute(model, 10)
             
             $scope.model = model;
             var chunked = $scope.model.getLatLngPoints().chunk(100);
@@ -125,6 +140,13 @@ angular.module('app.controllers')
             
             $scope.watchPosition();
             $scope.watchDirection();
+            
+        }).finally(function(){
+            try {
+                $scope.loading.hide();
+            } catch (e) {
+                $ionicLoading.hide();
+            }
         });
     }
     

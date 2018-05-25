@@ -2,7 +2,7 @@
     <ion-nav-buttons side="left">
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
-    <ion-content scroll="false" class="has-header">
+    <ion-content>
         <div ng-class="processing ? 'loader' : ''">
             <div class="list">
                 <div class="item item-avatar" href="#">
@@ -13,8 +13,30 @@
                     
                     <rating score="identity.rating"></rating>
                 </div>
+                
+                <div ng-show="viewedRoutes.length">
+                    <div class="item item-divider">
+                        <b>Latest</b>
+                    </div>
+                    <div class="item item-button-right" ng-repeat="route in viewedRoutes | limitTo:5 track by $index">
+                        <a class="button-link" href="#/app/route/detail/{{route.id}}">
+                            {{route.title}}
+                        </a>
+                    </div>
+                </div>
+                
+                <div ng-show="myRoutes.length">
+                    <div class="item item-divider">
+                        <b>Top 5</b>
+                    </div>
+                    <div class="item item-button-right" ng-repeat="route in myRoutes | limitTo:5 track by $index">
+                        <a class="button-link" href="#/app/route/detail/{{route.id}}">
+                            {{route.title}}
+                        </a>
+                    </div>
+                </div>
             </div>
-
+            
             <div class="row">
                 <div class="col">
                     <a class="button button-block button-positive icon-left ion-record" href="#/app/route/record">

@@ -1,7 +1,9 @@
 angular.module('app.controllers')
 
-.controller('DashboardCtrl', function ($scope, $state, AuthService) {
-	$scope.auth = AuthService;
+.controller('DashboardCtrl', function ($scope, $state, AuthService, Route) {
+
+    var _key = 'viewedRoutes';
+    $scope.viewedRoutes = JSON.parse(localStorage.getItem(_key)) || [];
     
     if (!AuthService.isLoggedIn()) {
         
@@ -12,5 +14,25 @@ angular.module('app.controllers')
         }
         
         $state.go('app.signin');
+        
     }
+
+    var identity = AuthService.getIdentity();
+
+    var criteria = {
+        user_id: identity.id,
+        order: 'rating'
+    };
+
+    $scope.processing = true;
+
+    Route.findAll(criteria).then(function(items){
+        $scope.myRoutes = items;
+        $scope.processing = false;
+    });
+
+    
+    $scope.$parent.$on('$stateChangeStart', function() {
+        $scope.viewedRoutes = JSON.parse(localStorage.getItem(_key)) || [];
+    });
 });
