@@ -46,7 +46,10 @@ angular.module('app.controllers', [])
         simulator.setFakeRoute(route.apply());
         $scope.fakeRouteId = route.id;
         $scope.fakeRoute = route;
-        $mapScope.init();
+        
+        if (angular.isFunction($mapScope.init)) {
+            $mapScope.init();
+        }
     }
     
     $scope.$watch('debug.enabled', function(_n,_o){
