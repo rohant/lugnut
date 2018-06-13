@@ -82,6 +82,26 @@ angular.module('app.services')
     };
     
     /**
+     * The Ramer Douglas Peucker path simplification
+     * 
+     * @param {Float} tolerance
+     * @return {Array}
+     */
+    RouteModel.prototype.simplify = function (tolerance) {
+        
+        var simplified = simplifyLine(this.points.map(function(o){
+            return Object.values(o);
+        }), tolerance || 0.00015).map(function(i){
+            return new google.maps.LatLng(i[0],i[1])
+        });
+        
+        $log.info('Points length:', this.points.length);
+        $log.info('Points length after simplified:', simplified.length);
+        
+        return simplified;
+    };
+    
+    /**
      * 
      * @return {Boolean}
      */
@@ -155,9 +175,13 @@ angular.module('app.services')
         if (!this.imageUrl) {
             
             var path = [], gsm = $injector.get('GoogleStaticMap');
+            var points = this.simplify(0.0005);
 
-            for (var i in this.points) {
-                path.push([this.points[i].lat, this.points[i].lng].join(','));
+            for (var i in points) {
+                path.push([
+                    points[i].lat().toFixed(6), 
+                    points[i].lng().toFixed(6)
+                ].join(','));
             }
             
             if (!options) options = {};

@@ -184,13 +184,17 @@ angular.module('app.services')
         geolocation: null,
         
         /**
+         * Returns the simulation status. 
+         * If exists the "enabled" argument then will be set status to the current value.
          * 
-         * @param {Boolean} enable
-         * @return {gps}
+         * @param {Boolean} enable optional
+         * @return {Boolean}
          */
-        simulationEnabled: function(enable){
-            this.simulation = enable;
-            return this;
+        simulationEnabled: function(enable) {
+            if (!angular.isUndefined(enable)) {
+                this.simulation = enable;
+            }
+            return this.simulation;
         },
         /**
          * 
@@ -215,6 +219,7 @@ angular.module('app.services')
          */
         setGeolocationSimulator: function (simulator) {
             this.simulator = simulator;
+            this.simulator.$parrent = this;
             return this;
         },
         /**
@@ -275,6 +280,12 @@ angular.module('app.services')
     
     gps.setGeolocation($cordovaGeolocation);
     gps.setGeolocationSimulator(GeolocationSimulator);
+    
+    // TODO: it must be refactored
+    var cfg = JSON.parse(localStorage.getItem('debug'));
+    if (cfg) {
+        gps.simulationEnabled(cfg.enabled);
+    }
 
     return gps;
 })

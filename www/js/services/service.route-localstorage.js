@@ -1,6 +1,6 @@
 angular.module('app.services')
 
-.factory('Route', function ($injector, $log, $http, $q, ApiService, Config) {
+.factory('Route', function ($log, $q) {
 
     var RouteModel = function(data){
         this.id = null;
@@ -89,35 +89,15 @@ angular.module('app.services')
         findAll: function () {
             var scope = this;
             var deferred = $q.defer();
-            //var routes = [];
-
+            
             deferred.resolve(storage.data());
-
-            //$http.get(apiUrl + '/routes').success(function (array) {
-            //    array.forEach(function (data) {
-            //        routes.push(new RouteModel(data));
-            //    });
-            //    deferred.resolve(routes);
-            //}).error(function () {
-            //    deferred.reject();
-            //});
-
             return deferred.promise;
         },
         findOne: function (id) {
             var scope = this;
             var deferred = $q.defer();
-
+            
             deferred.resolve(storage.data(id));
-
-            //var data = {};
-            //$http.get(apiUrl + '/routes/' + id).success(function (data) {
-            //    deferred.resolve(new RouteModel(data));
-            //})
-            //.error(function () {
-            //    deferred.reject();
-            //});
-
             return deferred.promise;
         },
 

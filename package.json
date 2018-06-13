@@ -22,7 +22,8 @@
     "cordova-universal-links-plugin": "git+https://github.com/walteram/cordova-universal-links-plugin.git",
     "es6-promise-plugin": "^4.2.2",
     "ng-cordova": "^0.1.27-alpha",
-    "npm": "^5.8.0"
+    "npm": "^5.8.0",
+    "cordova-plugin-network-information": "^2.0.1"
   },
   "cordova": {
     "plugins": {
@@ -37,7 +38,8 @@
       },
       "cordova-plugin-sim": {},
       "cordova-universal-links-plugin": {},
-      "cordova-plugin-x-socialsharing": {}
+      "cordova-plugin-x-socialsharing": {},
+      "cordova-plugin-network-information": {}
     },
     "platforms": []
   }

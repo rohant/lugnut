@@ -1,22 +1,39 @@
 angular.module('app.controllers')
 
-.controller('SignInCtrl', function ($scope, $state, $log, $ionicLoading, AuthService, GoogleOAuthService) {
+.controller('SignInCtrl', function ($scope, $state, $log, $ionicLoading, AuthService, GoogleOAuthService, DebugMode) {
 	
-	$scope.auth = AuthService;
-	
-	$scope.model = {
-		email: '',
-		password: '',
-	};
-
-    // todo:
-    if ($scope.debug.enabled) {
-        $scope.model = {
-            email: 'm325917+lugnut@gmail.com',
-            password: '12345',
-        };
+    // TODO: remove it on production
+    function test (enable) {
+        if (!enable) {
+            $scope.model = {
+                email: '',
+                password: '',
+            };
+        } else {
+            $scope.model = {
+                email: 'm325917+lugnut@gmail.com',
+                password: '12345',
+            };
+        } 
     }
     
+    test (DebugMode.enabled);
+
+    // TODO: remove it on production
+    $scope.$watch(function(){
+        return DebugMode.enabled;
+    }, function(_n,_o){
+        test (_n)
+    });
+    
+    
+	$scope.auth = AuthService;
+	
+    //$scope.model = {
+    //    email: '',
+    //    password: '',
+    //};
+
     /**
      * 
      * @return {unresolved}

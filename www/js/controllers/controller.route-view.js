@@ -1,7 +1,7 @@
 angular.module('app.controllers')
 
 .controller('RouteViewCtrl', function ($scope, $state, $log, $ionicLoading, $http, Route, Marker, Geolocation, Config) {
-
+    
     var watch;
     
     var closedArrowIcon = {
@@ -17,7 +17,7 @@ angular.module('app.controllers')
         fillColor: '#404040',
         anchor: new google.maps.Point(10, 25)
     };
-
+    
     $scope.mapCreated = function(map){
         $scope.map = map;
         $scope.map.setZoom(15);
@@ -57,7 +57,7 @@ angular.module('app.controllers')
             }
             
             $scope.model = model;
-            var chunked = $scope.model.getLatLngPoints().chunk(100);
+            var chunked = $scope.model.simplify().chunk(100);
             
             chunked.forEach(function(points, i){
 
@@ -141,7 +141,8 @@ angular.module('app.controllers')
         // todo:
         //Geolocation.simulationEnabled(false);
         
-        if ($scope.debug.simulation) {
+        if (Geolocation.simulationEnabled()) {
+            
             Geolocation
             .getGeolocationSimulator()
             .setFakeRoute({
@@ -223,7 +224,7 @@ angular.module('app.controllers')
     });
     
     $scope.$on("$ionicView.enter", function (event) {
-        if ($scope.debug.simulation) {
+        if (Geolocation.simulationEnabled()) {
             
         }
     });

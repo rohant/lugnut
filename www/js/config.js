@@ -12,15 +12,12 @@ angular.module('app.config', ['app.services'])
     // server url
     //apiUrl: 'http://192.168.122.17/api/',
     apiUrl: 'http://lugnut.rmasyahin-wd.office.webdevs.us/api/',
-
-    debug: {
-        enabled: true,
-        simulation: true,
-        showPoints: false,
-        snapToRoadEngine: 0,
-    },
 })
 
+.value('DebugMode', {
+    enabled: false,
+    simulation: false,
+})
 
 .config(function(FakeRoutesProvider) {
     
