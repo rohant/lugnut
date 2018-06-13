@@ -258,16 +258,16 @@ angular.module('app.controllers')
     }
     
     
-    //if (!AuthService.isLoggedIn()) {
-    //
-    //    // set "to back" function
-    //    AuthService.toBack = function(){
-    //        AuthService.toBack = null;
-    //        $state.go('app.route-search-advanced');
-    //    }
-    //
-    //    $state.go('app.signin');
-    //}
+    if (!AuthService.isLoggedIn()) {
+    
+        // set "to back" function
+        AuthService.toBack = function(){
+            AuthService.toBack = null;
+            $state.go('app.route-search-advanced');
+        }
+    
+        $state.go('app.signin');
+    }
     
     
     $scope.search = function(){
