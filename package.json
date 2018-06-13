@@ -3,18 +3,19 @@
   "version": "0.0.1",
   "description": "Truck route for drivers made by drivers.",
   "devDependencies": {
-    "gulp": "^3.5.6",
-    "gulp-clean-css": "^3.7.0",
-    "gulp-rename": "^1.2.0",
-    "gulp-sass": "^3.2.1"
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^3.9.4",
+    "gulp-rename": "^1.3.0",
+    "gulp-sass": "^4.0.1"
   },
   "dependencies": {
-    "cordova-android": "7.0.0",
-    "cordova-plugin-device": "^2.0.1",
+    "cordova-android": "7.1.0",
+    "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-geolocation": "^4.0.1",
     "cordova-plugin-googleplus": "git+https://github.com/EddyVerbruggen/cordova-plugin-googleplus.git",
-    "cordova-plugin-ionic-keyboard": "^2.0.5",
-    "cordova-plugin-ionic-webview": "^1.1.19",
+    "cordova-plugin-ionic-keyboard": "^2.1.2",
+    "cordova-plugin-ionic-webview": "^1.2.1",
+    "cordova-plugin-network-information": "^2.0.1",
     "cordova-plugin-sim": "^1.3.3",
     "cordova-plugin-splashscreen": "^5.0.2",
     "cordova-plugin-whitelist": "^1.3.3",
@@ -22,8 +23,7 @@
     "cordova-universal-links-plugin": "git+https://github.com/walteram/cordova-universal-links-plugin.git",
     "es6-promise-plugin": "^4.2.2",
     "ng-cordova": "^0.1.27-alpha",
-    "npm": "^5.8.0",
-    "cordova-plugin-network-information": "^2.0.1"
+    "npm": "^6.1.0"
   },
   "cordova": {
     "plugins": {
