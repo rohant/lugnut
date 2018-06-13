@@ -38,7 +38,7 @@
                     Profile
                 </ion-item>
                 
-                <div menu-close ng-controller="DebugCtrl">
+                <div ng-controller="DebugCtrl">
 
                     <ul class="list">
                         <li class="item item-toggle">
@@ -82,7 +82,7 @@
                     -->
 
                     <ion-list ng-show="debug.enabled && debug.simulation">
-                        <ion-radio ng-model="fakeRouteId" ng-click="setFakeRoute(route)" ng-value="{{id}}" ng-repeat="(id, route) in fakeRoutes track by $index">{{route.name}}</ion-radio>
+                        <ion-radio menu-close ng-model="fakeRouteId" ng-click="setFakeRoute(route)" ng-value="{{id}}" ng-repeat="(id, route) in fakeRoutes track by $index">{{route.name}}</ion-radio>
                     </ion-list>
                 </div>
                 

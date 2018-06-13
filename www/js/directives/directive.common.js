@@ -160,7 +160,7 @@ angular.module('app.directives', [])
   }
 })
 
-.directive('debugToolbar', function(Config, $timeout) {
+.directive('debugToolbar', function(DebugMode, $timeout) {
   return {
     restrict: 'E',
     template: [
@@ -181,7 +181,7 @@ angular.module('app.directives', [])
 
         var scroller = $element.find('#console')[0];
         
-        $scope.debug = Config.debug;
+        $scope.debug = DebugMode;
         $scope.logs = Logging.logs;
         
         $scope.$on('log:updated', function (event, data) {

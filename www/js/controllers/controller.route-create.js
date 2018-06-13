@@ -1,6 +1,37 @@
 angular.module('app.controllers')
 
-.controller('RouteCreateCtrl', function ($scope, $rootScope, $state, AuthService, Config, $ionicPopup, $cordovaNetwork) {
+.controller('RouteCreateCtrl', function ($scope, $rootScope, $state, AuthService, DebugMode, $ionicPopup, $cordovaNetwork) {
+    
+    // TODO: remove it on production
+    function test (enable) {
+        if (!enable) {
+            $rootScope.route.setData({
+                title: '',
+                city: '',
+                address: '',
+                company: '',
+                description: '',
+            });
+        } else {
+            $rootScope.route.setData({
+                title: 'Test route #',
+                city: 'New York',
+                address: 'Main str. 1',
+                company: 'Test Company',
+                description: 'Lorem ipsum..',
+            });
+        } 
+    }
+    
+    test (DebugMode.enabled);
+
+    // TODO: remove it on production
+    $scope.$watch(function(){
+        return DebugMode.enabled;
+    }, function(_n,_o){
+        test (_n)
+    });
+
 
     $scope.create = function (route) {
         
@@ -44,16 +75,5 @@ angular.module('app.controllers')
         }
         
         $state.go('app.signin');
-    }
-    
-    // todo:
-    if (Config.debug.enabled) {
-        $rootScope.route.setData({
-            title: 'Test route #',
-            city: 'New York',
-            address: 'Main str. 1',
-            company: 'Test Company',
-            description: 'Lorem ipsum..',
-        });
     }
 });

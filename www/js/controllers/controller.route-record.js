@@ -20,8 +20,6 @@ angular.module('app.controllers')
     var tracewaypoints;
     var predictPoints = [];
 
-    // todo:
-    Geolocation.simulationEnabled(true);
     
     $scope.isWatching = false;
     $scope.showActions = false;
@@ -138,7 +136,7 @@ angular.module('app.controllers')
         $rootScope.route = Route.createEmpty();
         $scope.isWatching = true;
 
-        if (Config.debug.enabled && Config.debug.simulation) {
+        if (Geolocation.simulationEnabled()) {
             $log.info("Start simulation..");
         }
 
@@ -150,7 +148,7 @@ angular.module('app.controllers')
 
 
         function onSuccess (position) {
-            $log.debug('Got position:', position);
+                $log.debug('Got position:', position);
 
             var myLatlng = new google.maps.LatLng(
                 position.coords.latitude,
@@ -261,7 +259,7 @@ angular.module('app.controllers')
     
     $scope.$on("$ionicView.enter", function (event) {
         
-        if ($scope.debug.simulation) {
+        if (Geolocation.simulationEnabled()) {
             
             var fakeRoute = Geolocation
                 .getGeolocationSimulator()

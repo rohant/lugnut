@@ -2,9 +2,6 @@ angular.module('app.controllers')
 
 .controller('RouteAdvancedSearchCtrl', function ($scope, $state, $log, $ionicLoading, Route, AuthService, Geolocation, Marker) {
     
-    // todo:
-    //Geolocation.simulationEnabled(true);
-    
     var closedArrowIcon = {
         //path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
         //scale: 2.5,
@@ -355,7 +352,7 @@ angular.module('app.controllers')
     
     $scope.$on("$ionicView.enter", function (event) {
         
-        if ($scope.debug.simulation) {
+        if (Geolocation.simulationEnabled()) {
             
             var fakeRoute = Geolocation
                 .getGeolocationSimulator()
