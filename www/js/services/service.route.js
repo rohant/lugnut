@@ -175,7 +175,7 @@ angular.module('app.services')
         if (!this.imageUrl) {
             
             var path = [], gsm = $injector.get('GoogleStaticMap');
-            var points = this.simplify(0.0005);
+            var points = this.simplify(0.0015);
 
             for (var i in points) {
                 path.push([
