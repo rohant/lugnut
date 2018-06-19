@@ -1,11 +1,11 @@
 angular.module('app.controllers')
 
-.controller('RouteDetailCtrl', function ($injector, $scope, $state, $log, Route, ApiService) {
+.controller('RouteDetailCtrl', function ($injector, $scope, $state, $log, Route, ApiService, $ionicNavBarDelegate, $ionicHistory) {
     $scope.model = null;
-    
+
     Route.findOne($state.params.id).then(function (model) {
         $scope.model = model.with('user');
-        
+
         ApiService.post('statistic/track-event', {
             entity: 'app\\models\\Route',
             entityID: model.id,
@@ -13,19 +13,19 @@ angular.module('app.controllers')
             eventData: {},
         });
     });
-    
+
     /**
-     * 
+     *
      * @return {undefined}
      */
     $scope.share = function(){
-        
+
         var socShar = $injector.get('$cordovaSocialSharing');
-        
+
         try {
-            
+
             var viewUrl = 'http://lugnut.rmasyahin-wd.office.webdevs.us/route/' + $scope.model.id;
-            
+
             var options = {
                 //message: 'This is my message',
                 //subject: 'Subject string',
@@ -36,11 +36,11 @@ angular.module('app.controllers')
                 //chooserTitle: 'Pick an app', // Android only, you can override the default share sheet title,
                 //appPackageName: 'com.apple.social.facebook', // Android only, you can provide id of the App you want to share with
             };
-            
+
             var onSuccess = function(result) {
                 console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
                 console.log("Shared to app: " + result.app); // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
-              
+
                 ApiService.post('statistic/track-event', {
                     entity: 'app\\models\\Route',
                     entityID: $scope.model.id,
@@ -52,11 +52,16 @@ angular.module('app.controllers')
             var onError = function(msg) {
                 console.log("Sharing failed with message: " + msg);
             };
-            
+
             socShar.shareWithOptions(options).then(onSuccess, onError);
-            
+
         } catch (e) {
             // ignore
         }
     }
+
+  $scope.$on("$ionicView.beforeEnter", function (event) {
+    $scope.showBackButton = !!$ionicHistory.viewHistory().backView;
+    $ionicNavBarDelegate.showBackButton($scope.showBackButton);
+  });
 });
