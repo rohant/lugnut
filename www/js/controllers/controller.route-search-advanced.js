@@ -39,20 +39,12 @@ angular.module('app.controllers')
         }).then(function (position) {
             
             $log.debug('Got position:', position);
-            //$scope.showActions = true;
-
-            try {
-                $scope.loading.hide();
-            } catch (e) {
-                $ionicLoading.hide();
-            }
 
             var myLatlng = new google.maps.LatLng(
                 position.coords.latitude,
                 position.coords.longitude
             );
 
-            //$scope.map.setCenter(myLatlng);
             $scope.map.panTo(myLatlng);
             
             $scope.$A.pristine = false;
@@ -70,12 +62,12 @@ angular.module('app.controllers')
                 drawDirection();
             });
 
-
         }, function (error) {
 
             $log.error('Unable to get location: ' + error.message, error);
             $scope.showReloadBtn = true;
-
+            
+        }).finally(function(){
             try {
                 $scope.loading.hide();
             } catch (e) {
@@ -107,21 +99,12 @@ angular.module('app.controllers')
                 travelMode: google.maps.DirectionsTravelMode.DRIVING
             }, function (result, status) {
 
-                if (status == google.maps.DirectionsStatus.OK) {
-
+                if (status != google.maps.DirectionsStatus.OK) {
+                    $log.error("Directions request failed: " + status);
+                } else {
                     $log.info('DirectionsStatus.OK');
-
-                    try {
-                        $scope.loading.hide();
-                    } catch (e) {
-                        $ionicLoading.hide();
-                    }
-
                     var snapPath = result.routes[0].overview_path;
                     tracewaypoints.setPath(snapPath);
-
-                } else {
-                    $log.error("Directions request failed: " + status);
                 }
             });
             
