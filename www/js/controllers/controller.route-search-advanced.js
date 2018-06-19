@@ -1,12 +1,12 @@
 angular.module('app.controllers')
 
 .controller('RouteAdvancedSearchCtrl', function ($scope, $state, $log, $ionicLoading, Route, AuthService, Geolocation, Marker) {
-    
+
     var closedArrowIcon = {
         //path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
         //scale: 2.5,
     };
-    
+
     var tracewaypoints = new google.maps.Polyline({
         //map: $scope.map,
         path: [],
@@ -20,13 +20,13 @@ angular.module('app.controllers')
             offset: '100%'
         }]
     });
-    
+
     /**
-     * 
+     *
      * @return {unresolved}
      */
     function getCurrentPosition(){
-        
+
         $scope.loading = $ionicLoading.show({
             content: 'Getting current location...',
             showBackdrop: false
@@ -37,7 +37,7 @@ angular.module('app.controllers')
             maximumAge: 6000,
             timeout: 30000,
         }).then(function (position) {
-            
+
             $log.debug('Got position:', position);
 
             var myLatlng = new google.maps.LatLng(
@@ -46,19 +46,19 @@ angular.module('app.controllers')
             );
 
             $scope.map.panTo(myLatlng);
-            
+
             $scope.$A.pristine = false;
             $scope.$A.setPosition(myLatlng);
             $scope.$B.setPosition(myLatlng);
-            
+
             $scope.currentMarker = Marker.createMarker('You here!');
             $scope.currentMarker.setIcon('./img/markers/darkgreen_MarkerA.png');
             $scope.currentMarker.setAnimation(google.maps.Animation.DROP);
             $scope.currentMarker.setPosition(myLatlng);
 
             google.maps.event.addListener($scope.currentMarker, 'click', function(e) {
-                $scope.$A.pristine = false;
                 $scope.$A.setPosition(e.latLng);
+                $scope.$A.pristine = false;
                 drawDirection();
             });
 
@@ -66,7 +66,7 @@ angular.module('app.controllers')
 
             $log.error('Unable to get location: ' + error.message, error);
             $scope.showReloadBtn = true;
-            
+
         }).finally(function(){
             try {
                 $scope.loading.hide();
@@ -75,24 +75,24 @@ angular.module('app.controllers')
             }
         });
     }
-    
+
     /**
-     * 
+     *
      * @return {undefined}
      */
     function drawDirection() {
-        
+
         removeAlternativeRoutes();
-        
+
         //$scope.loading = $ionicLoading.show({
         //    content: 'Wait..',
         //    showBackdrop: false
         //});
-        
+
         if ($scope.isCriteriaCompleate())
         {
             var service = new google.maps.DirectionsService();
-            
+
             service.route({
                 origin: $scope.$A.getPosition(),
                 destination: $scope.$B.getPosition(),
@@ -107,15 +107,15 @@ angular.module('app.controllers')
                     tracewaypoints.setPath(snapPath);
                 }
             });
-            
-            //if(!$scope.$$phase) {
-            //  $scope.$apply();
-            //}
+
+            if(!$scope.$$phase) {
+             $scope.$apply();
+            }
         }
     }
-    
+
     /**
-     * 
+     *
      * @param {Object} point
      * @return {undefined}
      */
@@ -138,38 +138,38 @@ angular.module('app.controllers')
 
         $scope.current = current;
     }
-    
+
     /**
-     * 
+     *
      * @return {Boolean}
      */
     $scope.isCriteriaCompleate = function(){
-        
+
         var dirty = (!$scope.$A.pristine && !$scope.$B.pristine);
 
         if (dirty) {
             try {
                 var distance = getDistance(
-                    $scope.$A.getPosition(), 
+                    $scope.$A.getPosition(),
                     $scope.$B.getPosition()
                 );
                 return (distance > 10);
             } catch (e) {
-                //console.log(e); 
+                console.log(e);
             }
-        } 
+        }
 
         return dirty;
     }
 
-    
+
     /**
      *
      * @param {type} map
      * @return {undefined}
      */
     $scope.init = function (map) {
-        
+
         if (map) {
             $scope.map = map;
             $scope.map.setZoom(15);
@@ -179,25 +179,25 @@ angular.module('app.controllers')
             Marker.init(map);
             tracewaypoints.setMap(map);
         }
-        
+
         $scope.$A = Marker.createMarker('Point A');
         $scope.$B = Marker.createMarker('Point B');
-        
+
         $scope.$A.pristine = true;
         $scope.$B.pristine = true;
-        
+
         //$scope.$A.setLabel('A');
         //$scope.$B.setLabel('B');
-        
+
         $scope.$A.setAnimation(google.maps.Animation.DROP);
         $scope.$B.setAnimation(google.maps.Animation.DROP);
-        
+
         //markerA.setDraggable(true);
         //markerB.setDraggable(true);
-        
+
         $scope.$A.setZIndex(2);
         $scope.$B.setZIndex(1);
-        
+
         //var image = {
         //    url: image,
         //    //size: new google.maps.Size(71, 71),
@@ -205,7 +205,7 @@ angular.module('app.controllers')
         //    //anchor: new google.maps.Point(17, 34),
         //    scaledSize: new google.maps.Size(25, 50)
         //};
-        
+
         $scope.$A.setIcon('./img/markers/blue_MarkerA.png');
         $scope.$B.setIcon('./img/markers/red_MarkerB.png');
 
@@ -213,21 +213,21 @@ angular.module('app.controllers')
             $log.debug('click on track');
             //tracewaypoints.setOptions({strokeOpacity: 1.0});
         });
-        
+
         google.maps.event.addListener($scope.$A, 'dragend', function(e) {
             $log.debug('A:dragend');
             $scope.$A.pristine = false;
             $scope.$A.setPosition(e.latLng);
             drawDirection();
         });
-        
+
         google.maps.event.addListener($scope.$B, 'dragend', function(e) {
             $log.debug('B:dragend');
             $scope.$B.pristine = false;
             $scope.$B.setPosition(e.latLng);
             drawDirection();
         });
-        
+
         google.maps.event.addListener(map, 'click', function(e) {
             $log.debug('Map:click');
             $scope.current.pristine = false;
@@ -235,32 +235,32 @@ angular.module('app.controllers')
             //tracewaypoints.setOptions({strokeOpacity: 0.5});
             drawDirection();
         });
-        
+
         $scope.active($scope.$B);
         getCurrentPosition();
     }
-    
-    
+
+
     if (!AuthService.isLoggedIn()) {
-    
+
         // set "to back" function
         AuthService.toBack = function(){
             AuthService.toBack = null;
             $state.go('app.route-search-advanced');
         }
-    
+
         $state.go('app.signin');
     }
-    
-    
+
+
     $scope.search = function(){
         $scope.processing = true;
-        
-        var latLngA = $scope.$A.getPosition(); 
+
+        var latLngA = $scope.$A.getPosition();
         var latLngB = $scope.$B.getPosition();
-        
+
         var criteria = {
-            
+
             detour: {
                 A: {
                     lat: latLngA.lat(),
@@ -274,31 +274,32 @@ angular.module('app.controllers')
                 }
             },
         }
-        
+
         return Route.findAll(criteria).then(function(items){
-            $scope.processing = false;
             $scope.routes = items;
             drawAlternativeRoutes();
+        }).finally(function(){
+            $scope.processing = false;
         });
     }
-    
-    
-    var polilines = []; 
-    
-    
-    
+
+
+    var polilines = [];
+
+
+
     function removeAlternativeRoutes () {
-        
+
         for (var i in polilines) {
             polilines[i].setMap(null);
         }
         polilines = [];
     }
-    
-    function drawAlternativeRoutes () 
+
+    function drawAlternativeRoutes ()
     {
         for (var i in $scope.routes) {
-            
+
             var poliline = new google.maps.Polyline({
                 map: $scope.map,
                 path: $scope.routes[i].points,
@@ -313,34 +314,34 @@ angular.module('app.controllers')
                     offset: '100%'
                 }]
             });
-            
+
             google.maps.event.addListener(poliline, 'click', function () {
                 $log.debug('click on track: #' + $scope.routes[i].id + ' ' + $scope.routes[i].title);
                 //poliline.setOptions({strokeOpacity: 1.0});
                 $state.go('app.route-detail', {id: $scope.routes[i].id});
             });
-            
+
             polilines.push(poliline);
         }
     }
-    
+
     /*function getRandomColor() {
         return '#' + Math.floor(Math.random()*16777215).toString(16);
     }*/
-    
-    
+
+
     $scope.$on("$destroy", function () {
         console.log('$destroy')
     });
-    
+
     $scope.$on("$ionicView.enter", function (event) {
-        
+
         if (Geolocation.simulationEnabled()) {
-            
+
             var fakeRoute = Geolocation
                 .getGeolocationSimulator()
                 .getFakeRoute();
-        
+
             $log.info('Used the fake route: ' + fakeRoute.name);
         }
     });
