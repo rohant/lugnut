@@ -45,16 +45,10 @@ angular.module('app.controllers')
         
         
         $scope.loading = $ionicLoading.show({
-            template: 'Wait...'
+            template: 'Opening your route...'
         });
 
         Route.findOne($state.params.id).then(function (model) {
-            
-            try {
-                $scope.loading.hide();
-            } catch (e) {
-                $ionicLoading.hide();
-            }
             
             $scope.model = model;
             var chunked = $scope.model.simplify().chunk(100);
@@ -70,8 +64,14 @@ angular.module('app.controllers')
                 });
 
                 if (waypoints.length) {
-                    $http.get("https://roads.googleapis.com/v1/snapToRoads?interpolate=true&key="+$scope.$config.API_KEY+"&path="+waypoints.join('|'))
-                    .then(function (response) {
+                    
+                    var route = [
+                        "https://roads.googleapis.com/v1/snapToRoads?interpolate=true",
+                        "&key=" + $scope.$config.API_KEY,
+                        "&path=" + waypoints.join('|'),
+                    ].join('');
+                    
+                    $http.get(route).then(function (response) {
                         $log.debug('snapToRoads:success', response)
 
                         var tmp = [];
@@ -125,6 +125,13 @@ angular.module('app.controllers')
             
             $scope.watchPosition();
             $scope.watchDirection();
+            
+        }).finally(function(){
+            try {
+                $scope.loading.hide();
+            } catch (e) {
+                $ionicLoading.hide();
+            }
         });
     }
     
@@ -137,9 +144,6 @@ angular.module('app.controllers')
         if (!$scope.map) {
             return;
         }
-
-        // todo:
-        //Geolocation.simulationEnabled(false);
         
         if (Geolocation.simulationEnabled()) {
             
@@ -170,10 +174,6 @@ angular.module('app.controllers')
         function onSuccess (position) {
             $log.debug('Got position:', position);
 
-            var myLatlng = new google.maps.LatLng(
-                position.coords.latitude,
-                position.coords.longitude
-            );
             var myLatlng = new google.maps.LatLng(
                 position.coords.latitude,
                 position.coords.longitude
@@ -225,7 +225,7 @@ angular.module('app.controllers')
     
     $scope.$on("$ionicView.enter", function (event) {
         if (Geolocation.simulationEnabled()) {
-            
+            // do something
         }
     });
 });
