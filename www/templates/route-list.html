@@ -14,7 +14,7 @@
         </div>
         -->
         
-        <div class="list" ng-class="processing ? 'loader' : ''">
+        <div class="list" ng-class="processing && !isInit ? 'loader' : ''" style="min-height: 200px">
             <div class="item item-button-right" ng-repeat="route in routes track by $index">
                 <a class="button-link" href="#/app/route/detail/{{route.id}}">
                     {{route.title}}

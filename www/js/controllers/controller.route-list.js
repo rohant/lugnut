@@ -2,9 +2,11 @@ angular.module('app.controllers')
 
 .controller('RouteListCtrl', function ($scope, $state, Route, AuthService) {
     
+    $scope.isInit = false;
+    
     $scope.reload = function(){
         var identity = AuthService.getIdentity();
-        //$scope.processing = true;
+        $scope.processing = true;
         
         var criteria = {
             user_id: identity.id
@@ -12,7 +14,11 @@ angular.module('app.controllers')
         
         return Route.findAll(criteria).then(function(items){
             $scope.routes = items;
-            //$scope.processing = false;
+        }).finally( function() {
+            $scope.processing = false;
+            if (!$scope.isInit) {
+                $scope.isInit = true;
+            }
         });
     }
     
