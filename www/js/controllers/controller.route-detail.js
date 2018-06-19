@@ -1,19 +1,39 @@
 angular.module('app.controllers')
 
-.controller('RouteDetailCtrl', function ($injector, $scope, $state, $log, Route, ApiService, $ionicNavBarDelegate, $ionicHistory) {
-    $scope.model = null;
+.controller('RouteDetailCtrl', function (
+    $injector, 
+    $scope, 
+    $state, 
+    $log, 
+    $cordovaNetwork, 
+    $ionicPopup, 
+    $ionicNavBarDelegate, 
+    $ionicHistory, 
+    Route, 
+    ApiService
+) {
+    
+    /**
+     * 
+     * @return {undefined}
+     */
+    $scope.init = function () {
+        
+        Route.findOne($state.params.id).then(function (model) {
+            $scope.model = model.with('user');
 
-    Route.findOne($state.params.id).then(function (model) {
-        $scope.model = model.with('user');
-
-        ApiService.post('statistic/track-event', {
-            entity: 'app\\models\\Route',
-            entityID: model.id,
-            eventType: 'route-view',
-            eventData: {},
+            ApiService.post('statistic/track-event', {
+                entity: 'app\\models\\Route',
+                entityID: model.id,
+                eventType: 'route-details',
+                eventData: {},
+            });
+            
+        }).catch(function(response){
+            $scope.errorInternal(response.data);
         });
-    });
-
+    }
+    
     /**
      *
      * @return {undefined}
@@ -59,9 +79,61 @@ angular.module('app.controllers')
             // ignore
         }
     }
+    
+    /**
+     * 
+     * @return {unresolved}
+     */
+    $scope.errorNoInternet = function () {
+        return $ionicPopup.confirm({
+            title: "Internet is not working",
+            content: "Internet is not working on your device."
+        }).then(function(isOK){
+            if (isOK) $scope.init();
+        });
+    }
+    
+    /**
+     * 
+     * @param {Object} errorObj
+     * @return {unresolved}
+     */
+    $scope.errorInternal = function (errorObj) {
+        var $location = $injector.get('$location');
+        
+        return $ionicPopup.confirm({
+            title: 'Internal server error',
+            content: 'Please try again later.'
+        }).then(function(isOK){
+            if (isOK) {
+                $scope.init();
+            } else {
+                if (!$scope.showBackButton) {
+                    $location.path('/');
+                } else {
+                    $ionicHistory.goBack();
+                }
+            }
+        });
+    }
 
-  $scope.$on("$ionicView.beforeEnter", function (event) {
-    $scope.showBackButton = !!$ionicHistory.viewHistory().backView;
-    $ionicNavBarDelegate.showBackButton($scope.showBackButton);
-  });
+    var isOffline = false;
+    if (typeof Connection != 'undefined') {
+        isOffline = $cordovaNetwork.isOffline();
+    }
+
+    if (!isOffline) {
+        $scope.init();
+    } else {
+        $scope.errorNoInternet();
+    }
+    
+    $scope.$on("$ionicView.beforeEnter", function (event) {
+        $scope.showBackButton = !!$ionicHistory.viewHistory().backView;
+        $ionicNavBarDelegate.showBackButton($scope.showBackButton);
+    });
+    
+    $scope.$on('$cordovaNetwork:online', function(event, networkState) {
+        $scope.init();
+    });
 });
