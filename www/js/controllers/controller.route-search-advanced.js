@@ -317,7 +317,7 @@ angular.module('app.controllers')
             google.maps.event.addListener(poliline, 'click', function () {
                 $log.debug('click on track: #' + $scope.routes[i].id + ' ' + $scope.routes[i].title);
                 //poliline.setOptions({strokeOpacity: 1.0});
-                $state.go('app.route-view', {id: $scope.routes[i].id});
+                $state.go('app.route-detail', {id: $scope.routes[i].id});
             });
             
             polilines.push(poliline);
