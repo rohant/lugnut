@@ -12,8 +12,20 @@ angular.module('app.controllers', [])
 })
 
 .controller('DebugCtrl', function ($scope, $log, FakeRoutes, Geolocation, DebugMode) {
-    var $mapScope = angular.element('map').scope();
     var simulator = Geolocation.getGeolocationSimulator();
+    
+    var mapInit = (function () {
+        var $mapScope = angular.element('map').scope();
+        
+        return function(){
+            try {
+                if (!angular.isUndefined($mapScope.init) 
+                    && angular.isFunction($mapScope.init)) {
+                    $mapScope.init();
+                }
+            } catch(e) {}
+        };
+    }());
     
 
     // TODO: it must be refactored
@@ -46,10 +58,7 @@ angular.module('app.controllers', [])
         simulator.setFakeRoute(route.apply());
         $scope.fakeRouteId = route.id;
         $scope.fakeRoute = route;
-        
-        if (angular.isFunction($mapScope.init)) {
-            $mapScope.init();
-        }
+        mapInit();
     }
     
     $scope.$watch('debug.enabled', function(_n,_o){
@@ -58,12 +67,7 @@ angular.module('app.controllers', [])
         
         $log.debug("debug.enabled:" + _n);
         
-        if (_n != _o) {
-            if (angular.isFunction($mapScope.init)) {
-                $mapScope.init();
-            }
-        }
-        
+        if (_n != _o) mapInit();
         cfg.update($scope.debug);
     });
 
@@ -71,12 +75,8 @@ angular.module('app.controllers', [])
         Geolocation.simulationEnabled(_n);
         
         $log.debug("debug.simulation:" + _n);
-        if (_n != _o) {
-            if (angular.isFunction($mapScope.init)) {
-                $mapScope.init();
-            }
-        }
         
+        if (_n != _o) mapInit();
         cfg.update($scope.debug);
     });
 
