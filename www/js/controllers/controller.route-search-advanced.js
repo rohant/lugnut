@@ -308,7 +308,7 @@ angular.module('app.controllers')
 
             var poliline = new google.maps.Polyline({
                 map: $scope.map,
-                path: $scope.routes[i].points,
+                path: $scope.routes[i].simplify(0.0015),
                 strokeColor: "grey",
                 //strokeColor: getRandomColor(),
                 //strokeOpacity: 1.0,
