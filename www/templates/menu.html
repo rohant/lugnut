@@ -14,8 +14,16 @@
         <ion-content class="has-header">
             <ion-list>
                 
+                <ion-item nav-clear menu-close href="#/app/dashboard" ng-if="isLoggedIn">
+                    Dashboard
+                </ion-item>
+                
                 <ion-item nav-clear menu-close href="#/app/signin" ng-if="!isLoggedIn">
                     Sign In
+                </ion-item>
+                
+                <ion-item nav-clear menu-close href="#/app/route/record">
+                    Record route
                 </ion-item>
                 
                 <ion-item nav-clear menu-close href="#/app/route/search">
@@ -24,10 +32,6 @@
 
                 <ion-item nav-clear menu-close href="#/app/route/search-advanced">
                     Advanced search
-                </ion-item>
-                
-                <ion-item nav-clear menu-close href="#/app/route/record">
-                    Record route
                 </ion-item>
                 
                 <ion-item nav-clear menu-close href="#/app/route/list">

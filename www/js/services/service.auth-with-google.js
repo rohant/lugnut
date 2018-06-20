@@ -100,6 +100,8 @@ angular.module('app.services')
             try {
                 window.plugins.googleplus.logout(function (message) {
                     deferred.resolve(message);
+                }, function (error) {
+                    deferred.reject(error);
                 });
 
                 //window.plugins.googleplus.disconnect(function (message) {
