@@ -147,6 +147,32 @@ angular.module('app.controllers')
                 }
             });
             
+            
+            //var waypoints = $scope.model.points.map(function(point){
+            //    return new google.maps.LatLng(point.lat, point.lng);
+            //}).map(function(point){
+            //    bounds.extend(point);
+            //    return point;
+            //});
+            //
+            //$scope.map.fitBounds(bounds);      // auto-zoom
+            //$scope.map.panToBounds(bounds);    // auto-center
+            //
+            //var tracewaypoints = new google.maps.Polyline({
+            //    map: $scope.map,
+            //    path: waypoints,
+            //    strokeColor: "blue",
+            //    strokeOpacity: 1.0,
+            //    strokeWeight: 2,
+            //    icons: [{
+            //        icon: closedArrowIcon,
+            //        offset: '100%'
+            //    }/*, {
+            //        icon: busIcon,
+            //        offset: '10%',
+            //    }*/]
+            //});
+            
             $scope.watchPosition();
             $scope.watchDirection();
             

@@ -1,9 +1,19 @@
 angular.module('app.controllers')
 
-.controller('RouteCreateCtrl', function ($scope, $rootScope, $state, AuthService, DebugMode, $ionicPopup, $cordovaNetwork) {
+.controller('RouteCreateCtrl', function ($injector, $scope, $rootScope, $state, $log, Route, AuthService, DebugMode, $ionicPopup, $cordovaNetwork) {
     
-    // TODO: remove it on production
+    /**
+     * TODO: remove it on production
+     * 
+     * @param {boolean} enable
+     * @return {undefined}
+     */
     function test (enable) {
+        
+        if (!$rootScope.route) {
+            $rootScope.route = $injector.get('Route').createEmpty();
+        }
+        
         if (!enable) {
             $rootScope.route.setData({
                 title: '',
@@ -57,16 +67,16 @@ angular.module('app.controllers')
         
             $scope.processing = true;
             route.user_id = $scope.identity.id;
-
+            
             route.save().then(function(model){
                 
-                if (model) {
-                    var routeID = model.id;
+                var routeID = model.id;
 
-                    if (routeID !== -1) {
-                        $state.go('app.route-view', {id: routeID})
-                    }
+                if (routeID !== -1) {
+                    $state.go('app.route-view', {id: routeID});
                 }
+                
+            }).catch(function(errors){
                 
             }).finally(function(){
                 $scope.processing = false;
