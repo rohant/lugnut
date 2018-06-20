@@ -42,6 +42,51 @@ angular.module('app.controllers')
      * @return {undefined}
      */
     $scope.init = function () {
+        
+        $scope.loading = $ionicLoading.show({
+            template: 'Getting current location...',
+            showBackdrop: true
+        });
+        
+        Geolocation.getCurrentPosition({
+            enableHighAccuracy: true,
+            maximumAge: 6000,
+            timeout: 30000,
+        }).then(function (position) {
+            $log.debug('Got position:', position);
+
+            var myLatlng = new google.maps.LatLng(
+                position.coords.latitude,
+                position.coords.longitude
+            );
+
+            //$scope.map.setCenter(myLatlng);
+            $scope.map.panTo(myLatlng);
+            marker = Marker.current(position);
+
+        }, function (error) {
+            
+            $log.error('Unable to get location: ' + error.message, error);
+            
+        }).finally(function(){
+            $scope.showActions = true;
+            try {
+                $scope.loading.hide();
+            } catch (e) {
+                $ionicLoading.hide();
+            }
+        });
+    }
+
+    /**
+     *
+     * @param {type} map
+     * @return {undefined}
+     */
+    $scope.mapCreated = function (map) {
+        
+        Marker.init(map);
+        $scope.map = map;
         $scope.map.setZoom(15);
         $scope.showReloadBtn = false;
 
@@ -67,11 +112,6 @@ angular.module('app.controllers')
         //}
 
 
-        $scope.loading = $ionicLoading.show({
-            template: 'Getting current location...',
-            showBackdrop: true
-        });
-
         if (!tracewaypoints) {
             tracewaypoints = new google.maps.Polyline({
                 map: $scope.map,
@@ -81,52 +121,10 @@ angular.module('app.controllers')
                 strokeWeight: 2
             });
         }
-
-        Geolocation.getCurrentPosition({
-            enableHighAccuracy: true,
-            maximumAge: 6000,
-            timeout: 30000,
-        }).then(function (position) {
-            $log.debug('Got position:', position);
-            $scope.showActions = true;
-
-            try {
-                $scope.loading.hide();
-            } catch (e) {
-                $ionicLoading.hide();
-            }
-
-            var myLatlng = new google.maps.LatLng(
-                position.coords.latitude,
-                position.coords.longitude
-            );
-
-            //$scope.map.setCenter(myLatlng);
-            $scope.map.panTo(myLatlng);
-            marker = Marker.current(position);
-
-        }, function (error) {
-
-            $log.error('Unable to get location: ' + error.message, error);
-            $scope.showReloadBtn = true;
-
-            try {
-                $scope.loading.hide();
-            } catch (e) {
-                $ionicLoading.hide();
-            }
-        });
-    }
-
-    /**
-     *
-     * @param {type} map
-     * @return {undefined}
-     */
-    $scope.mapCreated = function (map) {
-        $scope.map = map;
-        $scope.init(map);
-        Marker.init(map);
+        
+//        if (AuthService.isLoggedIn()) {
+//            $scope.init();
+//        }
     };
 
     /**
@@ -273,8 +271,9 @@ angular.module('app.controllers')
     
     $scope.$on("$ionicView.enter", function (event) {
         
-        if (!AuthService.isLoggedIn())
-        {
+        if (AuthService.isLoggedIn()) {
+            $scope.init();
+        } else {
             // set "to back" function
             AuthService.toBack = function(){
                 AuthService.toBack = null;
