@@ -69,7 +69,7 @@ angular.module('app.services')
 	RouteModel.prototype.hasErrors = function () {
 		return Object.keys(this.errors).length;
 	};
-    
+
     /**
      * 
      * @param {object} point
@@ -116,6 +116,8 @@ angular.module('app.services')
         
         return true;
     };
+    
+    //RouteModel.prototype.validate = function () {}
 
     /**
      * 
@@ -141,12 +143,24 @@ angular.module('app.services')
 			
 			if (response.errors) {
 				$self.errors = response.errors;
+                return $q.reject($self.errors);
 			}
             
             return $self;
             
         }).catch(function(errors){
-			$self.errors = errors;
+            
+            if (errors.hasOwnProperty('status')){
+                //$self.errors['_internal_'] = errors;
+                
+                if (errors.status == -1) {
+                    $self.errors['_internal_'] = 'Internet connection error. Please try again later.';
+                    
+                }else if (200 <= errors.status){
+                    $self.errors['_internal_'] = 'Internal server error. Please try again later.';
+                }
+            }
+            return $q.reject(errors);
 		});
     };
     
