@@ -69,22 +69,22 @@ angular.module('app.controllers', [])
     
     $scope.$watch('debug.enabled', function(_n,_o){
         $log.debug("debug.enabled:" + _n);
+        Geolocation.simulationEnabled(_n);
         
         if (_n != _o) {
-            mapInit();
             $scope.debug.simulation = _n;
-            Geolocation.simulationEnabled(_n);
             cfg.update($scope.debug);
+            mapInit();
         }
     });
 
     $scope.$watch('debug.simulation', function(_n,_o){
         $log.debug("debug.simulation:" + _n);
+        Geolocation.simulationEnabled(_n);
         
         if (_n != _o) {
-            mapInit();
-            Geolocation.simulationEnabled(_n);
             cfg.update($scope.debug);
+            mapInit();
         }
     });
 
