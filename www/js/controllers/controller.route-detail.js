@@ -30,7 +30,8 @@ angular.module('app.controllers')
             });
             
         }).catch(function(response){
-            $scope.errorInternal(response.data);
+            //$scope.errorInternal(response.data);
+            $scope.errorNoInternet();
         });
     }
     
@@ -87,9 +88,18 @@ angular.module('app.controllers')
     $scope.errorNoInternet = function () {
         return $ionicPopup.confirm({
             title: "Internet is not working",
-            content: "Internet is not working on your device."
+            content: "Internet is not working on your device. Please try again later."
         }).then(function(isOK){
-            if (isOK) $scope.init();
+            if (isOK) 
+                $scope.init();
+            else {
+                if (!$scope.showBackButton) {
+                    var $location = $injector.get('$location');
+                    $location.path('/');
+                } else {
+                    $ionicHistory.goBack();
+                }
+            }
         });
     }
     
@@ -99,16 +109,16 @@ angular.module('app.controllers')
      * @return {unresolved}
      */
     $scope.errorInternal = function (errorObj) {
-        var $location = $injector.get('$location');
         
         return $ionicPopup.confirm({
             title: 'Internal server error',
             content: 'Please try again later.'
         }).then(function(isOK){
             if (isOK) {
-                $scope.init();
+                $state.init();
             } else {
                 if (!$scope.showBackButton) {
+                    var $location = $injector.get('$location');
                     $location.path('/');
                 } else {
                     $ionicHistory.goBack();
@@ -133,7 +143,7 @@ angular.module('app.controllers')
         $ionicNavBarDelegate.showBackButton($scope.showBackButton);
     });
     
-    $scope.$on('$cordovaNetwork:online', function(event, networkState) {
-        $scope.init();
-    });
+    //$scope.$on('$cordovaNetwork:online', function(event, networkState) {
+    //    $scope.init();
+    //});
 });
