@@ -1,6 +1,21 @@
 angular.module('app.controllers')
 
-.controller('RouteViewCtrl', function ($scope, $state, $log, $ionicLoading, $http, Route, Marker, Geolocation, Config) {
+.controller('RouteViewCtrl', function (
+    $injector,
+    $scope, 
+    $state, 
+    $log, 
+    $ionicLoading, 
+    $http, 
+    $ionicPopup,
+    $ionicNavBarDelegate, 
+    $ionicHistory, 
+    $cordovaNetwork,
+    Route, 
+    Marker, 
+    Geolocation, 
+    Config
+) {
     
     var watch;
     
@@ -22,7 +37,15 @@ angular.module('app.controllers')
         $scope.map = map;
         $scope.map.setZoom(15);
         Marker.init(map);
-        
+        $scope.init();
+    }
+    
+    /**
+     * 
+     * @return {undefined}
+     */
+    $scope.init = function() {
+
         var bounds  = new google.maps.LatLngBounds();
         var path = [];
         
@@ -118,13 +141,45 @@ angular.module('app.controllers')
                         $scope.$B.setPosition(tmp[tmp.length-1]);
 
                     }, function(response) {
-                        $log.error('snapToRoads:error', response)
+                        $log.error('snapToRoads:error', response);
+                        $scope.errorNoInternet();
                     });
                 }
             });
             
+            
+            //var waypoints = $scope.model.points.map(function(point){
+            //    return new google.maps.LatLng(point.lat, point.lng);
+            //}).map(function(point){
+            //    bounds.extend(point);
+            //    return point;
+            //});
+            //
+            //$scope.map.fitBounds(bounds);      // auto-zoom
+            //$scope.map.panToBounds(bounds);    // auto-center
+            //
+            //var tracewaypoints = new google.maps.Polyline({
+            //    map: $scope.map,
+            //    path: waypoints,
+            //    strokeColor: "blue",
+            //    strokeOpacity: 1.0,
+            //    strokeWeight: 2,
+            //    icons: [{
+            //        icon: closedArrowIcon,
+            //        offset: '100%'
+            //    }/*, {
+            //        icon: busIcon,
+            //        offset: '10%',
+            //    }*/]
+            //});
+            
             $scope.watchPosition();
             $scope.watchDirection();
+            
+        }).catch(function(response){
+            
+            //$scope.errorInternal(response.data);
+            $scope.errorNoInternet();
             
         }).finally(function(){
             try {
@@ -219,13 +274,40 @@ angular.module('app.controllers')
         Geolocation.clearWatch(watch);
     };
 
+    /**
+     * 
+     * @return {unresolved}
+     */
+    $scope.errorNoInternet = function () {
+        return $ionicPopup.confirm({
+            title: "Internet is not working",
+            content: "Internet is not working on your device. Please try again later."
+        }).then(function(isOK){
+            if (isOK) {
+                $scope.init();
+            } else {
+                if (!$scope.showBackButton) {
+                    var $location = $injector.get('$location');
+                    $location.path('/');
+                } else {
+                    $ionicHistory.goBack();
+                }
+            }
+        });
+    }
+    
     $scope.$on("$destroy", function () {
         Geolocation.clearWatch(watch);
     });
     
-    $scope.$on("$ionicView.enter", function (event) {
-        if (Geolocation.simulationEnabled()) {
-            // do something
-        }
+    //$scope.$on("$ionicView.enter", function (event) {
+    //    if (Geolocation.simulationEnabled()) {
+    //        // do something
+    //    }
+    //});
+    
+    $scope.$on("$ionicView.beforeEnter", function (event) {
+        $scope.showBackButton = !!$ionicHistory.viewHistory().backView;
+        $ionicNavBarDelegate.showBackButton($scope.showBackButton);
     });
 });

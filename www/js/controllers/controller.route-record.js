@@ -13,7 +13,19 @@
 
 angular.module('app.controllers')
 
-.controller('RouteRecordCtrl', function ($scope, $rootScope, $log, $http, $state, $ionicLoading, Marker, Route, Geolocation, Config) {
+.controller('RouteRecordCtrl', function (
+    $scope, 
+    $rootScope, 
+    $log, 
+    $http, 
+    $state, 
+    $ionicLoading, 
+    Marker, 
+    Route, 
+    Geolocation, 
+    Config,
+    AuthService
+) {
 
     var watch, marker;
     var waypoints = [];
@@ -250,6 +262,7 @@ angular.module('app.controllers')
             $state.go('app.route-create')
     };
 
+
     $scope.$on("$destroy", function () {
         console.log('$destroy')
         
@@ -257,7 +270,19 @@ angular.module('app.controllers')
         tracewaypoints.setPath([]);
     });
     
+    
     $scope.$on("$ionicView.enter", function (event) {
+        
+        if (!AuthService.isLoggedIn())
+        {
+            // set "to back" function
+            AuthService.toBack = function(){
+                AuthService.toBack = null;
+                $state.go('app.route-record');
+            }
+
+            $state.go('app.signin');
+        }
         
         if (Geolocation.simulationEnabled()) {
             

@@ -1,9 +1,19 @@
 angular.module('app.controllers')
 
-.controller('RouteCreateCtrl', function ($scope, $rootScope, $state, AuthService, DebugMode, $ionicPopup, $cordovaNetwork) {
+.controller('RouteCreateCtrl', function ($injector, $scope, $rootScope, $state, $log, Route, AuthService, DebugMode, $ionicPopup, $cordovaNetwork) {
     
-    // TODO: remove it on production
+    /**
+     * TODO: remove it on production
+     * 
+     * @param {boolean} enable
+     * @return {undefined}
+     */
     function test (enable) {
+        
+        if (!$rootScope.route) {
+            $rootScope.route = $injector.get('Route').createEmpty();
+        }
+        
         if (!enable) {
             $rootScope.route.setData({
                 title: '',
@@ -41,24 +51,35 @@ angular.module('app.controllers')
         }
             
         if (isOffline) {
+            
             $ionicPopup.confirm({
                 title: "Internet is not working",
                 content: "Internet is not working on your device."
             }).then(function(isOK){
                 if (isOK) $scope.create(route);
             });
+            
+            $scope.$on('$cordovaNetwork:online', function(event, networkState) {
+                $scope.create(route);
+            });
+            
         } else {
         
             $scope.processing = true;
             route.user_id = $scope.identity.id;
-
+            
             route.save().then(function(model){
-                $scope.processing = false;
+                
                 var routeID = model.id;
 
                 if (routeID !== -1) {
-                    $state.go('app.route-view', {id: routeID})
+                    $state.go('app.route-view', {id: routeID});
                 }
+                
+            }).catch(function(errors){
+                
+            }).finally(function(){
+                $scope.processing = false;
             });
         }
     };

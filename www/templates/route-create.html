@@ -2,34 +2,67 @@
     <ion-nav-buttons side="left">
         <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
     </ion-nav-buttons>
-    <ion-content scroll="false" class="has-header">
+    <ion-content class="has-header">
         <div ng-class="processing ? 'loader' : ''">
             <div class="list">
-                <label class="item item-input _item-stacked-label item-floating-label">
-                    <span class="input-label">Title</span>
-                    <input type="text" placeholder="Title" ng-model="route.title">
-                </label>
-                <label class="item item-input _item-stacked-label item-floating-label">
-                    <span class="input-label">Company</span>
-                    <input type="text" placeholder="Company" ng-model="route.company">
-                </label>
-                <label class="item item-input _item-stacked-label item-floating-label">
-                    <span class="input-label">City</span>
-                    <input type="text" placeholder="City" ng-model="route.city">
-                </label>
-                <label class="item item-input _item-stacked-label item-floating-label">
-                    <span class="input-label">Address</span>
-                    <input type="text" placeholder="Address" ng-model="route.address">
-                </label>
-                <label class="item item-input _item-stacked-label item-floating-label">
-                    <span class="input-label">Description</span>
-                    <textarea placeholder="Description" ng-model="route.description"></textarea>
-                </label>
-            </div>
-            <div class="padding">
-                <button class="button button-positive button-block" ng-click="create(route)">
-                    Save
-                </button>
+                
+                <div class="row">
+                    <div class="col">
+                        <label class="item item-input _item-stacked-label item-floating-label" ng-class="route.errors['title'] ? 'has-error' : ''">
+                            <span class="input-label">Title</span>
+                            <input type="text" placeholder="Email" ng-model="route.title">
+                        </label>
+                        <div class="help-block" ng-show="route.errors['title']">{{route.errors['title'].join(', ')}}</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="item item-input _item-stacked-label item-floating-label" ng-class="route.errors['company'] ? 'has-error' : ''">
+                            <span class="input-label">Company</span>
+                            <input type="text" placeholder="Company" ng-model="route.company">
+                        </label>
+                        <div class="help-block" ng-show="route.errors['company']">{{route.errors['company'].join(', ')}}</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="item item-input _item-stacked-label item-floating-label" ng-class="route.errors['city'] ? 'has-error' : ''">
+                            <span class="input-label">City</span>
+                            <input type="text" placeholder="City" ng-model="route.city">
+                        </label>
+                        <div class="help-block" ng-show="route.errors['city']">{{route.errors['city'].join(', ')}}</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="item item-input _item-stacked-label item-floating-label" ng-class="route.errors['address'] ? 'has-error' : ''">
+                            <span class="input-label">Address</span>
+                            <input type="text" placeholder="Address" ng-model="route.address">
+                        </label>
+                        <div class="help-block" ng-show="route.errors['address']">{{route.errors['address'].join(', ')}}</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="item item-input _item-stacked-label item-floating-label" ng-class="route.errors['description'] ? 'has-error' : ''">
+                            <span class="input-label">Description</span>
+                            <textarea placeholder="Description" ng-model="route.description"></textarea>
+                        </label>
+                        <div class="help-block" ng-show="route.errors['description']">{{route.errors['description'].join(', ')}}</div>
+                    </div>
+                </div>
+                
+                <div ng-if="route.errors['points'] || route.errors['_internal_']" class="alert alert-danger">
+                    <div><b>Errors:</b></div>
+                    <span ng-bind="route.errors['points']"></span>
+                    <span ng-bind="route.errors['_internal_']"></span>
+                </div>
+
+                <div class="padding">
+                    <button class="button button-positive button-block" ng-click="create(route)">
+                        Save
+                    </button>
+                </div>
             </div>
         </div>
     </ion-content>

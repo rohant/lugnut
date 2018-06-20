@@ -6,55 +6,57 @@
 
     <ion-content class="has-header">
         <!--<ion-refresher on-refresh="reload()"></ion-refresher>-->
+        
+        <div ng-class="!model ? 'loader' : ''" style="min-height: 200px">
+            
+            <div class="padding" ng-show="model">
+                <h2>{{model.title}}</h2>
 
-        <div class="padding" ng-class="!model ? 'loader' : ''">
-
-            <h2>{{model.title}}</h2>
-
-            <div class="row">
-                <div class="col">City</div>
-                <div class="col">{{model.city}}</div>
-            </div>
-            <div class="row">
-                <div class="col">Address</div>
-                <div class="col">{{model.address}}</div>
-            </div>
-            <div class="row">
-                <div class="col">Description</div>
-                <div class="col">{{model.description}}</div>
-            </div>
-            <div class="row">
-                <div class="col">Created by</div>
-                <div class="col">{{model.user.name}}</div>
-            </div>
-            <div class="row">
-                <div class="col"></div>
-                <div class="col">
-                    <ul>
-                        <li ng-class="{'highlight': model.user.rating == 1}">★</li>
-                        <li ng-class="{'highlight': model.user.rating == 2}">★</li>
-                        <li ng-class="{'highlight': model.user.rating == 3}">★</li>
-                        <li ng-class="{'highlight': model.user.rating == 4}">★</li>
-                        <li ng-class="{'highlight': model.user.rating == 5}">★</li>
-                    </ul>
+                <div class="row">
+                    <div class="col">City</div>
+                    <div class="col">{{model.city}}</div>
                 </div>
-            </div>
-            <div style="position:absolute;bottom:5px;left:0;padding:0 10px;">
-                <div style="position:relative">
-                    <img src="./img/map-default.jpg" ng-src="{{model.getImageUrl({size:'500x420'})}}" style="width:100%">
+                <div class="row">
+                    <div class="col">Address</div>
+                    <div class="col">{{model.address}}</div>
+                </div>
+                <div class="row">
+                    <div class="col">Description</div>
+                    <div class="col">{{model.description}}</div>
+                </div>
+                <div class="row">
+                    <div class="col">Created by</div>
+                    <div class="col">{{model.user.name}}</div>
+                </div>
+                <div class="row">
+                    <div class="col"></div>
+                    <div class="col">
+                        <ul>
+                            <li ng-class="{'highlight': model.user.rating == 1}">★</li>
+                            <li ng-class="{'highlight': model.user.rating == 2}">★</li>
+                            <li ng-class="{'highlight': model.user.rating == 3}">★</li>
+                            <li ng-class="{'highlight': model.user.rating == 4}">★</li>
+                            <li ng-class="{'highlight': model.user.rating == 5}">★</li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="position:absolute;bottom:5px;left:0;padding:0 10px;">
+                    <div style="position:relative">
+                        <img src="./img/map-default.jpg" ng-src="{{model.getImageUrl({size:'500x420'})}}" style="width:100%">
 
-                    <div style="position:absolute;bottom:0;left:0;padding:0 10px;width:100%;background:rgba(255,255,255,.5)">
+                        <div style="position:absolute;bottom:0;left:0;padding:0 10px;width:100%;background:rgba(255,255,255,.5)">
 
-                        <div class="row">
-                            <div class="col">
-                                <a class="button button-block button-positive icon-left ion-log-in" href="#/app/route/view/{{model.id}}">
-                                    Go!
-                                </a>
-                            </div>
-                            <div class="col">
-                                <button class="button button-block button-calm icon-left ion-share" ng-click="share()">
-                                    Share It!
-                                </button>
+                            <div class="row">
+                                <div class="col">
+                                    <a class="button button-block button-positive icon-left ion-log-in" href="#/app/route/view/{{model.id}}">
+                                        Go!
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <button class="button button-block button-calm icon-left ion-share" ng-click="share()">
+                                        Share It!
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
