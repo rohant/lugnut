@@ -11,13 +11,21 @@ angular.module('app.controllers', [])
     $log.info('Start application!');
 })
 
-.controller('DebugCtrl', function ($scope, $log, FakeRoutes, Geolocation, DebugMode) {
+.controller('DebugCtrl', function ($scope, $log, $state, FakeRoutes, Geolocation, DebugMode) {
     var simulator = Geolocation.getGeolocationSimulator();
     
     var mapInit = (function () {
         var $mapScope = angular.element('map').scope();
         
         return function(){
+            
+            if ([
+                'app.route-record',
+                'app.route-search-advanced',
+            ].indexOf($state.current.name) == -1) {
+                return false;
+            }
+            
             try {
                 if (!angular.isUndefined($mapScope.init) 
                     && angular.isFunction($mapScope.init)) {
