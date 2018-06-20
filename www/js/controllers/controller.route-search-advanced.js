@@ -75,7 +75,7 @@ angular.module('app.controllers')
             }
         });
     }
-
+    
     /**
      *
      * @return {undefined}
@@ -162,23 +162,20 @@ angular.module('app.controllers')
         return dirty;
     }
 
-
     /**
-     *
+     * Initialize the Google Map
      * @param {type} map
      * @return {undefined}
      */
-    $scope.init = function (map) {
+    $scope.mapCreated = function (map) {
+        
+        $scope.map = map;
+        $scope.map.setZoom(15);
+        $scope.showReloadBtn = false;
+        $scope.initialized = true;
 
-        if (map) {
-            $scope.map = map;
-            $scope.map.setZoom(15);
-            $scope.showReloadBtn = false;
-            $scope.initialized = true;
-
-            Marker.init(map);
-            tracewaypoints.setMap(map);
-        }
+        Marker.init(map);
+        tracewaypoints.setMap(map);
 
         $scope.$A = Marker.createMarker('Point A');
         $scope.$B = Marker.createMarker('Point B');
@@ -237,6 +234,15 @@ angular.module('app.controllers')
         });
 
         $scope.active($scope.$B);
+        $scope.init();
+    }
+
+    /**
+     *
+     * @param {type} map
+     * @return {undefined}
+     */
+    $scope.init = function (map) {
         getCurrentPosition();
     }
 

@@ -14,26 +14,25 @@ angular.module('app.controllers', [])
 .controller('DebugCtrl', function ($scope, $log, $state, FakeRoutes, Geolocation, DebugMode) {
     var simulator = Geolocation.getGeolocationSimulator();
     
-    var mapInit = (function () {
+    var mapInit = function () {
+
         var $mapScope = angular.element('map').scope();
-        
-        return function(){
-            
-            if ([
-                'app.route-record',
-                'app.route-search-advanced',
-            ].indexOf($state.current.name) == -1) {
-                return false;
+
+        if ([
+            'app.route-record',
+            'app.route-search-advanced',
+        ].indexOf($state.current.name) == -1) {
+            return false;
+        }
+
+        try {
+            if (!angular.isUndefined($mapScope.init) 
+                && angular.isFunction($mapScope.init)) {
+                console.log('$mapScope.init()')
+                $mapScope.init();
             }
-            
-            try {
-                if (!angular.isUndefined($mapScope.init) 
-                    && angular.isFunction($mapScope.init)) {
-                    $mapScope.init();
-                }
-            } catch(e) {}
-        };
-    }());
+        } catch(e) {}
+    };
     
 
     // TODO: it must be refactored

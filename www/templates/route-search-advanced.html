@@ -8,7 +8,7 @@
         <div ng-class="processing ? 'loader' : ''" style="position:absolute;top:0;bottom:0;left:0;right:0;"></div>
 
         <load-google-map>
-            <map on-create="init(map)"></map>
+            <map on-create="mapCreated(map)"></map>
         </load-google-map>
 
         <debug-toolbar></debug-toolbar>
