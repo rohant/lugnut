@@ -28,7 +28,6 @@ angular.module('app.controllers', [])
         try {
             if (!angular.isUndefined($mapScope.init) 
                 && angular.isFunction($mapScope.init)) {
-                console.log('$mapScope.init()')
                 $mapScope.init();
             }
         } catch(e) {}
