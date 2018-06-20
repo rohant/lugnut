@@ -14,6 +14,7 @@ angular.module('app.controllers')
         }
         
         $state.go('app.signin');
+        return false;
         
     }
 
