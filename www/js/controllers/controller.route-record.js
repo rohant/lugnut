@@ -68,8 +68,8 @@ angular.module('app.controllers')
 
 
         $scope.loading = $ionicLoading.show({
-            content: 'Getting current location...',
-            showBackdrop: false
+            template: 'Getting current location...',
+            showBackdrop: true
         });
 
         if (!tracewaypoints) {
