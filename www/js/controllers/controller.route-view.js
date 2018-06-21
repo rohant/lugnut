@@ -6,7 +6,6 @@ angular.module('app.controllers')
     $log, 
     $http, 
     $state, 
-    $filter,
     $ionicPopup,
     $ionicHistory, 
     $ionicLoading, 
@@ -44,10 +43,12 @@ angular.module('app.controllers')
     function saveViewedRoute(model, limit)
     {
         var _key = 'viewedRoutes';
+        var $filter = $injector.get('$filter');
         var viewedRoutes = JSON.parse(localStorage.getItem(_key)) || [];
         var isViewed = $filter('filter')(viewedRoutes, {id: model.id}, true)[0];
 
         if (!isViewed) {
+            model.viewed_at = new Date().getTime();
             viewedRoutes.reverse().push(model.getAttributes());
             viewedRoutes.reverse().splice(limit || 10,viewedRoutes.length-1);
             localStorage.setItem(_key, JSON.stringify(viewedRoutes));
@@ -319,7 +320,7 @@ angular.module('app.controllers')
     }
     
     $scope.$on("$destroy", function () {
-        Geolocation.clearWatch(watch);
+        $scope.stopWatchingPosition();
     });
     
     //$scope.$on("$ionicView.enter", function (event) {
