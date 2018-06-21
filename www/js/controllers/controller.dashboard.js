@@ -36,7 +36,6 @@ angular.module('app.controllers')
 
     
     $scope.$on("$ionicView.beforeEnter", function (event) {
-        console.log("$ionicView.beforeEnter");
         
         if (!AuthService.isLoggedIn()) {
 
