@@ -1,6 +1,6 @@
 angular.module('app.controllers')
 
-.controller('RouteListCtrl', function ($scope, $state, Route, AuthService) {
+.controller('RouteListCtrl', function ($scope, $state, $injector, Route, AuthService) {
     
     $scope.isInit = false;
     
@@ -14,6 +14,10 @@ angular.module('app.controllers')
         
         return Route.findAll(criteria).then(function(items){
             $scope.routes = items;
+        }).catch(function(){
+            $scope.errorNoInternet(function(){
+                $scope.reload();
+            });
         }).finally( function() {
             $scope.processing = false;
             if (!$scope.isInit) {
@@ -25,10 +29,41 @@ angular.module('app.controllers')
     $scope.delete = function(route){
         $scope.processing = true;
         return route.delete().then(function(){
-            $scope.processing = false;
             $scope.reload();
+        }).catch(function(){
+            $scope.errorNoInternet(function(){
+                $scope.delete(route);
+            });
+        }).finally(function(){
+            $scope.processing = false;
         });
     };
+    
+    
+    /**
+     * 
+     * @return {unresolved}
+     */
+    $scope.errorNoInternet = function (tryAgain) {
+        var $ionicPopup = $injector.get('$ionicPopup');
+        
+        return $ionicPopup.confirm({
+            title: "Internet is not working",
+            content: "Internet is not working on your device. Please try again later."
+        }).then(function(isOK){
+            if (isOK) {
+                tryAgain();
+            } else {
+                if (!$scope.showBackButton) {
+                    var $location = $injector.get('$location');
+                    $location.path('/');
+                } else {
+                    var $ionicHistory = $injector.get('$ionicHistory');
+                    $ionicHistory.goBack();
+                }
+            }
+        });
+    }
     
     $scope.$on("$ionicView.enter", function (event) {
         
