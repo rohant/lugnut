@@ -4,6 +4,10 @@ angular.module('app.config', ['app.services'])
     $logProvider.debugEnabled(true);
 }])
 
+//.config(['$ionicConfigProvider', function ($ionicConfigProvider) {
+//    $ionicConfigProvider.views.maxCache(0);
+//}])
+
 .value('Config', {
     
     // Google Map API key
