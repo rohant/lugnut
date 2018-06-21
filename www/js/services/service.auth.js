@@ -21,7 +21,7 @@ angular.module('app.services')
 		},
 		
 		logout: function () {
-			return ApiService.get('client/logout').then(function (response) {
+			return ApiService.post('client/logout').then(function (response) {
 				$log.debug('Logout..', response);
 				_identity = null;
 				return response;
@@ -29,7 +29,7 @@ angular.module('app.services')
 		},
 		
 		refrash: function () {
-			return ApiService.get('client/me').then(function (response) {
+			return ApiService.post('client/me').then(function (response) {
 				$log.debug('Refrash..', response);
 				
 				return auth
