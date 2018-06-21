@@ -122,9 +122,9 @@ angular.module('app.controllers')
             });
         }
         
-//        if (AuthService.isLoggedIn()) {
-//            $scope.init();
-//        }
+        if (AuthService.isLoggedIn()) {
+            $scope.init();
+        }
     };
 
     /**
@@ -263,15 +263,13 @@ angular.module('app.controllers')
 
     $scope.$on("$destroy", function () {
         console.log('$destroy')
-        
         Geolocation.clearWatch(watch);
-        tracewaypoints.setPath([]);
     });
     
-    $scope.$on("$ionicView.enter", function (event) {
+    $scope.$on("$ionicView.beforeEnter", function (event) {
         
         if (AuthService.isLoggedIn()) {
-            $scope.init();
+            //$scope.init();
         } else {
             // set "to back" function
             AuthService.toBack = function(){
