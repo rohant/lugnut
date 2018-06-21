@@ -26,10 +26,15 @@ angular.module('app.controllers')
      * @return {unresolved}
      */
     function getCurrentPosition(){
+        
+        removeAlternativeRoutes();
+        
+        $scope.$A.setVisible(false);
+        $scope.$B.setVisible(false);
 
         $scope.loading = $ionicLoading.show({
-            content: 'Getting current location...',
-            showBackdrop: false
+            template: 'Getting current location...',
+            showBackdrop: true
         });
 
         return Geolocation.getCurrentPosition({
@@ -68,6 +73,10 @@ angular.module('app.controllers')
             $scope.showReloadBtn = true;
 
         }).finally(function(){
+            
+            $scope.$A.setVisible(true);
+            $scope.$B.setVisible(true);
+            
             try {
                 $scope.loading.hide();
             } catch (e) {
@@ -109,9 +118,76 @@ angular.module('app.controllers')
             });
 
             if(!$scope.$$phase) {
-             $scope.$apply();
+                $scope.$apply();
             }
         }
+    }
+
+    /**
+     * 
+     * @return {undefined}
+     */
+    function initMarkers(map) {
+        
+        Marker.init(map);
+        
+        $scope.$A = Marker.createMarker('Point A');
+        $scope.$B = Marker.createMarker('Point B');
+
+        $scope.$A.pristine = true;
+        $scope.$B.pristine = true;
+
+        //$scope.$A.setLabel('A');
+        //$scope.$B.setLabel('B');
+
+        $scope.$A.setAnimation(google.maps.Animation.DROP);
+        $scope.$B.setAnimation(google.maps.Animation.DROP);
+
+        //markerA.setDraggable(true);
+        //markerB.setDraggable(true);
+
+        $scope.$A.setZIndex(2);
+        $scope.$B.setZIndex(1);
+
+        //var image = {
+        //    url: image,
+        //    //size: new google.maps.Size(71, 71),
+        //    //origin: new google.maps.Point(0, 0),
+        //    //anchor: new google.maps.Point(17, 34),
+        //    scaledSize: new google.maps.Size(25, 50)
+        //};
+
+        $scope.$A.setIcon('./img/markers/blue_MarkerA.png');
+        $scope.$B.setIcon('./img/markers/red_MarkerB.png');
+
+        google.maps.event.addListener(tracewaypoints, 'click', function () {
+            $log.debug('click on track');
+            //tracewaypoints.setOptions({strokeOpacity: 1.0});
+        });
+
+        google.maps.event.addListener($scope.$A, 'dragend', function(e) {
+            $log.debug('A:dragend');
+            $scope.$A.pristine = false;
+            $scope.$A.setPosition(e.latLng);
+            drawDirection();
+        });
+
+        google.maps.event.addListener($scope.$B, 'dragend', function(e) {
+            $log.debug('B:dragend');
+            $scope.$B.pristine = false;
+            $scope.$B.setPosition(e.latLng);
+            drawDirection();
+        });
+
+        google.maps.event.addListener(map, 'click', function(e) {
+            $log.debug('Map:click');
+            $scope.current.pristine = false;
+            $scope.current.setPosition(e.latLng);
+            //tracewaypoints.setOptions({strokeOpacity: 0.5});
+            drawDirection();
+        });
+
+        $scope.active($scope.$B);
     }
 
     /**
@@ -171,70 +247,14 @@ angular.module('app.controllers')
         
         $scope.map = map;
         $scope.map.setZoom(15);
+        
         $scope.showReloadBtn = false;
         $scope.initialized = true;
 
-        Marker.init(map);
         tracewaypoints.setMap(map);
 
-        $scope.$A = Marker.createMarker('Point A');
-        $scope.$B = Marker.createMarker('Point B');
-
-        $scope.$A.pristine = true;
-        $scope.$B.pristine = true;
-
-        //$scope.$A.setLabel('A');
-        //$scope.$B.setLabel('B');
-
-        $scope.$A.setAnimation(google.maps.Animation.DROP);
-        $scope.$B.setAnimation(google.maps.Animation.DROP);
-
-        //markerA.setDraggable(true);
-        //markerB.setDraggable(true);
-
-        $scope.$A.setZIndex(2);
-        $scope.$B.setZIndex(1);
-
-        //var image = {
-        //    url: image,
-        //    //size: new google.maps.Size(71, 71),
-        //    //origin: new google.maps.Point(0, 0),
-        //    //anchor: new google.maps.Point(17, 34),
-        //    scaledSize: new google.maps.Size(25, 50)
-        //};
-
-        $scope.$A.setIcon('./img/markers/blue_MarkerA.png');
-        $scope.$B.setIcon('./img/markers/red_MarkerB.png');
-
-        google.maps.event.addListener(tracewaypoints, 'click', function () {
-            $log.debug('click on track');
-            //tracewaypoints.setOptions({strokeOpacity: 1.0});
-        });
-
-        google.maps.event.addListener($scope.$A, 'dragend', function(e) {
-            $log.debug('A:dragend');
-            $scope.$A.pristine = false;
-            $scope.$A.setPosition(e.latLng);
-            drawDirection();
-        });
-
-        google.maps.event.addListener($scope.$B, 'dragend', function(e) {
-            $log.debug('B:dragend');
-            $scope.$B.pristine = false;
-            $scope.$B.setPosition(e.latLng);
-            drawDirection();
-        });
-
-        google.maps.event.addListener(map, 'click', function(e) {
-            $log.debug('Map:click');
-            $scope.current.pristine = false;
-            $scope.current.setPosition(e.latLng);
-            //tracewaypoints.setOptions({strokeOpacity: 0.5});
-            drawDirection();
-        });
-
-        $scope.active($scope.$B);
-        $scope.init();
+        initMarkers(map);
+        $scope.init(map);
     }
 
     /**
@@ -244,18 +264,6 @@ angular.module('app.controllers')
      */
     $scope.init = function (map) {
         getCurrentPosition();
-    }
-
-
-    if (!AuthService.isLoggedIn()) {
-
-        // set "to back" function
-        AuthService.toBack = function(){
-            AuthService.toBack = null;
-            $state.go('app.route-search-advanced');
-        }
-
-        $state.go('app.signin');
     }
 
 
@@ -295,6 +303,8 @@ angular.module('app.controllers')
 
 
     function removeAlternativeRoutes () {
+        
+        tracewaypoints.setPath([]);
 
         for (var i in polilines) {
             polilines[i].setMap(null);
@@ -337,11 +347,25 @@ angular.module('app.controllers')
 
 
     $scope.$on("$destroy", function () {
-        console.log('$destroy')
+        console.log('$destroy');
     });
 
-    $scope.$on("$ionicView.enter", function (event) {
+    $scope.$on("$ionicView.beforeEnter", function (event) {
+        
+        console.log("$ionicView.beforeEnter")
 
+        if (!AuthService.isLoggedIn()) {
+
+            // set "to back" function
+            AuthService.toBack = function(){
+                AuthService.toBack = null;
+                $state.go('app.route-search-advanced');
+            }
+
+            $state.go('app.signin');
+            return false;
+        }
+        
         if (Geolocation.simulationEnabled()) {
 
             var fakeRoute = Geolocation
@@ -350,5 +374,8 @@ angular.module('app.controllers')
 
             $log.info('Used the fake route: ' + fakeRoute.name);
         }
+
+        if ($scope.initialized)
+            getCurrentPosition();
     });
 });

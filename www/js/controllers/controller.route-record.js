@@ -268,7 +268,6 @@ angular.module('app.controllers')
         tracewaypoints.setPath([]);
     });
     
-    
     $scope.$on("$ionicView.enter", function (event) {
         
         if (AuthService.isLoggedIn()) {
