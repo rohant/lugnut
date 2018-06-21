@@ -345,9 +345,9 @@ angular.module('app.controllers')
         return '#' + Math.floor(Math.random()*16777215).toString(16);
     }*/
 
-
     $scope.$on("$destroy", function () {
         console.log('$destroy');
+        Geolocation.clearWatch();
     });
 
     $scope.$on("$ionicView.beforeEnter", function (event) {
