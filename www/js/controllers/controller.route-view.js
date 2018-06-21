@@ -329,7 +329,8 @@ angular.module('app.controllers')
     //});
     
     $scope.$on("$ionicView.beforeEnter", function (event) {
-        $scope.showBackButton = !!$ionicHistory.viewHistory().backView;
+        var backView = $ionicHistory.viewHistory().backView;
+        $scope.showBackButton = backView && (backView.stateName != 'app.route-create');
         $ionicNavBarDelegate.showBackButton($scope.showBackButton);
     });
 });

@@ -5,7 +5,7 @@
     <ion-content scroll="false" class="has-header">
         <load-google-map>
             <load-script id="'helpers-google-map'" src="'vendor/helpers-google-map.js'"></load-script>
-            <map on-create="mapCreated(map)"></map>
+            <map on-create="mapCreated(map)" state-name="{{::$state.current.name}}"></map>
         </load-google-map>
     </ion-content>
 </ion-view>

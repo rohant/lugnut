@@ -14,9 +14,14 @@ angular.module('app.controllers', [])
 .controller('DebugCtrl', function ($scope, $log, $state, FakeRoutes, Geolocation, DebugMode) {
     var simulator = Geolocation.getGeolocationSimulator();
     
+    /**
+     * 
+     * @return {Boolean}
+     */
     var mapInit = function () {
-
-        var $mapScope = angular.element('map').scope();
+        
+        var state = 'map[state-name="'+$state.current.name+'"]', 
+            $mapScope = angular.element(state).scope();
 
         if ([
             'app.route-record',
