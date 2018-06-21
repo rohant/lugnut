@@ -35,6 +35,7 @@ angular.module('app.controllers')
     
     $scope.isWatching = false;
     $scope.showActions = false;
+    $scope.initialized = false;
     
     /**
      *
@@ -53,6 +54,9 @@ angular.module('app.controllers')
             maximumAge: 6000,
             timeout: 30000,
         }).then(function (position) {
+            
+            $scope.initialized = true;
+            
             $log.debug('Got position:', position);
 
             var myLatlng = new google.maps.LatLng(
@@ -122,9 +126,9 @@ angular.module('app.controllers')
             });
         }
         
-        if (AuthService.isLoggedIn()) {
-            $scope.init();
-        }
+        //if (AuthService.isLoggedIn()) {
+        //    $scope.init();
+        //}
     };
 
     /**
@@ -266,10 +270,12 @@ angular.module('app.controllers')
         Geolocation.clearWatch(watch);
     });
     
-    $scope.$on("$ionicView.beforeEnter", function (event) {
+    $scope.$on("$ionicView.enter", function (event) {
         
         if (AuthService.isLoggedIn()) {
-            //$scope.init();
+            if (!$scope.initialized) {
+                $scope.init();
+            }
         } else {
             // set "to back" function
             AuthService.toBack = function(){
