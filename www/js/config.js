@@ -9,12 +9,12 @@ angular.module('app.config', ['app.services'])
 //}])
 
 .value('Config', {
-    
+
     // Google Map API key
     API_KEY: 'AIzaSyDBbNcRgAaE9L4Q6IuAFchPqT1BA61kHvw',
-    
+
     // server url
-    //apiUrl: 'http://192.168.122.17/api/',
+    // apiUrl: 'http://192.168.120.104/api/',
     apiUrl: 'http://lugnut.rmasyahin-wd.office.webdevs.us/api/',
 })
 
@@ -24,7 +24,7 @@ angular.module('app.config', ['app.services'])
 })
 
 .config(function(FakeRoutesProvider) {
-    
+
     FakeRoutesProvider
     .addRoute({
         active: true,

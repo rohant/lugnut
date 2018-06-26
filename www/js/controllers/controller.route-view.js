@@ -91,12 +91,16 @@ angular.module('app.controllers')
         $scope.loading = $ionicLoading.show({
             template: 'Opening your route...'
         });
-
+        
+        $log.debug("Find the route waypoints..");
+        
         Route.findOne($state.params.id).then(function (model) {
             
-            saveViewedRoute(model, 10)
-            
             $scope.model = model;
+            saveViewedRoute(model, 10);
+            
+            $log.debug("Snap to road..");
+            
             var chunked = $scope.model.simplify().chunk(100);
             
             chunked.forEach(function(points, i){
@@ -213,15 +217,15 @@ angular.module('app.controllers')
         });
     }
     
-    /**
-     *
-     * @return {undefined}
-     */
     $scope.watchPosition = function () {
 
         if (!$scope.map) {
             return;
         }
+        
+        $scope.isWatching = true;
+        
+        $log.debug("Start watching locations..");
         
         if (Geolocation.simulationEnabled()) {
             
@@ -238,14 +242,10 @@ angular.module('app.controllers')
             });
         }
 
-        $log.debug("Search GPS coordinates..");
-
-        $scope.isWatching = true;
-
         watch = Geolocation.watchPosition({
             enableHighAccuracy: true,
             maximumAge: 3600000,
-            timeout: 30000,
+            timeout: 5000,
         }).then(null, onError, onSuccess);
 
 
@@ -257,44 +257,46 @@ angular.module('app.controllers')
                 position.coords.longitude
             );
     
-            $scope.$C.setPosition(myLatlng)
+            $scope.$C.setPosition(myLatlng);
         }
 
         function onError (error) {
             $log.error('Unable to get location: ' + error.message, error);
         }
     };
-
-    /**
-     * 
-     * @return {undefined}
-     */
-    $scope.watchDirection = function () {
-        
-        window.addEventListener("deviceorientation", throttle(function (event) {
-
-            var alpha = event.webkitCompassHeading 
-                ? event.webkitCompassHeading 
-                : event.alpha;
-
-            if (event.absolute) {
-                //$log.info('Compass heading: ' + Math.floor(alpha))
-                
-                var icon = $scope.$C.getIcon()
-                icon.rotation = 360 - alpha;
-                $scope.$C.setIcon(icon)
-            }
-
-        }, 250));
-    }
-
-    /**
-     *
-     * @return {undefined}
-     */
+    
     $scope.stopWatchingPosition = function(){
         $scope.isWatching = false;
         Geolocation.clearWatch(watch);
+        
+        try { // TODO:
+            watch && watch.clearWatch();
+        } catch (e) {};
+    };
+    
+    var handleWatchingDirection = throttle(function (event) {
+
+        var alpha = event.webkitCompassHeading 
+            ? event.webkitCompassHeading 
+            : event.alpha;
+
+        if (event.absolute) {
+            //$log.info('Compass heading: ' + Math.floor(alpha))
+
+            var icon = $scope.$C.getIcon()
+            icon.rotation = 360 - alpha;
+            $scope.$C.setIcon(icon)
+        }
+
+    }, 250);
+
+
+    $scope.watchDirection = function () {
+        window.addEventListener("deviceorientation", handleWatchingDirection);
+    };
+    
+    $scope.stopWatchingDirections = function(){
+        window.removeEventListener("deviceorientation", handleWatchingDirection);
     };
 
     /**
@@ -321,6 +323,7 @@ angular.module('app.controllers')
     
     $scope.$on("$destroy", function () {
         $scope.stopWatchingPosition();
+        $scope.stopWatchingDirections();
     });
     
     //$scope.$on("$ionicView.enter", function (event) {
@@ -328,6 +331,11 @@ angular.module('app.controllers')
     //        // do something
     //    }
     //});
+    
+    $scope.$on('$ionicView.leave', function(){
+        $scope.stopWatchingPosition();
+        $scope.stopWatchingDirections();
+    });
     
     $scope.$on("$ionicView.beforeEnter", function (event) {
         var backView = $ionicHistory.viewHistory().backView;

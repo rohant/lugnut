@@ -73,7 +73,9 @@ angular.module('app.controllers')
             $log.error('Unable to get location: ' + error.message, error);
             
         }).finally(function(){
+            
             $scope.showActions = true;
+            
             try {
                 $scope.loading.hide();
             } catch (e) {
@@ -137,32 +139,34 @@ angular.module('app.controllers')
      */
     $scope.watchPosition = function () {
 
-        $log.debug("Start route recording..");
-        $log.debug("Search GPS coordinates..");
-
         if (!$scope.map) {
             return;
         }
-
-        waypoints = [];
-        tracewaypoints.setPath(waypoints);
-
-        $rootScope.route = Route.createEmpty();
+        
         $scope.isWatching = true;
+        
+        $log.debug("Start route recording..");
+        $log.debug("Search GPS coordinates..");
 
         if (Geolocation.simulationEnabled()) {
             $log.info("Start simulation..");
         }
+        
+        waypoints = [];
+        tracewaypoints.setPath(waypoints);
+
+        $rootScope.route = Route.createEmpty();
 
         watch = Geolocation.watchPosition({
             enableHighAccuracy: true,
             maximumAge: 3600000,
-            timeout: 30000,
+            timeout: 5000,
         }).then(null, onError, onSuccess);
 
 
         function onSuccess (position) {
-                $log.debug('Got position:', position);
+            
+            $log.debug('Got position:', position);
 
             var myLatlng = new google.maps.LatLng(
                 position.coords.latitude,
@@ -236,13 +240,19 @@ angular.module('app.controllers')
      * @return {undefined}
      */
     $scope.stopWatchingPosition = function(){
+        
         $scope.isWatching = false;
 
         $log.debug('Stop route recording.');
-        $log.debug('Saving route..');
-
+        
         Geolocation.clearWatch(watch);
-
+        
+        try { // TODO:
+            watch && watch.clearWatch();
+        } catch (e) {}
+        
+        
+        waypoints = [];
         tracewaypoints.setPath([]);
         //tracewaypoints.setMap(null);
 
@@ -259,16 +269,12 @@ angular.module('app.controllers')
         }
         predictPoints = [];
         
-        
-        if ($scope.route.points.length > 3)
-            $state.go('app.route-create')
+        if ($scope.route.points.length > 3) {
+            $log.debug('Saving route..');
+            $state.go('app.route-create');
+        }
     };
 
-
-    $scope.$on("$destroy", function () {
-        console.log('$destroy')
-        Geolocation.clearWatch(watch);
-    });
     
     $scope.$on("$ionicView.enter", function (event) {
         
@@ -294,5 +300,15 @@ angular.module('app.controllers')
         
             $log.info('Used the fake route: ' + fakeRoute.name);
         }
+    });
+
+    $scope.$on('$ionicView.leave', function(){
+        // $scope.stopWatchingPosition();
+    });
+    
+    $scope.$on("$destroy", function () {
+        console.log('$destroy');
+        
+        $scope.stopWatchingPosition();
     });
 })
