@@ -254,10 +254,7 @@ angular.module('app.services')
         getCurrentPosition: function () {
             var arguments = arguments;
             return this.getSource().then(function(source){
-
-              console.log('geo getCurrentPosition', source, arguments)
-
-                return source.getCurrentPosition.apply(null, arguments);
+                return source.getCurrentPosition.apply(source, arguments);
             });
         },
         /**
@@ -332,24 +329,24 @@ angular.module('app.services')
     getCurrentPosition: function (options) {
       var q = $q.defer();
 
-      if (angular.isObject(options)) {
-        if (!options.timeout) {
-          options.timeout = 30000;
-        }
-        if (!options.priority) {
-          options.priority = PRIORITY_HIGH_ACCURACY;
-        }
-        if (!options.maximumAge) {
-          options.maximumAge = 10000;
-        }
-        if (!options.interval) {
-          options.interval = 1000;
-        }
-        if (!options.fastInterval) {
-          options.fastInterval = 1000;
-        }
+      if (!angular.isObject(options)) {
+        options = {};
       }
-
+      if (!options.timeout) {
+        options.timeout = 30000;
+      }
+      if (!options.priority) {
+        options.priority = PRIORITY_HIGH_ACCURACY;
+      }
+      if (!options.maximumAge) {
+        options.maximumAge = 10000;
+      }
+      if (!options.interval) {
+        options.interval = 1000;
+      }
+      if (!options.fastInterval) {
+        options.fastInterval = 1000;
+      }
 
       console.log('LocationServices: getCurrentPosition: start', options);
 
