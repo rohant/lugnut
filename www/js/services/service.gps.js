@@ -325,43 +325,43 @@ angular.module('app.services')
     //   maximumAge: 3000,
     //   timeout: 5000,
     //   enableHighAccuracy: true,
-    //   priority: geolocation.priorities.PRIORITY_HIGH_ACCURACY,
+    //   priority: PRIORITY_HIGH_ACCURACY,
     //   interval: 6000,
     //   fastInterval: 1000
     // };
     getCurrentPosition: function (options) {
-      // var q = $q.defer();
+      var q = $q.defer();
 
-      // if (angular.isObject(options)) {
-      //   if (!options.timeout) {
-      //     options.timeout = 30000;
-      //   }
-      //   if (!options.priority) {
-      //     options.priority = PRIORITY_HIGH_ACCURACY;
-      //   }
-      //   if (!options.maximumAge) {
-      //     options.maximumAge = 10000;
-      //   }
-      //   if (!options.interval) {
-      //     options.interval = 1000;
-      //   }
-      //   if (!options.fastInterval) {
-      //     options.fastInterval = 1000;
-      //   }
-      // }
+      if (angular.isObject(options)) {
+        if (!options.timeout) {
+          options.timeout = 30000;
+        }
+        if (!options.priority) {
+          options.priority = PRIORITY_HIGH_ACCURACY;
+        }
+        if (!options.maximumAge) {
+          options.maximumAge = 10000;
+        }
+        if (!options.interval) {
+          options.interval = 1000;
+        }
+        if (!options.fastInterval) {
+          options.fastInterval = 1000;
+        }
+      }
 
 
-      // console.log('LocationServices: getCurrentPosition: start', options);
+      console.log('LocationServices: getCurrentPosition: start', options);
 
-      // geolocation.getCurrentPosition(function (result) {
-      //   console.log('LocationServices: getCurrentPosition: success');
-      //   q.resolve(result);
-      // }, function (err) {
-      //   console.log('LocationServices: getCurrentPosition: error');
-      //   q.reject(err);
-      // }, options);
+      geolocation.getCurrentPosition(function (result) {
+        console.log('LocationServices: getCurrentPosition: success');
+        q.resolve(result);
+      }, function (err) {
+        console.log('LocationServices: getCurrentPosition: error');
+        q.reject(err);
+      }, {});
 
-      // return q.promise;
+      return q.promise;
     },
 
     watchPosition: function (options) {
