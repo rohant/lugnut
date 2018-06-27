@@ -302,6 +302,8 @@ angular.module('app.services')
  */
 .factory('$cordovaGeolocationAdvanced', ['$q', function ($q) {
 
+  if (typeof cordova === 'undefined') return {};
+
   var geolocation = cordova.plugins.locationServices.geolocation;
 
   var PRIORITY_HIGH_ACCURACY = 100;

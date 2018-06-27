@@ -166,15 +166,28 @@ angular.module('app.services')
     
     /**
      * 
+     * @param {Integer} index
+     * @return {google.maps.LatLng}
+     */
+    RouteModel.prototype.getLatLngPoint = function (index) {
+        
+        if (index < 0) {
+            index = this.points.length + index;
+        }
+        return new google.maps.LatLng(
+            this.points[index].lat,
+            this.points[index].lng
+        );
+    };
+    
+    /**
+     * 
      * @return {Array}
      */
     RouteModel.prototype.getLatLngPoints = function () {
         var tmp = [];
         for (var i in this.points) {
-            tmp.push(new google.maps.LatLng(
-                this.points[i].lat,
-                this.points[i].lng
-            ));
+            tmp.push(this.getLatLngPoint(i));
         }
         return tmp;
     };
