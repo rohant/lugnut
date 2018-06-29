@@ -160,7 +160,7 @@ angular.module('app.controllers')
         watch = Geolocation.watchPosition({
             enableHighAccuracy: true,
             maximumAge: 3600000,
-            timeout: 5000,
+            timeout: 30000,
         }).then(null, onError, onSuccess);
 
 
@@ -217,11 +217,34 @@ angular.module('app.controllers')
             //    }
             //}
             
-            $scope.route.addPoint({
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-            });
-
+            if (!$scope.route.points.length) {
+                $scope.route.addPoint({
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                });
+            } else {
+                
+                var precision = 9;
+                
+                var currentGeoHash = Geohash.encode(
+                    position.coords.latitude,
+                    position.coords.longitude, precision);
+        
+                var lastGeohash = Geohash.encode(
+                    $scope.route.points[$scope.route.points.length-1].lat, 
+                    $scope.route.points[$scope.route.points.length-1].lng, precision);
+        
+                if (currentGeoHash === lastGeohash) {
+                    $log.info('Ignore point.')
+                } else {
+                    $scope.route.addPoint({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
+                }
+            }
+            
+            
             waypoints.push(myLatlng)
             tracewaypoints.setPath(waypoints);
 
@@ -232,6 +255,8 @@ angular.module('app.controllers')
 
         function onError (error) {
             $log.error('Unable to get location: ' + error.message, error);
+            
+            $scope.watchPosition();
         }
     };
 

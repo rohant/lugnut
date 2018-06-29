@@ -76,8 +76,7 @@ angular.module('app.services')
      * @return {RouteModel}
      */
     RouteModel.prototype.addPoint = function (point) {
-        if (angular.isArray(this.points))
-            this.points.push(point);
+        this.points.push(point);
         return this;
     };
     

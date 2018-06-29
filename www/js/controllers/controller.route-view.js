@@ -313,7 +313,7 @@ angular.module('app.controllers')
         watch = Geolocation.watchPosition({
             enableHighAccuracy: true,
             maximumAge: 3600000,
-            timeout: 5000,
+            timeout: 30000,
         }).then(null, onError, onSuccess);
 
 
@@ -330,6 +330,8 @@ angular.module('app.controllers')
 
         function onError (error) {
             $log.error('Unable to get location: ' + error.message, error);
+            
+            $scope.watchPosition();
         }
     };
     
@@ -352,7 +354,7 @@ angular.module('app.controllers')
             //$log.info('Compass heading: ' + Math.floor(alpha))
 
             var icon = $scope.$C.getIcon()
-            icon.rotation = /*360 -*/ alpha;
+            icon.rotation = 360 - Math.floor(alpha);
             $scope.$C.setIcon(icon)
         }
 
