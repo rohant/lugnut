@@ -3,22 +3,22 @@ angular.module('app.controllers')
 .controller('DashboardCtrl', function ($scope, $state, AuthService, Route) {
 
     function fetchViewedRoutes () {
-        
+
         var _key = 'viewedRoutes';
         $scope.viewedRoutes = JSON.parse(localStorage.getItem(_key)) || [];
-    
+
         var viewedIDs = $scope.viewedRoutes.map(function(viewed){
             return +viewed.id;
         });
-        
+
         Route.findAll({id: viewedIDs}).then(function(items){
             $scope.viewedRoutes = items;
             localStorage.setItem(_key, JSON.stringify($scope.viewedRoutes));
         });
     }
-    
+
     function fetchMyRoutes () {
-        
+
         var identity = AuthService.getIdentity();
 
         var criteria = {
@@ -34,9 +34,9 @@ angular.module('app.controllers')
         });
     }
 
-    
+
     $scope.$on("$ionicView.beforeEnter", function (event) {
-        
+
         if (!AuthService.isLoggedIn()) {
 
             // set "to back" function
@@ -48,7 +48,7 @@ angular.module('app.controllers')
             $state.go('app.signin');
             return false;
         }
-        
+
         fetchMyRoutes();
         fetchViewedRoutes();
     });

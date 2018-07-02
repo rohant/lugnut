@@ -186,6 +186,7 @@ var app = angular.module('app', [
     //$urlRouterProvider.otherwise('/app/route/record');
     $urlRouterProvider.otherwise(function ($injector) {
         var $state = $injector.get('$state');
-        $state.go('app.route-record');
+        // $state.go('app.route-record');
+        $state.go('app.signin');
     });
 });

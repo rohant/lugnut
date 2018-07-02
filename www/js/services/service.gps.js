@@ -278,8 +278,14 @@ angular.module('app.services')
         },
     };
 
-    //var $cordovaGeolocation = $injector.get('$cordovaGeolocation');
-    var $cordovaGeolocation = $injector.get('$cordovaGeolocationAdvanced');
+    if (ionic.Platform.is('browser') || !ionic.Platform.isAndroid()) {
+      // based on the W3C Geolocation API Specification.
+      var $cordovaGeolocation = $injector.get('$cordovaGeolocation');
+    } else {
+      // uses the Google Play services location APIs.
+      var $cordovaGeolocation = $injector.get('$cordovaGeolocationAdvanced');
+    }
+
     var GeolocationSimulator = $injector.get('GeolocationSimulator');
 
     gps.setGeolocation($cordovaGeolocation);
@@ -311,14 +317,36 @@ angular.module('app.services')
   var PRIORITY_LOW_POWER = 104;
   var PRIORITY_NO_POWER = 105;
 
-  return {
+  var priorities = {
+    PRIORITY_HIGH_ACCURACY: PRIORITY_HIGH_ACCURACY,
+    PRIORITY_BALANCED_POWER_ACCURACY: PRIORITY_BALANCED_POWER_ACCURACY,
+    PRIORITY_LOW_POWER: PRIORITY_LOW_POWER,
+    PRIORITY_NO_POWER: PRIORITY_NO_POWER
+  };
 
-    priorities: {
-      PRIORITY_HIGH_ACCURACY: PRIORITY_HIGH_ACCURACY,
-      PRIORITY_BALANCED_POWER_ACCURACY: PRIORITY_BALANCED_POWER_ACCURACY,
-      PRIORITY_LOW_POWER: PRIORITY_LOW_POWER,
-      PRIORITY_NO_POWER: PRIORITY_NO_POWER
-    },
+  function prepare(options) {
+    if (!options) {
+      options = {};
+    }
+    if (!options.timeout) {
+      options.timeout = 30000;
+    }
+    if (!options.priority) {
+      options.priority = PRIORITY_HIGH_ACCURACY;
+    }
+    if (!options.maximumAge) {
+      options.maximumAge = 10000;
+    }
+    if (!options.interval) {
+      options.interval = 1000;
+    }
+    if (!options.fastInterval) {
+      options.fastInterval = 1000;
+    }
+  }
+
+  return {
+    priorities: priorities,
 
     // geolocationOptions = {
     //   maximumAge: 3000,
@@ -330,33 +358,11 @@ angular.module('app.services')
     // };
     getCurrentPosition: function (options) {
       var q = $q.defer();
-
-      if (!angular.isObject(options)) {
-        options = {};
-      }
-      if (!options.timeout) {
-        options.timeout = 30000;
-      }
-      if (!options.priority) {
-        options.priority = PRIORITY_HIGH_ACCURACY;
-      }
-      if (!options.maximumAge) {
-        options.maximumAge = 10000;
-      }
-      if (!options.interval) {
-        options.interval = 1000;
-      }
-      if (!options.fastInterval) {
-        options.fastInterval = 1000;
-      }
-
-      console.log('LocationServices: getCurrentPosition: start', options);
+      options = prepare(options);
 
       geolocation.getCurrentPosition(function (result) {
-        console.log('LocationServices: getCurrentPosition: success');
         q.resolve(result);
       }, function (err) {
-        console.log('LocationServices: getCurrentPosition: error');
         q.reject(err);
       }, {});
 
@@ -365,13 +371,12 @@ angular.module('app.services')
 
     watchPosition: function (options) {
       var q = $q.defer();
-      console.log('LocationServices: watchPosition: start');
+      options = prepare(options);
+
       var watchID = geolocation.watchPosition(function (result) {
-        console.log('LocationServices: watchPosition: success');
         q.notify(result);
       }, function (err) {
         q.reject(err);
-        console.log('LocationServices: watchPosition: err');
       }, options);
 
       q.promise.cancel = function () {

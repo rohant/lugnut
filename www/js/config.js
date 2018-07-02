@@ -27,7 +27,7 @@ angular.module('app.config', ['app.services'])
 
     FakeRoutesProvider
     .addRoute({
-        active: true,
+        active: false,
         name: 'Fake route #1',
         speed: 60,
         interval: 2000,
@@ -72,6 +72,7 @@ angular.module('app.config', ['app.services'])
         ]
     })
     .addRoute({
+        active: true,
         name: 'Fake route #3',
         speed: 130,
         interval: 500,
