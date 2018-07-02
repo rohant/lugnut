@@ -23,7 +23,7 @@ angular.module('app.controllers')
 
         var criteria = {
             user_id: identity.id,
-            order: 'rating'
+            order: '-rating'
         };
 
         $scope.processing = true;
