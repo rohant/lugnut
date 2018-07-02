@@ -28,16 +28,14 @@ angular.module('app.controllers')
     }
 
     $scope.delete = function(route){
-        $scope.processing = true;
         $scope.deleting = true;
         return route.delete().then(function(){
-            $scope.reload();
+            return $scope.reload();
         }).catch(function(){
             $scope.errorNoInternet(function(){
                 $scope.delete(route);
             });
         }).finally(function(){
-            $scope.processing = false;
             $scope.deleting = false;
         });
     };

@@ -1,19 +1,19 @@
 angular.module('app.controllers')
 
 .controller('RouteCreateCtrl', function ($injector, $scope, $rootScope, $state, $log, Route, AuthService, DebugMode, $ionicPopup, $cordovaNetwork) {
-    
+
     /**
      * TODO: remove it on production
-     * 
+     *
      * @param {boolean} enable
      * @return {undefined}
      */
     function test (enable) {
-        
+
         if (!$rootScope.route) {
             $rootScope.route = $injector.get('Route').createEmpty();
         }
-        
+
         if (!enable) {
             $rootScope.route.setData({
                 title: '',
@@ -30,9 +30,9 @@ angular.module('app.controllers')
                 company: 'Test Company',
                 description: 'Lorem ipsum..',
             });
-        } 
+        }
     }
-    
+
     test (DebugMode.enabled);
 
     // TODO: remove it on production
@@ -44,57 +44,61 @@ angular.module('app.controllers')
 
 
     $scope.create = function (route) {
-        
+
         var isOffline = false;
         if (typeof Connection != 'undefined') {
             isOffline = $cordovaNetwork.isOffline();
         }
-            
+
         if (isOffline) {
-            
+
             $ionicPopup.confirm({
                 title: "Internet is not working",
                 content: "Internet is not working on your device."
             }).then(function(isOK){
                 if (isOK) $scope.create(route);
             });
-            
+
             $scope.$on('$cordovaNetwork:online', function(event, networkState) {
                 $scope.create(route);
             });
-            
+
         } else {
-        
+
             $scope.processing = true;
             route.user_id = $scope.identity.id;
-            
+
             route.save().then(function(model){
-                
+
                 var routeID = model.id;
 
                 if (routeID !== -1) {
                     $state.go('app.route-view', {id: routeID});
                 }
-                
+
             }).catch(function(errors){
-                
+
             }).finally(function(){
                 $scope.processing = false;
             });
         }
     };
-    
-    if (!$rootScope.route)
-        $state.go('app.list');
-    
-    if (!AuthService.isLoggedIn())
-    {
-        // set "to back" function
-        AuthService.toBack = function(){
-            AuthService.toBack = null;
-            $state.go('app.route-create');
-        }
-        
-        $state.go('app.signin');
-    }
+
+
+    $scope.$on("$ionicView.beforeEnter", function (event) {
+
+      if (!$rootScope.route)
+          $state.go('app.list');
+
+      if (!AuthService.isLoggedIn())
+      {
+          // set "to back" function
+          AuthService.toBack = function(){
+              AuthService.toBack = null;
+              $state.go('app.route-create');
+          }
+
+          $state.go('app.signin');
+      }
+  });
 });
