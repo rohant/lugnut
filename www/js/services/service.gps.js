@@ -138,6 +138,7 @@ angular.module('app.services')
 
             var watcher = setInterval(function(){
                 if (i > route.points.length-1) {
+                    i = 0;
                     clearInterval(watcher);
                     $log.debug('end.');
                 } else {

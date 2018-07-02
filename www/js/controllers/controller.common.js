@@ -52,6 +52,7 @@ angular.module('app.controllers', [])
             }
         },
         update: function(data){
+            angular.extend(DebugMode, data);
             localStorage.setItem(this._key, JSON.stringify(data));
         },
     }

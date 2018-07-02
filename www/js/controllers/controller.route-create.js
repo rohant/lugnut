@@ -33,8 +33,6 @@ angular.module('app.controllers')
         }
     }
 
-    test (DebugMode.enabled);
-
     // TODO: remove it on production
     $scope.$watch(function(){
         return DebugMode.enabled;
@@ -73,6 +71,7 @@ angular.module('app.controllers')
                 var routeID = model.id;
 
                 if (routeID !== -1) {
+                    $rootScope.route = null;
                     $state.go('app.route-view', {id: routeID});
                 }
 
@@ -86,6 +85,8 @@ angular.module('app.controllers')
 
 
     $scope.$on("$ionicView.beforeEnter", function (event) {
+
+      test (DebugMode.enabled);
 
       if (!$rootScope.route)
           $state.go('app.list');
