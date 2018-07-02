@@ -6,12 +6,16 @@
 
     <ion-content class="has-header">
         <!--<ion-refresher on-refresh="reload()"></ion-refresher>-->
-        
+
         <div ng-class="!model ? 'loader' : ''" style="min-height: 200px">
-            
+
             <div class="padding" ng-show="model">
                 <h2>{{model.title}}</h2>
 
+                <div class="row">
+                    <div class="col">id</div>
+                    <div class="col">#{{model.id}}</div>
+                </div>
                 <div class="row">
                     <div class="col">City</div>
                     <div class="col">{{model.city}}</div>

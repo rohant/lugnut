@@ -103,9 +103,10 @@ angular.module('app.controllers')
         }
 
         if (!$scope.isWatching) {
+          $scope.isWatching = true;
+
           waypoints = [];
           tracewaypoints.setPath(waypoints);
-          $scope.isWatching = true;
           $rootScope.route = Route.createEmpty();
         }
 

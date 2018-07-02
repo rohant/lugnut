@@ -29,6 +29,7 @@ angular.module('app.controllers')
 
     $scope.delete = function(route){
         $scope.processing = true;
+        $scope.deleting = true;
         return route.delete().then(function(){
             $scope.reload();
         }).catch(function(){
@@ -37,6 +38,7 @@ angular.module('app.controllers')
             });
         }).finally(function(){
             $scope.processing = false;
+            $scope.deleting = false;
         });
     };
 
