@@ -7,7 +7,7 @@ var app = angular.module('app', [
     'app.directives'
 ])
 
-.run(function($rootScope, $ionicPlatform, $state, $cordovaNetwork, $ionicPopup) {
+.run(function($rootScope, $ionicPlatform, $state, $cordovaNetwork, $ionicPopup, AuthService) {
     
   $ionicPlatform.ready(function() {
 
@@ -33,6 +33,38 @@ var app = angular.module('app', [
         });
     }
 
+    // TODO:
+    $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams, error) {
+        
+        // TODO: 
+        if ([
+            'app.account',
+            'app.dashboard',
+            'app.route-list',
+            'app.route-record',
+            'app.route-create',
+            'app.route-search',
+            'app.route-search-advanced',
+            
+        ].indexOf(toState.name) !== -1) {
+            
+            if (!AuthService.isLoggedIn()) {
+                event.preventDefault();
+                
+                // set "to back" function
+                AuthService.toBack = function(){
+                    AuthService.toBack = null;
+                    $state.go(toState.name);
+                }
+
+                $state.go('app.signin', {}, {notify: false}).then(function() {
+                    $rootScope.$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
+                });
+            }
+        }
+    });
+    
+    
     try {
         if ($cordovaNetwork.isOffline()) {
             var appStarted = false;
@@ -48,7 +80,6 @@ var app = angular.module('app', [
     } catch (e) {
         // ignore
     }
-    
   });
 })
 
