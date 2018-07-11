@@ -1,6 +1,6 @@
 angular.module('app.controllers')
 
-.controller('RouteCreateCtrl', function ($injector, $scope, $rootScope, $state, $log, Route, AuthService, DebugMode, $ionicPopup, $cordovaNetwork) {
+.controller('RouteCreateCtrl', function ($injector, $scope, $rootScope, $state, $log, AuthService, DebugMode) {
 
     /**
      * TODO: remove it on production
@@ -42,6 +42,9 @@ angular.module('app.controllers')
 
 
     $scope.create = function (route) {
+        
+        var $ionicPopup = $injector.get('$ionicPopup');
+        var $cordovaNetwork = $injector.get('$cordovaNetwork');
 
         var isOffline = false;
         if (typeof Connection != 'undefined') {
@@ -74,8 +77,6 @@ angular.module('app.controllers')
                     $rootScope.route = null;
                     $state.go('app.route-view', {id: routeID});
                 }
-
-            }).catch(function(errors){
 
             }).finally(function(){
                 $scope.processing = false;

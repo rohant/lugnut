@@ -253,9 +253,9 @@ angular.module('app.services')
          * @return {unresolved}
          */
         getCurrentPosition: function () {
-            var arguments = arguments;
+            var args = arguments;
             return this.getSource().then(function(source){
-                return source.getCurrentPosition.apply(source, arguments);
+                return source.getCurrentPosition.apply(source, args);
             });
         },
         /**
@@ -263,9 +263,10 @@ angular.module('app.services')
          * @return {unresolved}
          */
         watchPosition: function () {
-            var arguments = arguments;
+            var args = arguments;
             return this.getSource().then(function(source){
-                return (gps.watcher = source.watchPosition.apply(source, arguments));
+                return (gps.watcher = source.watchPosition.apply(source, args));
+                //return source.watchPosition.apply(source, args);
             });
         },
         /**
@@ -344,6 +345,7 @@ angular.module('app.services')
     if (!options.fastInterval) {
       options.fastInterval = 1000;
     }
+    return options;
   }
 
   return {
@@ -360,12 +362,15 @@ angular.module('app.services')
     getCurrentPosition: function (options) {
       var q = $q.defer();
       options = prepare(options);
+      
+      console.log('use Google geolocation services.', options);
+      console.log('geolocationOptions', options);
 
       geolocation.getCurrentPosition(function (result) {
         q.resolve(result);
       }, function (err) {
         q.reject(err);
-      }, {});
+      }, options);
 
       return q.promise;
     },
@@ -373,6 +378,9 @@ angular.module('app.services')
     watchPosition: function (options) {
       var q = $q.defer();
       options = prepare(options);
+      
+      console.log('use Google geolocation services.', options);
+      console.log('geolocationOptions', options);
 
       var watchID = geolocation.watchPosition(function (result) {
         q.notify(result);

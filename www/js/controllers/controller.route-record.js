@@ -4,7 +4,7 @@ angular.module('app.controllers')
     $scope,
     $rootScope,
     $log,
-    $http,
+    $injector,
     $state,
     $ionicLoading,
     Marker,
@@ -28,6 +28,8 @@ angular.module('app.controllers')
      * @return {undefined}
      */
     $scope.init = function () {
+        
+        $scope.showReloadBtn = false;
 
         $scope.loading = $ionicLoading.show({
             template: 'Getting current location...',
@@ -35,9 +37,8 @@ angular.module('app.controllers')
         });
 
         return Geolocation.getCurrentPosition({
-            enableHighAccuracy: true,
-            maximumAge: 6000,
             timeout: 30000,
+            enableHighAccuracy: true,
         }).then(function (position) {
 
             $scope.initialized = true;
@@ -52,10 +53,33 @@ angular.module('app.controllers')
             //$scope.map.setCenter(myLatlng);
             $scope.map.panTo(myLatlng);
             marker = Marker.current(position);
+            
+            return position;
 
-        }, function (error) {
+        }).catch(function (error) {
+            
+            $scope.showReloadBtn = true;
 
             $log.error('Unable to get location: ' + error.message, error);
+
+            try {
+                // if GPS is disabled
+                if (error.code === 2) {
+                    var $ionicPopup = $injector.get('$ionicPopup');
+                    
+                    $ionicPopup.alert({
+                        title: "Unable to get location.",
+                        content: error.message + "<br>Turn on the GPS and try again."
+                    }).then(function () {
+                        $scope.init();
+                    });
+                }
+            } catch(e) {
+                // ignore
+                console.log(e)
+            }
+            
+            return error;
 
         }).finally(function(){
 
@@ -118,9 +142,13 @@ angular.module('app.controllers')
         }
 
         watch = Geolocation.watchPosition({
-            enableHighAccuracy: true,
             maximumAge: 3600000,
-            timeout: 30000,
+            //maximumAge: 3000,
+            timeout: 5000,
+            enableHighAccuracy: true,
+            priority: 100,
+            interval: 6000,
+            fastInterval: 1000
         }).then(null, onError, onSuccess);
 
         function onSuccess (position) {
@@ -169,7 +197,6 @@ angular.module('app.controllers')
 
         function onError (error) {
             $log.error('Unable to get location: ' + error.message, error);
-
 
             Geolocation.clearWatch(watch);
 
@@ -224,18 +251,19 @@ angular.module('app.controllers')
     $scope.$on("$ionicView.enter", function (event) {
 
         if (AuthService.isLoggedIn()) {
-            if (!$scope.initialized) {
+            //if (!$scope.initialized) {
+            if (!$scope.isWatching) {
                 $scope.init();
             }
         } else {
             event.preventDefault();
-
+            
             // set "to back" function
             AuthService.toBack = function(){
                 AuthService.toBack = null;
                 $state.go('app.route-record');
             }
-
+            
             $state.go('app.signin');
         }
 
