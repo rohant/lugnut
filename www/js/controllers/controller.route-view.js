@@ -2,23 +2,24 @@ angular.module('app.controllers')
 
 .controller('RouteViewCtrl', function (
     $injector,
-    $scope, 
-    $log, 
-    $http, 
-    $state, 
+    $scope,
+    $q,
+    $log,
+    $http,
+    $state,
     $ionicPopup,
-    $ionicHistory, 
-    $ionicLoading, 
+    $ionicHistory,
+    $ionicLoading,
     $cordovaNetwork,
-    $ionicNavBarDelegate, 
-    Route, 
-    Marker, 
-    Geolocation, 
+    $ionicNavBarDelegate,
+    Route,
+    Marker,
+    Geolocation,
     Config
 ) {
-    
+
     var watch;
-    
+
     var closedArrowIcon = {
         path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
     };
@@ -32,10 +33,10 @@ angular.module('app.controllers')
         fillColor: '#404040',
         anchor: new google.maps.Point(10, 25)
     };
-    
+
     /**
      * TODO: it must be refactored!
-     * 
+     *
      * @param {Route} model
      * @param {integer} limit
      * @return {undefined}
@@ -61,44 +62,91 @@ angular.module('app.controllers')
         Marker.init(map);
         $scope.init();
     }
-    
+
+    function snapToRoads(waypoints) {
+
+        var route = [
+            "https://roads.googleapis.com/v1/snapToRoads?interpolate=true",
+            "&key=" + $scope.$config.API_KEY,
+            "&path=" + waypoints.join('|'),
+        ].join('');
+
+        return $http.get(route).then(function (response) {
+
+            $log.debug('snapToRoads:success', response);
+
+            var tmp = [];
+
+            for (var i in response.data.snappedPoints) {
+                var point = response.data.snappedPoints[i];
+
+                var pointLatLng = new google.maps.LatLng(
+                    point.location.latitude,
+                    point.location.longitude
+                );
+
+                tmp.push(pointLatLng);
+            }
+
+            return tmp;
+        });
+    }
+
     /**
-     * 
+     *
      * @return {undefined}
      */
     $scope.init = function() {
 
         var bounds  = new google.maps.LatLngBounds();
         var path = [];
-        
+
         $scope.$A = Marker.createMarker('Point A');
         $scope.$B = Marker.createMarker('Point B');
         $scope.$C = Marker.createMarker('Point C');
-        
+
         $scope.$A.setAnimation(google.maps.Animation.DROP);
         $scope.$B.setAnimation(google.maps.Animation.DROP);
         //$scope.$C.setAnimation(google.maps.Animation.DROP);
-        
+
         $scope.$A.setZIndex(2);
         $scope.$B.setZIndex(1);
         $scope.$C.setZIndex(1);
-        
+
         $scope.$A.setIcon('./img/markers/blue_MarkerA.png');
         $scope.$B.setIcon('./img/markers/red_MarkerB.png');
         $scope.$C.setIcon(busIcon);
-        
-        
+
+
         $scope.loading = $ionicLoading.show({
             template: 'Opening your route...'
         });
 
+        $log.debug("Find the route waypoints..");
+
+        var tracewaypoints = new google.maps.Polyline({
+            map: $scope.map,
+            strokeColor: "blue",
+            strokeOpacity: 1.0,
+            strokeWeight: 2,
+            icons: [{
+                icon: closedArrowIcon,
+                offset: '100%'
+            }/*, {
+                icon: busIcon,
+                offset: '10%',
+            }*/]
+        });
+
         Route.findOne($state.params.id).then(function (model) {
-            
-            saveViewedRoute(model, 10)
-            
+
             $scope.model = model;
+            saveViewedRoute(model, 10);
+
+            $log.debug("Snap to road..");
+
             var chunked = $scope.model.simplify().chunk(100);
-            
+
             chunked.forEach(function(points, i){
 
                 if (i-1 >= 0) {
@@ -110,67 +158,88 @@ angular.module('app.controllers')
                 });
 
                 if (waypoints.length) {
-                    
-                    var route = [
-                        "https://roads.googleapis.com/v1/snapToRoads?interpolate=true",
-                        "&key=" + $scope.$config.API_KEY,
-                        "&path=" + waypoints.join('|'),
-                    ].join('');
-                    
-                    $http.get(route).then(function (response) {
-                        $log.debug('snapToRoads:success', response)
 
-                        var tmp = [];
-                        for (var i in response.data.snappedPoints) {
-                            var point = response.data.snappedPoints[i];
-                            
-                            var pointLatLng = new google.maps.LatLng(
-                                point.location.latitude,
-                                point.location.longitude
-                            );
-                    
-                            tmp.push(pointLatLng);
-                            bounds.extend(pointLatLng);
-                        }
+                    snapToRoads(waypoints).then(function(points){
 
-                        var tracewaypoints = new google.maps.Polyline({
-                            map: $scope.map,
-                            strokeColor: "blue",
-                            strokeOpacity: 1.0,
-                            strokeWeight: 2,
-                            icons: [{
-                                icon: closedArrowIcon,
-                                offset: '100%'
-                            }/*, {
-                                icon: busIcon,
-                                offset: '10%',
-                            }*/]
-                        });
+                        for (var i in points)
+                            bounds.extend(points[i]);
 
-                        path = path.concat(tmp);
-                        tracewaypoints.setPath(tmp);
-                        
+                        path = path.concat(points);
+                        tracewaypoints.setPath(path);
+
                         $scope.map.fitBounds(bounds);      // auto-zoom
                         $scope.map.panToBounds(bounds);    // auto-center
-                        
+
                         //$scope.map.setCenter(tmp[tmp.length-1]);
                         //$scope.map.setCenter(tmp[Math.ceil(tmp.length/2)]);
 
                         //Marker
                         //.createMarker('You are here!', tmp[tmp.length-1])
                         //.setPosition(tmp[tmp.length-1]);
-                
-                        $scope.$A.setPosition(tmp[0]);
-                        $scope.$B.setPosition(tmp[tmp.length-1]);
-
                     }, function(response) {
                         $log.error('snapToRoads:error', response);
                         $scope.errorNoInternet();
-                    });
+                    })
+//
+//                    var route = [
+//                        "https://roads.googleapis.com/v1/snapToRoads?interpolate=true",
+//                        "&key=" + $scope.$config.API_KEY,
+//                        "&path=" + waypoints.join('|'),
+//                    ].join('');
+//
+//                    $http.get(route).then(function (response) {
+//                        $log.debug('snapToRoads:success', response)
+//
+//                        var tmp = [];
+//                        for (var i in response.data.snappedPoints) {
+//                            var point = response.data.snappedPoints[i];
+//
+//                            var pointLatLng = new google.maps.LatLng(
+//                                point.location.latitude,
+//                                point.location.longitude
+//                            );
+//
+//                            tmp.push(pointLatLng);
+//                            bounds.extend(pointLatLng);
+//                        }
+//
+//                        var tracewaypoints = new google.maps.Polyline({
+//                            map: $scope.map,
+//                            strokeColor: "blue",
+//                            strokeOpacity: 1.0,
+//                            strokeWeight: 2,
+//                            icons: [{
+//                                icon: closedArrowIcon,
+//                                offset: '100%'
+//                            }/*, {
+//                                icon: busIcon,
+//                                offset: '10%',
+//                            }*/]
+//                        });
+//
+//                        path = path.concat(tmp);
+//                        tracewaypoints.setPath(tmp);
+//
+//                        $scope.map.fitBounds(bounds);      // auto-zoom
+//                        $scope.map.panToBounds(bounds);    // auto-center
+//
+//                        //$scope.map.setCenter(tmp[tmp.length-1]);
+//                        //$scope.map.setCenter(tmp[Math.ceil(tmp.length/2)]);
+//
+//                        //Marker
+//                        //.createMarker('You are here!', tmp[tmp.length-1])
+//                        //.setPosition(tmp[tmp.length-1]);
+//
+//
+//
+//                    }, function(response) {
+//                        $log.error('snapToRoads:error', response);
+//                        $scope.errorNoInternet();
+//                    });
                 }
             });
-            
-            
+
+
             //var waypoints = $scope.model.points.map(function(point){
             //    return new google.maps.LatLng(point.lat, point.lng);
             //}).map(function(point){
@@ -195,15 +264,18 @@ angular.module('app.controllers')
             //        offset: '10%',
             //    }*/]
             //});
-            
+
+            $scope.$A.setPosition($scope.model.getLatLngPoint(0));
+            $scope.$B.setPosition($scope.model.getLatLngPoint(-1));
+
             $scope.watchPosition();
             $scope.watchDirection();
-            
+
         }).catch(function(response){
-            
+
             //$scope.errorInternal(response.data);
             $scope.errorNoInternet();
-            
+
         }).finally(function(){
             try {
                 $scope.loading.hide();
@@ -212,35 +284,30 @@ angular.module('app.controllers')
             }
         });
     }
-    
-    /**
-     *
-     * @return {undefined}
-     */
+
     $scope.watchPosition = function () {
 
         if (!$scope.map) {
             return;
         }
-        
-        if (Geolocation.simulationEnabled()) {
-            
-            Geolocation
-            .getGeolocationSimulator()
-            .setFakeRoute({
-                active: true,
-                name: 'Fake route #1',
-                speed: 60,
-                interval: 500,
-                points: [
-                    [37.803210, -122.285347],
-                ]
-            });
-        }
-
-        $log.debug("Search GPS coordinates..");
 
         $scope.isWatching = true;
+
+        $log.debug("Start watching locations..");
+
+        // if (Geolocation.simulationEnabled()) {
+        //     Geolocation
+        //     .getGeolocationSimulator()
+        //     .setFakeRoute({
+        //         active: true,
+        //         name: 'Fake route #1',
+        //         speed: 60,
+        //         interval: 500,
+        //         points: [
+        //             [37.803210, -122.285347],
+        //         ]
+        //     });
+        // }
 
         watch = Geolocation.watchPosition({
             enableHighAccuracy: true,
@@ -256,49 +323,53 @@ angular.module('app.controllers')
                 position.coords.latitude,
                 position.coords.longitude
             );
-    
-            $scope.$C.setPosition(myLatlng)
+
+            $scope.$C.setPosition(myLatlng);
         }
 
         function onError (error) {
             $log.error('Unable to get location: ' + error.message, error);
+
+            $scope.watchPosition();
         }
     };
 
-    /**
-     * 
-     * @return {undefined}
-     */
-    $scope.watchDirection = function () {
-        
-        window.addEventListener("deviceorientation", throttle(function (event) {
-
-            var alpha = event.webkitCompassHeading 
-                ? event.webkitCompassHeading 
-                : event.alpha;
-
-            if (event.absolute) {
-                //$log.info('Compass heading: ' + Math.floor(alpha))
-                
-                var icon = $scope.$C.getIcon()
-                icon.rotation = 360 - alpha;
-                $scope.$C.setIcon(icon)
-            }
-
-        }, 250));
-    }
-
-    /**
-     *
-     * @return {undefined}
-     */
     $scope.stopWatchingPosition = function(){
         $scope.isWatching = false;
         Geolocation.clearWatch(watch);
+
+        try { // TODO:
+            watch && watch.clearWatch();
+        } catch (e) {};
+    };
+
+    var handleWatchingDirection = throttle(function (event) {
+
+        var alpha = event.webkitCompassHeading
+            ? event.webkitCompassHeading
+            : event.alpha;
+
+        if (event.absolute) {
+            //$log.info('Compass heading: ' + Math.floor(alpha))
+
+            var icon = $scope.$C.getIcon()
+            icon.rotation = 360 - Math.floor(alpha);
+            $scope.$C.setIcon(icon)
+        }
+
+    }, 250);
+
+
+    $scope.watchDirection = function () {
+        window.addEventListener("deviceorientation", handleWatchingDirection);
+    };
+
+    $scope.stopWatchingDirections = function(){
+        window.removeEventListener("deviceorientation", handleWatchingDirection);
     };
 
     /**
-     * 
+     *
      * @return {unresolved}
      */
     $scope.errorNoInternet = function () {
@@ -318,17 +389,23 @@ angular.module('app.controllers')
             }
         });
     }
-    
+
     $scope.$on("$destroy", function () {
         $scope.stopWatchingPosition();
+        $scope.stopWatchingDirections();
     });
-    
+
     //$scope.$on("$ionicView.enter", function (event) {
     //    if (Geolocation.simulationEnabled()) {
     //        // do something
     //    }
     //});
-    
+
+    $scope.$on('$ionicView.leave', function(){
+        $scope.stopWatchingPosition();
+        $scope.stopWatchingDirections();
+    });
+
     $scope.$on("$ionicView.beforeEnter", function (event) {
         var backView = $ionicHistory.viewHistory().backView;
         $scope.showBackButton = backView && (backView.stateName != 'app.route-create');

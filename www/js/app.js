@@ -7,8 +7,8 @@ var app = angular.module('app', [
     'app.directives'
 ])
 
-.run(function($rootScope, $ionicPlatform, $state, $cordovaNetwork, $ionicPopup, AuthService) {
-    
+.run(function($rootScope, $ionicPlatform, $state, $cordovaNetwork, $ionicPopup) {
+
   $ionicPlatform.ready(function() {
 
     if(window.StatusBar) {
@@ -18,13 +18,13 @@ var app = angular.module('app', [
     ['isArray', 'isDate', 'isDefined', 'isFunction', 'isNumber', 'isObject', 'isString', 'isUndefined'].forEach(function(name) {
         $rootScope[name] = angular[name];
     });
-    
-    // 
+
+    //
     // Handle the deep links
-    // 
-    // adb shell am start -W -a android.intent.action.VIEW 
+    //
+    // adb shell am start -W -a android.intent.action.VIEW
     // -d "http://lugnut.rmasyahin-wd.office.webdevs.us/route/20" com.wdevs.lugnut
-    // 
+    //
     if (typeof universalLinks != 'undefined') {
         universalLinks.subscribe('openRouteDetailedPage', function (eventData) {
             var routeId = +eventData.url.replace(/.*\//,'');
@@ -80,6 +80,7 @@ var app = angular.module('app', [
     } catch (e) {
         // ignore
     }
+
   });
 })
 
@@ -102,7 +103,7 @@ var app = angular.module('app', [
         }
       }
     })
-    
+
     .state('app.dashboard', {
       url: '/dashboard',
       views: {
@@ -217,6 +218,7 @@ var app = angular.module('app', [
     //$urlRouterProvider.otherwise('/app/route/record');
     $urlRouterProvider.otherwise(function ($injector) {
         var $state = $injector.get('$state');
-        $state.go('app.route-record');
+        // $state.go('app.route-record');
+        $state.go('app.signin');
     });
 });

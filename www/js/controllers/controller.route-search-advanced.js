@@ -1,6 +1,8 @@
 angular.module('app.controllers')
 
-.controller('RouteAdvancedSearchCtrl', function ($scope, $state, $log, $ionicLoading, Route, AuthService, Geolocation, Marker) {
+.controller('RouteAdvancedSearchCtrl', function ($injector, $scope, $state, $log, $ionicLoading, Route, AuthService, Geolocation, Marker) {
+
+    var $ionicPopup = $injector.get('$ionicPopup');
 
     var closedArrowIcon = {
         //path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
@@ -27,6 +29,8 @@ angular.module('app.controllers')
      */
     function getCurrentPosition(){
         
+        $scope.showReloadBtn = false;
+        
         removeAlternativeRoutes();
         
         $scope.$A.setVisible(false);
@@ -36,10 +40,9 @@ angular.module('app.controllers')
             template: 'Getting current location...',
             showBackdrop: true
         });
-
+        
         return Geolocation.getCurrentPosition({
             enableHighAccuracy: true,
-            maximumAge: 6000,
             timeout: 30000,
         }).then(function (position) {
 
@@ -71,6 +74,20 @@ angular.module('app.controllers')
 
             $log.error('Unable to get location: ' + error.message, error);
             $scope.showReloadBtn = true;
+            
+            try {
+                // if GPS is disabled
+                if (error.code === 2) {
+                    $ionicPopup.alert({
+                        title: "Unable to get location.",
+                        content: error.message + "<br>Turn on the GPS and try again."
+                    }).then(function () {
+                        getCurrentPosition();
+                    });
+                }
+            } catch(e) {
+                // ignore
+            }
 
         }).finally(function(){
             
@@ -350,9 +367,9 @@ angular.module('app.controllers')
         Geolocation.clearWatch();
     });
 
-    $scope.$on("$ionicView.beforeEnter", function (event) {
+    $scope.$on("$ionicView.enter", function (event) {
         
-        console.log("$ionicView.beforeEnter")
+        console.log("$ionicView.enter");
 
         if (!AuthService.isLoggedIn()) {
 
@@ -361,7 +378,7 @@ angular.module('app.controllers')
                 AuthService.toBack = null;
                 $state.go('app.route-search-advanced');
             }
-
+            
             $state.go('app.signin');
             return false;
         }
@@ -375,7 +392,7 @@ angular.module('app.controllers')
             $log.info('Used the fake route: ' + fakeRoute.name);
         }
 
-        if ($scope.initialized)
+        //if ($scope.initialized)
             getCurrentPosition();
     });
 });
